@@ -7,6 +7,7 @@ namespace RealTime.GameConnection
     using System.Collections.Generic;
     using System.Linq;
     using ColossalFramework;
+    using Epic.OnlineServices.Presence;
     using UnityEngine;
 
     /// <summary>
@@ -474,6 +475,46 @@ namespace RealTime.GameConnection
             if (buildinAI is AuxiliaryBuildingAI && buildinAI.GetType().Name.Equals("BarracksAI") || buildinAI is CampusBuildingAI && buildinAI.GetType().Name.Equals("DormsAI"))
             {
                 return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the building with specified ID is essential to the supply chain
+        /// when advanced automation policy is on.
+        /// </summary>
+        /// <param name="buildingId">The building ID to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the building with the specified ID is essential to the supply chain when advanced automation policy is on;
+        ///   otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsEssentialIndustryBuilding(ushort buildingId)
+        {
+            if (buildingId == 0)
+            {
+                return false;
+            }
+
+            var building = BuildingManager.instance.m_buildings.m_buffer[buildingId];
+            var buildingInfo = building.Info;
+            var buildinAI = buildingInfo?.m_buildingAI;
+
+            var instance = Singleton<DistrictManager>.instance;
+            byte b = instance.GetPark(building.m_position);
+            if (b != 0)
+            {
+                if (instance.m_parks.m_buffer[b].IsIndustry)
+                {
+                    var parkPolicies = instance.m_parks.m_buffer[b].m_parkPolicies;
+                    if ((parkPolicies & DistrictPolicies.Park.AdvancedAutomation) != 0)
+                    {
+                        if (buildinAI is ProcessingFacilityAI || buildinAI is WarehouseAI || buildinAI is WarehouseStationAI)
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
 
             return false;

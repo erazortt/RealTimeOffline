@@ -565,6 +565,10 @@ namespace RealTime.CustomAI
                     {
                         return false;
                     }
+                    else if (buildingManager.IsEssentialIndustryBuilding(buildingId))
+                    {
+                        return false;
+                    }
                     else
                     {
                         goto default;
