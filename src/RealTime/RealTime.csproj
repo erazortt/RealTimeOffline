@@ -21,19 +21,27 @@
     <PackageReference Include="SkyTools.Patching" Version="2.1.0" />
     <PackageReference Include="GitVersionTask" Version="5.2.4" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
-    <PackageReference Include="Roslynator.Analyzers" Version="2.3.0"/>
-    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="1.0.0-beta"/>
+    <PackageReference Include="Roslynator.Analyzers" Version="2.3.0" />
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="1.0.0-beta" />
     <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.164" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp" />
-    <Reference Include="ColossalManaged" />
-    <Reference Include="ICities" />
-    <Reference Include="UnityEngine" />
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ColossalManaged">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+    </Reference>
+    <Reference Include="ICities">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Target Name="DeployToModsDirectory" AfterTargets="Build" DependsOnTargets="Build">
     <PropertyGroup>
-      <CitiesSkylinesModDir>D:\Data\SteamLibrary\steamapps\workshop\content\255710\1420955187\</CitiesSkylinesModDir>
+      <CitiesSkylinesModDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\</CitiesSkylinesModDir>
     </PropertyGroup>
     <ItemGroup>
       <TranslationFiles Include="$(ProjectDir)Localization\Translations\*.xml" />
