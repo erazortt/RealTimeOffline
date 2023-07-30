@@ -5,6 +5,7 @@
 namespace RealTime.CustomAI
 {
     using System;
+    using System.Security.Cryptography;
     using ColossalFramework;
     using RealTime.Config;
     using RealTime.Events;
@@ -156,6 +157,7 @@ namespace RealTime.CustomAI
                 {
                     // Heading to a hotel, no need to change anything
                     case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialTourist:
+                    case ItemClass.Service.Hotel:
                         return;
 
                     case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialLeisure:
@@ -182,7 +184,17 @@ namespace RealTime.CustomAI
                 return;
             }
 
-            ushort hotel = FindHotel(targetBuildingId);
+            var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
+            ushort hotel;
+            if (tourist_citizen.m_hotelBuilding != 0)
+            {
+                hotel = tourist_citizen.m_hotelBuilding;
+            }
+            else
+            {
+                hotel = FindHotel(targetBuildingId);
+            }
+
             if (hotel != 0)
             {
                 Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {hotel} because of time or weather");
@@ -225,7 +237,10 @@ namespace RealTime.CustomAI
                 case ItemClass.Service.Commercial
                     when BuildingMgr.GetBuildingSubService(visitBuilding) == ItemClass.SubService.CommercialTourist
                         && !Random.ShouldOccur(GetHotelLeaveChance()):
+                case ItemClass.Service.Hotel
+                    when !Random.ShouldOccur(GetHotelLeaveChance()):
                     return;
+
             }
 
             var currentEvent = EventMgr.GetCityEvent(visitBuilding);
@@ -291,7 +306,17 @@ namespace RealTime.CustomAI
                     break;
 
                 case TouristTarget.Hotel:
-                    ushort hotel = FindHotel(currentBuilding);
+                    var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
+                    ushort hotel;
+                    if (tourist_citizen.m_hotelBuilding != 0)
+                    {
+                        hotel = tourist_citizen.m_hotelBuilding;
+                    }
+                    else
+                    {
+                        hotel = FindHotel(currentBuilding);
+                    }
+
                     if (hotel == 0)
                     {
                         goto case TouristTarget.LeaveCity;

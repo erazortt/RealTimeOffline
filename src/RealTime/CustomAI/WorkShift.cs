@@ -1,4 +1,4 @@
-﻿// <copyright file="WorkShift.cs" company="dymanoid">
+// <copyright file="WorkShift.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
