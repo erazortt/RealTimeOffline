@@ -57,6 +57,37 @@ namespace RealTime.GameConnection.Patches
                     case TransferManager.TransferReason.ParkMaintenance:
                         return RealTimeAI.IsBuildingActive(offer.Building);
 
+                    case TransferManager.TransferReason.Mail:
+                    case TransferManager.TransferReason.RoadMaintenance:
+                        return RealTimeAI.IsBuildingActive(offer.Building);
+
+                    default:
+                        return true;
+                }
+            }
+        }
+
+        private sealed class TransferManager_AddIncomingOffer : PatchBase
+        {
+            protected override MethodInfo GetMethod() =>
+                typeof(TransferManager).GetMethod(
+                    "AddIncomingOffer",
+                    BindingFlags.Instance | BindingFlags.Public,
+                    null,
+                    new[] { typeof(TransferManager.TransferReason), typeof(TransferManager.TransferOffer) },
+                    new ParameterModifier[0]);
+
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
+            private static bool Prefix(TransferManager.TransferReason material, ref TransferManager.TransferOffer offer)
+            {
+                switch (material)
+                {
+                    case TransferManager.TransferReason.Mail:
+                        return RealTimeAI.IsMailHours(offer.Building);
+
+                    case TransferManager.TransferReason.RoadMaintenance:
+                        return RealTimeAI.IsMaintenanceHours(offer.NetSegment);
+
                     default:
                         return true;
                 }

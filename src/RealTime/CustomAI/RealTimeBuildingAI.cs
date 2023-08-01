@@ -7,6 +7,7 @@ namespace RealTime.CustomAI
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using ColossalFramework;
     using RealTime.Config;
     using RealTime.GameConnection;
     using RealTime.Simulation;
@@ -364,6 +365,82 @@ namespace RealTime.CustomAI
             else
             {
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the building with the specified ID is allowed to accept mail in this time of day.
+        /// </summary>
+        /// <param name="buildingId">The building ID to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the building is allowed to accept mail in this time of day; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsMailHours(ushort buildingId)
+        {
+            if (buildingId == 0)
+            {
+                return true;
+            }
+
+            // A building still can post outgoing offers while inactive.
+            // This is to prevent those offers from being dispatched.
+            if (!buildingManager.BuildingHasFlags(buildingId, Building.Flags.Active))
+            {
+                return false;
+            }
+
+            float currentHour = timeInfo.CurrentHour;
+
+            switch (buildingManager.GetBuildingService(buildingId))
+            {
+                // collect at morning time
+                case ItemClass.Service.Residential:
+                    return currentHour >= timeInfo.SunriseHour && currentHour <= 12f;
+
+                // collect during the day
+                case ItemClass.Service.Commercial:
+                case ItemClass.Service.Industrial:
+                case ItemClass.Service.Office:
+                    return currentHour >= timeInfo.SunriseHour && currentHour <= timeInfo.SunsetHour;
+
+                default:
+                    return true;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the segment with the specified ID is allowed to accept maintenance in this time of day.
+        /// </summary>
+        /// <param name="segmentId">The segment ID to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the segment is allowed to accept maintenance in this time of day; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsMaintenanceHours(ushort segmentId)
+        {
+            if (segmentId == 0)
+            {
+                return true;
+            }
+
+            float currentHour = timeInfo.CurrentHour;
+
+            var road_info = Singleton<NetManager>.instance.m_segments.m_buffer[segmentId].Info;
+
+            switch (road_info.name)
+            {
+                // maintian in the day
+                case "RoadsSmall":
+                case "RoadsMedium":
+                    return currentHour >= timeInfo.SunriseHour && currentHour <= timeInfo.SunsetHour;
+
+                // maintian in the night
+                case "RoadsLarge":
+                case "RoadsHighway":
+                    return currentHour >= timeInfo.SunsetHour && currentHour <= timeInfo.SunriseHour;
+
+                // maintian in the morning
+                default:
+                    return currentHour >= timeInfo.SunriseHour && currentHour <= 12f;
             }
         }
 
