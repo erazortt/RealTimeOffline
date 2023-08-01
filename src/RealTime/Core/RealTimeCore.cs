@@ -317,6 +317,7 @@ namespace RealTime.Core
                 ResidentAIPatch.InstanceSimulationStep,
                 TouristAIPatch.Location,
                 TransferManagerPatch.AddOutgoingOffer,
+                TransferManagerPatch.AddIncomingOffer,
                 WorldInfoPanelPatch.UpdateBindings,
                 UIGraphPatch.MinDataPoints,
                 UIGraphPatch.VisibleEndTime,
@@ -370,6 +371,7 @@ namespace RealTime.Core
                 ResidentAIPatch.ArriveAtTarget,
                 TouristAIPatch.Location,
                 TransferManagerPatch.AddOutgoingOffer,
+                TransferManagerPatch.AddIncomingOffer,
             };
 
             return requiredPatches.All(appliedPatches.Contains);

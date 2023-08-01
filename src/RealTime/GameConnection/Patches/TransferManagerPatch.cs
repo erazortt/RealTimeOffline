@@ -16,6 +16,9 @@ namespace RealTime.GameConnection.Patches
         /// <summary>Gets the patch object for the outgoing offer method.</summary>
         public static IPatch AddOutgoingOffer { get; } = new TransferManager_AddOutgoingOffer();
 
+        /// <summary>Gets the patch object for the incoming offer method.</summary>
+        public static IPatch AddIncomingOffer { get; } = new TransferManager_AddIncomingOffer();
+
         /// <summary>Gets or sets the custom AI object for buildings.</summary>
         public static RealTimeBuildingAI RealTimeAI { get; set; }
 

@@ -241,7 +241,6 @@ namespace RealTime.CustomAI
                 case ItemClass.Service.Hotel when Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.Hotels) &&
                     !Random.ShouldOccur(GetHotelLeaveChance()):
                     return;
-
             }
 
             var currentEvent = EventMgr.GetCityEvent(visitBuilding);
