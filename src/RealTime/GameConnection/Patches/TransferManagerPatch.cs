@@ -86,7 +86,8 @@ namespace RealTime.GameConnection.Patches
                         return RealTimeAI.IsMailHours(offer.Building);
 
                     case TransferManager.TransferReason.RoadMaintenance:
-                        return RealTimeAI.IsMaintenanceHours(offer.NetSegment);
+                    case TransferManager.TransferReason.Snow:
+                        return RealTimeAI.IsRoadServiceHours(offer.NetSegment);
 
                     default:
                         return true;

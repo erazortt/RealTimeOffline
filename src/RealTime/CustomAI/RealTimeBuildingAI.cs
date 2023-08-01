@@ -415,7 +415,7 @@ namespace RealTime.CustomAI
         /// <returns>
         ///   <c>true</c> if the segment is allowed to accept maintenance in this time of day; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsMaintenanceHours(ushort segmentId)
+        public bool IsRoadServiceHours(ushort segmentId)
         {
             if (segmentId == 0)
             {
