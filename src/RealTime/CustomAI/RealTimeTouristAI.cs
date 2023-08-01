@@ -7,6 +7,7 @@ namespace RealTime.CustomAI
     using System;
     using System.Security.Cryptography;
     using ColossalFramework;
+    using ICities;
     using RealTime.Config;
     using RealTime.Events;
     using RealTime.GameConnection;
@@ -237,8 +238,8 @@ namespace RealTime.CustomAI
                 case ItemClass.Service.Commercial
                     when BuildingMgr.GetBuildingSubService(visitBuilding) == ItemClass.SubService.CommercialTourist
                         && !Random.ShouldOccur(GetHotelLeaveChance()):
-                case ItemClass.Service.Hotel
-                    when !Random.ShouldOccur(GetHotelLeaveChance()):
+                case ItemClass.Service.Hotel when Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.Hotels) &&
+                    !Random.ShouldOccur(GetHotelLeaveChance()):
                     return;
 
             }
