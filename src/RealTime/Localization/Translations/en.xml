@@ -91,6 +91,77 @@
   <translation id="LunchEndTooltip" value="The daytime hour when the Cims return from lunch back to work" />
   <translation id="MaxVacationLength" value="Maximum vacation days" />
   <translation id="MaxVacationLengthTooltip" value="For how long citizens can be on vacation. Set to 0 to disable vacations." />
+  
+  <translation id="5BuildingService" value="Building Services" />
+  <translation id="GarbageResidentialStartHour" value="Garbage residential start hour" />
+  <translation id="GarbageResidentialBeginTooltip" value="The daytime when garbage services starts to operate in residential areas" />
+  <translation id="GarbageResidentialEndHour" value="Garbage residential end hour" />
+  <translation id="GarbageResidentialEndTooltip" value="The daytime when garbage services stop to operate in residential areas" />
+  <translation id="GarbageCommercialStartHour" value="Garbage commercial start hour" />
+  <translation id="GarbageCommercialBeginTooltip" value="The daytime when garbage services starts to operate in commercial areas" />
+  <translation id="GarbageCommercialEndHour" value="Garbage commercial end hour" />
+  <translation id="GarbageCommercialEndTooltip" value="The daytime when garbage services stop to operate in commercial areas" />
+  <translation id="GarbageIndustrialStartHour" value="Garbage industrial start hour" />
+  <translation id="GarbageIndustrialBeginTooltip" value="The daytime when garbage services starts to operate in industrial areas" />
+  <translation id="GarbageIndustrialEndHour" value="Garbage industrial end hour" />
+  <translation id="GarbageIndustrialEndTooltip" value="The daytime when garbage services stop to operate in industrial areas" />
+  <translation id="GarbageOfficeStartHour" value="Garbage office start hour" />
+  <translation id="GarbageOfficeBeginTooltip" value="The daytime when garbage services starts to operate in office areas" />
+  <translation id="GarbageOfficeEndHour" value="Garbage office end hour" />
+  <translation id="GarbageOfficeEndTooltip" value="The daytime when garbage services stop to operate in office areas" />
+  <translation id="GarbageOtherStartHour" value="Garbage other start hour" />
+  <translation id="GarbageOtherBeginTooltip" value="The daytime when garbage services starts to operate in other areas" />
+  <translation id="GarbageOtherEndHour" value="Garbage other end hour" />
+  <translation id="GarbageOtherEndTooltip" value="The daytime when garbage services stop to operate in other areas" />
+
+  <translation id="MailResidentialStartHour" value="Mail residential start hour" />
+  <translation id="MailResidentialBeginTooltip" value="The daytime when mail services starts to operate in residential areas" />
+  <translation id="MailResidentialEndHour" value="Mail residential end hour" />
+  <translation id="MailResidentialEndTooltip" value="The daytime when mail services stop to operate in residential areas" />
+  <translation id="MailCommercialStartHour" value="Mail commercial start hour" />
+  <translation id="MailCommercialBeginTooltip" value="The daytime when mail services starts to operate in commercial areas" />
+  <translation id="MailCommercialEndHour" value="Mail commercial end hour" />
+  <translation id="MailCommercialEndTooltip" value="The daytime when mail services stop to operate in commercial areas" />
+  <translation id="MailIndustrialStartHour" value="Mail industrial start hour" />
+  <translation id="MailIndustrialBeginTooltip" value="The daytime when mail services starts to operate in industrial areas" />
+  <translation id="MailIndustrialEndHour" value="Mail industrial end hour" />
+  <translation id="MailIndustrialEndTooltip" value="The daytime when mail services stop to operate in industrial areas" />
+  <translation id="MailOfficeStartHour" value="Mail office start hour" />
+  <translation id="MailOfficeBeginTooltip" value="The daytime when mail services starts to operate in office areas" />
+  <translation id="MailOfficeEndHour" value="Mail office end hour" />
+  <translation id="MailOfficeEndTooltip" value="The daytime when mail services stop to operate in office areas" />
+  <translation id="MailOtherStartHour" value="Mail other start hour" />
+  <translation id="MailOtherBeginTooltip" value="The daytime when mail services starts to operate in other areas" />
+  <translation id="MailOtherEndHour" value="Mail other end hour" />
+  <translation id="MailOtherEndTooltip" value="The daytime when mail services stop to operate in other areas" />
+
+  <translation id="ParkMaintenanceStartHour" value="Park Maintenance start hour" />
+  <translation id="ParkMaintenanceBeginTooltip" value="The daytime when park maintenance services starts to operate" />
+  <translation id="ParkMaintenanceEndHour" value="Park Maintenance end hour" />
+  <translation id="ParkMaintenanceEndTooltip" value="The daytime when park maintenance services stop to operate" />
+
+  <translation id="6RoadService" value="Road Services" />
+  <translation id="MaintenanceSnowRoadsSmallStartHour" value="Maintenance and Snow small roads start hour" />
+  <translation id="MaintenanceSnowRoadsSmallBeginTooltip" value="The daytime when maintenance and snow services starts to operate for small roads" />
+  <translation id="MaintenanceSnowRoadsSmallEndHour" value="Maintenance and Snow small road ends hour" />
+  <translation id="MaintenanceSnowRoadsSmallEndTooltip" value="The daytime when maintenance and snow services stop to operate for small roads" />
+  <translation id="MaintenanceSnowRoadsMediumStartHour" value="Maintenance and Snow medium roads start hour" />
+  <translation id="MaintenanceSnowRoadsMediumBeginTooltip" value="The daytime when maintenance and snow services starts to operate for medium roads" />
+  <translation id="MaintenanceSnowRoadsMediumEndHour" value="Maintenance and Snow medium roads end hour" />
+  <translation id="MaintenanceSnowRoadsMediumEndTooltip" value="The daytime when maintenance and snow services stop to operate for medium roads" />
+  <translation id="MaintenanceSnowRoadsLargeStartHour" value="Maintenance and Snow large roads start hour" />
+  <translation id="MaintenanceSnowRoadsLargeBeginTooltip" value="The daytime when maintenance and snow services starts to operate for large roads" />
+  <translation id="MaintenanceSnowRoadsLargeEndHour" value="Maintenance and Snow large roads end hour" />
+  <translation id="MaintenanceSnowRoadsLargeEndTooltip" value="The daytime when maintenance and snow services stop to operate for large roads" />
+  <translation id="MaintenanceSnowRoadsHighwayStartHour" value="Maintenance and Snow highway roads start hour" />
+  <translation id="MaintenanceSnowRoadsHighwayBeginTooltip" value="The daytime when maintenance and snow services starts to operate for highway roads" />
+  <translation id="MaintenanceSnowRoadsHighwayEndHour" value="Maintenance and Snow highway roads end hour" />
+  <translation id="MaintenanceSnowRoadsHighwayEndTooltip" value="The daytime when maintenance and snow services stop to operate for highway roads" />
+  <translation id="MaintenanceSnowRoadsOtherStartHour" value="Maintenance and Snow other roads start hour" />
+  <translation id="MaintenanceSnowRoadsOtherBeginTooltip" value="The daytime when maintenance and snow services starts to operate for other roads" />
+  <translation id="MaintenanceSnowRoadsOtherEndHour" value="Maintenance and Snow other roads end hour" />
+  <translation id="MaintenanceSnowRoadsOtherEndTooltip" value="The daytime when maintenance and snow services stop to operate for other roads" />
+
 
   <translation id="ScheduledAction" value="Now" />
   <translation id="NextScheduledAction" value="Until" />
