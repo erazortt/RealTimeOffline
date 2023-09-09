@@ -395,19 +395,29 @@ namespace RealTime.CustomAI
             switch (buildingManager.GetBuildingService(buildingId))
             {
                 case ItemClass.Service.Residential:
-                    return currentHour >= config.GarbageResidentialStartHour && currentHour <= config.GarbageResidentialEndHour;
+                    return config.GarbageResidentialStartHour == config.GarbageResidentialEndHour || (config.GarbageResidentialStartHour < config.GarbageResidentialEndHour
+                            ? currentHour >= config.GarbageResidentialStartHour && currentHour <= config.GarbageResidentialEndHour
+                            : config.GarbageResidentialStartHour <= currentHour || currentHour <= config.GarbageResidentialEndHour);
 
                 case ItemClass.Service.Commercial:
-                    return currentHour >= config.GarbageCommercialStartHour && currentHour <= config.GarbageCommercialEndHour;
+                    return config.GarbageCommercialStartHour == config.GarbageCommercialEndHour || (config.GarbageCommercialStartHour < config.GarbageCommercialEndHour
+                            ? currentHour >= config.GarbageCommercialStartHour && currentHour <= config.GarbageCommercialEndHour
+                            : config.GarbageCommercialStartHour <= currentHour || currentHour <= config.GarbageCommercialEndHour);
 
                 case ItemClass.Service.Industrial:
-                    return currentHour >= config.GarbageIndustrialStartHour && currentHour <= config.GarbageIndustrialEndHour;
+                    return config.GarbageIndustrialStartHour == config.GarbageIndustrialEndHour || (config.GarbageIndustrialStartHour < config.GarbageIndustrialEndHour
+                            ? currentHour >= config.GarbageIndustrialStartHour && currentHour <= config.GarbageIndustrialEndHour
+                            : config.GarbageIndustrialStartHour <= currentHour || currentHour <= config.GarbageIndustrialEndHour);
 
                 case ItemClass.Service.Office:
-                    return currentHour >= config.GarbageOfficeStartHour && currentHour <= config.GarbageOfficeEndHour;
+                    return config.GarbageOfficeStartHour == config.GarbageOfficeEndHour || (config.GarbageOfficeStartHour < config.GarbageOfficeEndHour
+                            ? currentHour >= config.GarbageOfficeStartHour && currentHour <= config.GarbageOfficeEndHour
+                            : config.GarbageOfficeStartHour <= currentHour || currentHour <= config.GarbageOfficeEndHour);
 
                 default:
-                    return currentHour >= config.GarbageOtherStartHour && currentHour <= config.GarbageOtherEndHour;
+                    return config.GarbageOtherStartHour == config.GarbageOtherEndHour || (config.GarbageOtherStartHour < config.GarbageOtherEndHour
+                            ? currentHour >= config.GarbageOtherStartHour && currentHour <= config.GarbageOtherEndHour
+                            : config.GarbageOtherStartHour <= currentHour || currentHour <= config.GarbageOtherEndHour);
             }
         }
 
@@ -437,19 +447,29 @@ namespace RealTime.CustomAI
             switch (buildingManager.GetBuildingService(buildingId))
             {
                 case ItemClass.Service.Residential:
-                    return currentHour >= config.MailResidentialStartHour && currentHour <= config.MailResidentialEndHour;
+                    return config.MailResidentialStartHour == config.MailResidentialEndHour || (config.MailResidentialStartHour < config.MailResidentialEndHour
+                            ? currentHour >= config.MailResidentialStartHour && currentHour <= config.MailResidentialEndHour
+                            : config.MailResidentialStartHour <= currentHour || currentHour <= config.MailResidentialEndHour);
 
                 case ItemClass.Service.Commercial:
-                    return currentHour >= config.MailCommercialStartHour && currentHour <= config.MailCommercialEndHour;
+                    return config.MailCommercialStartHour == config.MailCommercialEndHour || (config.MailCommercialStartHour < config.MailCommercialEndHour
+                            ? currentHour >= config.MailCommercialStartHour && currentHour <= config.MailCommercialEndHour
+                            : config.MailCommercialStartHour <= currentHour || currentHour <= config.MailCommercialEndHour);
 
                 case ItemClass.Service.Industrial:
-                    return currentHour >= config.MailIndustrialStartHour && currentHour <= config.MailIndustrialEndHour;
+                    return config.MailIndustrialStartHour == config.MailIndustrialEndHour || (config.MailIndustrialStartHour < config.MailIndustrialEndHour
+                            ? currentHour >= config.MailIndustrialStartHour && currentHour <= config.MailIndustrialEndHour
+                            : config.MailIndustrialStartHour <= currentHour || currentHour <= config.MailIndustrialEndHour);
 
                 case ItemClass.Service.Office:
-                    return currentHour >= config.MailOfficeStartHour && currentHour <= config.MailOfficeEndHour;
+                    return config.MailOfficeStartHour == config.MailOfficeEndHour || (config.MailOfficeStartHour < config.MailOfficeEndHour
+                            ? currentHour >= config.MailOfficeStartHour && currentHour <= config.MailOfficeEndHour
+                            : config.MailOfficeStartHour <= currentHour || currentHour <= config.MailOfficeEndHour);
 
                 default:
-                    return currentHour >= config.MailOtherStartHour && currentHour <= config.MailOtherEndHour;
+                    return config.MailOtherStartHour == config.MailOtherEndHour || (config.MailOtherStartHour < config.MailOtherEndHour
+                            ? currentHour >= config.MailOtherStartHour && currentHour <= config.MailOtherEndHour
+                            : config.MailOtherStartHour <= currentHour || currentHour <= config.MailOtherEndHour);
             }
         }
 
@@ -480,8 +500,9 @@ namespace RealTime.CustomAI
             {
                 case ItemClass.Service.Beautification:
                 default:
-                    return currentHour >= config.ParkMaintenanceStartHour && currentHour <= config.ParkMaintenanceEndHour;
-
+                    return config.ParkMaintenanceStartHour == config.ParkMaintenanceEndHour || (config.ParkMaintenanceStartHour < config.ParkMaintenanceEndHour
+                            ? currentHour >= config.ParkMaintenanceStartHour && currentHour <= config.ParkMaintenanceEndHour
+                            : config.ParkMaintenanceStartHour <= currentHour || currentHour <= config.ParkMaintenanceEndHour);
             }
         }
 
@@ -506,19 +527,29 @@ namespace RealTime.CustomAI
             switch (road_info.category)
             {
                 case "RoadsSmall":
-                    return currentHour >= config.MaintenanceSnowRoadsSmallStartHour && currentHour <= config.MaintenanceSnowRoadsSmallEndHour;
+                    return config.MaintenanceSnowRoadsSmallStartHour == config.MaintenanceSnowRoadsSmallEndHour || (config.MaintenanceSnowRoadsSmallStartHour < config.MaintenanceSnowRoadsSmallEndHour
+                            ? currentHour >= config.MaintenanceSnowRoadsSmallStartHour && currentHour <= config.MaintenanceSnowRoadsSmallEndHour
+                            : config.MaintenanceSnowRoadsSmallStartHour <= currentHour || currentHour <= config.MaintenanceSnowRoadsSmallEndHour);
 
                 case "RoadsMedium":
-                    return currentHour >= config.MaintenanceSnowRoadsMediumStartHour && currentHour <= config.MaintenanceSnowRoadsMediumEndHour;
+                    return config.MaintenanceSnowRoadsMediumStartHour == config.MaintenanceSnowRoadsMediumEndHour || (config.MaintenanceSnowRoadsMediumStartHour < config.MaintenanceSnowRoadsMediumEndHour
+                            ? currentHour >= config.MaintenanceSnowRoadsMediumStartHour && currentHour <= config.MaintenanceSnowRoadsMediumEndHour
+                            : config.MaintenanceSnowRoadsMediumStartHour <= currentHour || currentHour <= config.MaintenanceSnowRoadsMediumEndHour);
 
                 case "RoadsLarge":
-                    return currentHour >= config.MaintenanceSnowRoadsLargeStartHour && currentHour <= config.MaintenanceSnowRoadsLargeEndHour;
+                    return config.MaintenanceSnowRoadsLargeStartHour == config.MaintenanceSnowRoadsLargeEndHour || (config.MaintenanceSnowRoadsLargeStartHour < config.MaintenanceSnowRoadsLargeEndHour
+                            ? currentHour >= config.MaintenanceSnowRoadsLargeStartHour && currentHour <= config.MaintenanceSnowRoadsLargeEndHour
+                            : config.MaintenanceSnowRoadsLargeStartHour <= currentHour || currentHour <= config.MaintenanceSnowRoadsLargeEndHour);
 
                 case "RoadsHighway":
-                    return currentHour >= config.MaintenanceSnowRoadsHighwayStartHour && currentHour <= config.MaintenanceSnowRoadsHighwayEndHour;
+                    return config.MaintenanceSnowRoadsHighwayStartHour == config.MaintenanceSnowRoadsHighwayEndHour || (config.MaintenanceSnowRoadsHighwayStartHour < config.MaintenanceSnowRoadsHighwayEndHour
+                            ? currentHour >= config.MaintenanceSnowRoadsHighwayStartHour && currentHour <= config.MaintenanceSnowRoadsHighwayEndHour
+                            : config.MaintenanceSnowRoadsHighwayStartHour <= currentHour || currentHour <= config.MaintenanceSnowRoadsHighwayEndHour);
 
                 default:
-                    return currentHour >= config.MaintenanceSnowRoadsOtherStartHour && currentHour <= config.MaintenanceSnowRoadsOtherEndHour;
+                    return config.MaintenanceSnowRoadsOtherStartHour == config.MaintenanceSnowRoadsOtherEndHour || (config.MaintenanceSnowRoadsOtherStartHour < config.MaintenanceSnowRoadsOtherEndHour
+                            ? currentHour >= config.MaintenanceSnowRoadsOtherStartHour && currentHour <= config.MaintenanceSnowRoadsOtherEndHour
+                            : config.MaintenanceSnowRoadsOtherStartHour <= currentHour || currentHour <= config.MaintenanceSnowRoadsOtherEndHour);
             }
         }
 

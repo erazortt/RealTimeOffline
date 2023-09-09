@@ -386,56 +386,56 @@ namespace RealTime.Config
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for industrial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 12)]
+        [ConfigItem("5BuildingService", 14)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailIndustrialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for industrial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 13)]
+        [ConfigItem("5BuildingService", 15)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailIndustrialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for office buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 14)]
+        [ConfigItem("5BuildingService", 16)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOfficeStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for office buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 15)]
+        [ConfigItem("5BuildingService", 17)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOfficeEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for other buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 16)]
+        [ConfigItem("5BuildingService", 18)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOtherStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for other buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 17)]
+        [ConfigItem("5BuildingService", 19)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOtherEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the park maintenance service starts.
         /// </summary>
-        [ConfigItem("5BuildingService", 18)]
+        [ConfigItem("5BuildingService", 20)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float ParkMaintenanceStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the park maintenance service ends.
         /// </summary>
-        [ConfigItem("5BuildingService", 19)]
+        [ConfigItem("5BuildingService", 21)]
         [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
         public float ParkMaintenanceEndHour { get; set; }
 
@@ -579,53 +579,53 @@ namespace RealTime.Config
             MaxOvertime = FastMath.Clamp(MaxOvertime, 0f, 4f);
             MaxVacationLength = FastMath.Clamp(MaxVacationLength, 0u, 7u);
 
-            GarbageResidentialStartHour = FastMath.Clamp(GarbageResidentialStartHour, 0f, GarbageResidentialEndHour - 0.5f);
-            GarbageResidentialEndHour = FastMath.Clamp(GarbageResidentialEndHour, GarbageResidentialStartHour + 0.5f, 24f);
+            GarbageResidentialStartHour = FastMath.Clamp(GarbageResidentialStartHour, 0f, 23.5f);
+            GarbageResidentialEndHour = FastMath.Clamp(GarbageResidentialEndHour, 0f, 23.5f);
 
-            GarbageCommercialStartHour = FastMath.Clamp(GarbageCommercialStartHour, 0f, GarbageCommercialEndHour - 0.5f);
-            GarbageCommercialEndHour = FastMath.Clamp(GarbageCommercialEndHour, GarbageCommercialStartHour + 0.5f, 24f);
+            GarbageCommercialStartHour = FastMath.Clamp(GarbageCommercialStartHour, 0f, 23.5f);
+            GarbageCommercialEndHour = FastMath.Clamp(GarbageCommercialEndHour, 0f, 23.5f);
 
-            GarbageIndustrialStartHour = FastMath.Clamp(GarbageIndustrialStartHour, 0f, GarbageIndustrialEndHour - 0.5f);
-            GarbageIndustrialEndHour = FastMath.Clamp(GarbageIndustrialEndHour, GarbageIndustrialStartHour + 0.5f, 24f);
+            GarbageIndustrialStartHour = FastMath.Clamp(GarbageIndustrialStartHour, 0f, 23.5f);
+            GarbageIndustrialEndHour = FastMath.Clamp(GarbageIndustrialEndHour, 0f, 23.5f);
 
-            GarbageOfficeStartHour = FastMath.Clamp(GarbageOfficeStartHour, 0f, GarbageOfficeEndHour - 0.5f);
-            GarbageOfficeEndHour = FastMath.Clamp(GarbageOfficeEndHour, GarbageOfficeStartHour + 0.5f, 24f);
+            GarbageOfficeStartHour = FastMath.Clamp(GarbageOfficeStartHour, 0f, 23.5f);
+            GarbageOfficeEndHour = FastMath.Clamp(GarbageOfficeEndHour, 0f, 23.5f);
 
-            GarbageOtherStartHour = FastMath.Clamp(GarbageOtherStartHour, 0f, GarbageOtherEndHour - 0.5f);
-            GarbageOtherEndHour = FastMath.Clamp(GarbageOtherEndHour, GarbageOtherStartHour + 0.5f, 24f);
+            GarbageOtherStartHour = FastMath.Clamp(GarbageOtherStartHour, 0f, 23.5f);
+            GarbageOtherEndHour = FastMath.Clamp(GarbageOtherEndHour, 0f, 23.5f);
 
-            MailResidentialStartHour = FastMath.Clamp(MailResidentialStartHour, 0f, MailResidentialEndHour - 0.5f);
-            MailResidentialEndHour = FastMath.Clamp(MailResidentialEndHour, MailResidentialStartHour + 0.5f, 24f);
+            MailResidentialStartHour = FastMath.Clamp(MailResidentialStartHour, 0f, 23.5f);
+            MailResidentialEndHour = FastMath.Clamp(MailResidentialEndHour, 0f, 23.5f);
 
-            MailCommercialStartHour = FastMath.Clamp(MailCommercialStartHour, 0f, MailCommercialEndHour - 0.5f);
-            MailCommercialEndHour = FastMath.Clamp(MailCommercialEndHour, MailCommercialStartHour + 0.5f, 24f);
+            MailCommercialStartHour = FastMath.Clamp(MailCommercialStartHour, 0f, 23.5f);
+            MailCommercialEndHour = FastMath.Clamp(MailCommercialEndHour,0f, 23.5f);
 
-            MailIndustrialStartHour = FastMath.Clamp(MailIndustrialStartHour, 0f, MailIndustrialEndHour - 0.5f);
-            MailIndustrialEndHour = FastMath.Clamp(MailIndustrialEndHour, MailIndustrialStartHour + 0.5f, 24f);
+            MailIndustrialStartHour = FastMath.Clamp(MailIndustrialStartHour, 0f, 23.5f);
+            MailIndustrialEndHour = FastMath.Clamp(MailIndustrialEndHour, 0f, 23.5f);
 
-            MailOfficeStartHour = FastMath.Clamp(MailOfficeStartHour, 0f, MailOfficeEndHour - 0.5f);
-            MailOfficeEndHour = FastMath.Clamp(MailOfficeEndHour, MailOfficeStartHour + 0.5f, 24f);
+            MailOfficeStartHour = FastMath.Clamp(MailOfficeStartHour, 0f, 23.5f);
+            MailOfficeEndHour = FastMath.Clamp(MailOfficeEndHour, 0f, 23.5f);
 
-            MailOtherStartHour = FastMath.Clamp(MailOtherStartHour, 0f, MailOtherEndHour - 0.5f);
-            MailOtherEndHour = FastMath.Clamp(MailOtherEndHour, MailOtherStartHour + 0.5f, 24f);
+            MailOtherStartHour = FastMath.Clamp(MailOtherStartHour, 0f, 23.5f);
+            MailOtherEndHour = FastMath.Clamp(MailOtherEndHour, 0f, 23.5f);
 
-            ParkMaintenanceStartHour = FastMath.Clamp(ParkMaintenanceStartHour, 0f, ParkMaintenanceEndHour - 0.5f);
-            ParkMaintenanceEndHour = FastMath.Clamp(ParkMaintenanceEndHour, ParkMaintenanceStartHour + 0.5f, 24f);
+            ParkMaintenanceStartHour = FastMath.Clamp(ParkMaintenanceStartHour, 0f, 23.5f);
+            ParkMaintenanceEndHour = FastMath.Clamp(ParkMaintenanceEndHour, 0f, 23.5f);
 
-            MaintenanceSnowRoadsSmallStartHour = FastMath.Clamp(MaintenanceSnowRoadsSmallStartHour, 0f, MaintenanceSnowRoadsSmallEndHour - 0.5f);
-            MaintenanceSnowRoadsSmallEndHour = FastMath.Clamp(MaintenanceSnowRoadsSmallEndHour, MaintenanceSnowRoadsSmallStartHour + 0.5f, 24f);
+            MaintenanceSnowRoadsSmallStartHour = FastMath.Clamp(MaintenanceSnowRoadsSmallStartHour, 0f, 23.5f);
+            MaintenanceSnowRoadsSmallEndHour = FastMath.Clamp(MaintenanceSnowRoadsSmallEndHour, 0f, 23.5f);
 
-            MaintenanceSnowRoadsMediumStartHour = FastMath.Clamp(MaintenanceSnowRoadsMediumStartHour, 0f, MaintenanceSnowRoadsMediumEndHour - 0.5f);
-            MaintenanceSnowRoadsMediumEndHour = FastMath.Clamp(MaintenanceSnowRoadsMediumEndHour, MaintenanceSnowRoadsMediumStartHour + 0.5f, 24f);
+            MaintenanceSnowRoadsMediumStartHour = FastMath.Clamp(MaintenanceSnowRoadsMediumStartHour, 0f, 23.5f);
+            MaintenanceSnowRoadsMediumEndHour = FastMath.Clamp(MaintenanceSnowRoadsMediumEndHour, 0f, 23.5f);
 
-            MaintenanceSnowRoadsLargeStartHour = FastMath.Clamp(MaintenanceSnowRoadsLargeStartHour, 0f, MaintenanceSnowRoadsLargeEndHour - 0.5f);
-            MaintenanceSnowRoadsLargeEndHour = FastMath.Clamp(MaintenanceSnowRoadsLargeEndHour, MaintenanceSnowRoadsLargeStartHour + 0.5f, 24f);
+            MaintenanceSnowRoadsLargeStartHour = FastMath.Clamp(MaintenanceSnowRoadsLargeStartHour, 0f, 23.5f);
+            MaintenanceSnowRoadsLargeEndHour = FastMath.Clamp(MaintenanceSnowRoadsLargeEndHour, 0f, 23.5f);
 
-            MaintenanceSnowRoadsHighwayStartHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayStartHour, 0f, MaintenanceSnowRoadsHighwayEndHour - 0.5f);
-            MaintenanceSnowRoadsHighwayEndHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayEndHour, MaintenanceSnowRoadsHighwayStartHour + 0.5f, 24f);
+            MaintenanceSnowRoadsHighwayStartHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayStartHour, 0f, 23.5f);
+            MaintenanceSnowRoadsHighwayEndHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayEndHour, 0f, 23.75f);
 
-            MaintenanceSnowRoadsOtherStartHour = FastMath.Clamp(MaintenanceSnowRoadsOtherStartHour, 0f, MaintenanceSnowRoadsOtherEndHour - 0.5f);
-            MaintenanceSnowRoadsOtherEndHour = FastMath.Clamp(MaintenanceSnowRoadsOtherEndHour, MaintenanceSnowRoadsOtherStartHour + 0.5f, 24f);
+            MaintenanceSnowRoadsOtherStartHour = FastMath.Clamp(MaintenanceSnowRoadsOtherStartHour, 0f, 23.5f);
+            MaintenanceSnowRoadsOtherEndHour = FastMath.Clamp(MaintenanceSnowRoadsOtherEndHour, 0f, 23.75f);
         }
 
         /// <summary>Resets all values to their defaults.</summary>
@@ -673,40 +673,40 @@ namespace RealTime.Config
             MaxVacationLength = 3u;
 
             GarbageResidentialStartHour = 0f;
-            GarbageResidentialEndHour = 24f;
+            GarbageResidentialEndHour = 0f;
             GarbageCommercialStartHour = 0f;
-            GarbageCommercialEndHour = 24f;
+            GarbageCommercialEndHour = 0f;
             GarbageIndustrialStartHour = 0f;
-            GarbageIndustrialEndHour = 24f;
+            GarbageIndustrialEndHour = 0f;
             GarbageOfficeStartHour = 0f;
-            GarbageOfficeEndHour = 24f;
+            GarbageOfficeEndHour = 0f;
             GarbageOtherStartHour = 0f;
-            GarbageOtherEndHour = 24f;
+            GarbageOtherEndHour = 0f;
 
             MailResidentialStartHour = 0f;
-            MailResidentialEndHour = 24f;
+            MailResidentialEndHour = 0f;
             MailCommercialStartHour = 0f;
-            MailCommercialEndHour = 24f;
+            MailCommercialEndHour = 0f;
             MailIndustrialStartHour = 0f;
-            MailIndustrialEndHour = 24f;
+            MailIndustrialEndHour = 0f;
             MailOfficeStartHour = 0f;
-            MailOfficeEndHour = 24f;
+            MailOfficeEndHour = 0f;
             MailOtherStartHour = 0f;
-            MailOtherEndHour = 24f;
+            MailOtherEndHour = 0f;
 
             ParkMaintenanceStartHour = 0f;
-            ParkMaintenanceEndHour = 24f;
+            ParkMaintenanceEndHour = 0f;
 
             MaintenanceSnowRoadsSmallStartHour = 0f;
-            MaintenanceSnowRoadsSmallEndHour = 24f;
+            MaintenanceSnowRoadsSmallEndHour = 0f;
             MaintenanceSnowRoadsMediumStartHour = 0f;
-            MaintenanceSnowRoadsMediumEndHour = 24f;
+            MaintenanceSnowRoadsMediumEndHour = 0f;
             MaintenanceSnowRoadsLargeStartHour = 0f;
-            MaintenanceSnowRoadsLargeEndHour = 24f;
+            MaintenanceSnowRoadsLargeEndHour = 0f;
             MaintenanceSnowRoadsHighwayStartHour = 0f;
-            MaintenanceSnowRoadsHighwayEndHour = 24f;
+            MaintenanceSnowRoadsHighwayEndHour = 0f;
             MaintenanceSnowRoadsOtherStartHour = 0f;
-            MaintenanceSnowRoadsOtherEndHour = 24f;
+            MaintenanceSnowRoadsOtherEndHour = 0f;
 
             ShowIncompatibilityNotifications = true;
         }
