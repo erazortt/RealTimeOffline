@@ -238,8 +238,7 @@ namespace RealTime.CustomAI
                 case ItemClass.Service.Commercial
                     when BuildingMgr.GetBuildingSubService(visitBuilding) == ItemClass.SubService.CommercialTourist
                         && !Random.ShouldOccur(GetHotelLeaveChance()):
-                case ItemClass.Service.Hotel when Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.Hotels) &&
-                    !Random.ShouldOccur(GetHotelLeaveChance()):
+                case ItemClass.Service.Hotel when !Random.ShouldOccur(GetHotelLeaveChance()):
                     return;
             }
 

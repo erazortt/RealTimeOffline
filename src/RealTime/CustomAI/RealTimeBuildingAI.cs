@@ -53,6 +53,7 @@ namespace RealTime.CustomAI
         private int lightStateCheckFramesInterval;
         private int lightStateCheckCounter;
         private ushort lightCheckStep;
+        public bool DeactivatedVisually = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RealTimeBuildingAI"/> class.
@@ -369,11 +370,53 @@ namespace RealTime.CustomAI
         }
 
         /// <summary>
-        /// Determines whether the building with the specified ID is allowed to accept mail in this time of day.
+        /// Determines whether the building with the specified ID is allowed to accept garbage services in this time of day.
         /// </summary>
         /// <param name="buildingId">The building ID to check.</param>
         /// <returns>
-        ///   <c>true</c> if the building is allowed to accept mail in this time of day; otherwise, <c>false</c>.
+        ///   <c>true</c> if the building is allowed to accept garbage services in this time of day; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsGarbageHours(ushort buildingId)
+        {
+            if (buildingId == 0)
+            {
+                return true;
+            }
+
+            // A building still can post outgoing offers while inactive.
+            // This is to prevent those offers from being dispatched.
+            if (!buildingManager.BuildingHasFlags(buildingId, Building.Flags.Active))
+            {
+                return false;
+            }
+
+            float currentHour = timeInfo.CurrentHour;
+
+            switch (buildingManager.GetBuildingService(buildingId))
+            {
+                case ItemClass.Service.Residential:
+                    return currentHour >= config.GarbageResidentialStartHour && currentHour <= config.GarbageResidentialEndHour;
+
+                case ItemClass.Service.Commercial:
+                    return currentHour >= config.GarbageCommercialStartHour && currentHour <= config.GarbageCommercialEndHour;
+
+                case ItemClass.Service.Industrial:
+                    return currentHour >= config.GarbageIndustrialStartHour && currentHour <= config.GarbageIndustrialEndHour;
+
+                case ItemClass.Service.Office:
+                    return currentHour >= config.GarbageOfficeStartHour && currentHour <= config.GarbageOfficeEndHour;
+
+                default:
+                    return currentHour >= config.GarbageOtherStartHour && currentHour <= config.GarbageOtherEndHour;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the building with the specified ID is allowed to accept mail services in this time of day.
+        /// </summary>
+        /// <param name="buildingId">The building ID to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the building is allowed to accept mail services in this time of day; otherwise, <c>false</c>.
         /// </returns>
         public bool IsMailHours(ushort buildingId)
         {
@@ -393,29 +436,63 @@ namespace RealTime.CustomAI
 
             switch (buildingManager.GetBuildingService(buildingId))
             {
-                // collect at morning time
                 case ItemClass.Service.Residential:
-                    return currentHour >= timeInfo.SunriseHour && currentHour <= 12f;
+                    return currentHour >= config.MailResidentialStartHour && currentHour <= config.MailResidentialEndHour;
 
-                // collect during the day
                 case ItemClass.Service.Commercial:
+                    return currentHour >= config.MailCommercialStartHour && currentHour <= config.MailCommercialEndHour;
+
                 case ItemClass.Service.Industrial:
+                    return currentHour >= config.MailIndustrialStartHour && currentHour <= config.MailIndustrialEndHour;
+
                 case ItemClass.Service.Office:
-                    return currentHour >= timeInfo.SunriseHour && currentHour <= timeInfo.SunsetHour;
+                    return currentHour >= config.MailOfficeStartHour && currentHour <= config.MailOfficeEndHour;
 
                 default:
-                    return true;
+                    return currentHour >= config.MailOtherStartHour && currentHour <= config.MailOtherEndHour;
             }
         }
 
         /// <summary>
-        /// Determines whether the segment with the specified ID is allowed to accept maintenance in this time of day.
+        /// Determines whether the park with the specified ID is allowed to accept park maintenance services in this time of day.
+        /// </summary>
+        /// <param name="buildingId">The building ID to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the park is allowed to accept park maintenance services in this time of day; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsParkMaintenanceHours(ushort buildingId)
+        {
+            if (buildingId == 0)
+            {
+                return true;
+            }
+
+            // A building still can post outgoing offers while inactive.
+            // This is to prevent those offers from being dispatched.
+            if (!buildingManager.BuildingHasFlags(buildingId, Building.Flags.Active))
+            {
+                return false;
+            }
+
+            float currentHour = timeInfo.CurrentHour;
+
+            switch (buildingManager.GetBuildingService(buildingId))
+            {
+                case ItemClass.Service.Beautification:
+                default:
+                    return currentHour >= config.ParkMaintenanceStartHour && currentHour <= config.ParkMaintenanceEndHour;
+
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the segment with the specified ID is allowed to accept maintenance and snow services in this time of day.
         /// </summary>
         /// <param name="segmentId">The segment ID to check.</param>
         /// <returns>
-        ///   <c>true</c> if the segment is allowed to accept maintenance in this time of day; otherwise, <c>false</c>.
+        ///   <c>true</c> if the segment is allowed to accept maintenance and snow services in this time of day; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsRoadServiceHours(ushort segmentId)
+        public bool IsMaintenanceSnowRoadServiceHours(ushort segmentId)
         {
             if (segmentId == 0)
             {
@@ -426,21 +503,22 @@ namespace RealTime.CustomAI
 
             var road_info = Singleton<NetManager>.instance.m_segments.m_buffer[segmentId].Info;
 
-            switch (road_info.name)
+            switch (road_info.category)
             {
-                // maintian in the day
                 case "RoadsSmall":
+                    return currentHour >= config.MaintenanceSnowRoadsSmallStartHour && currentHour <= config.MaintenanceSnowRoadsSmallEndHour;
+
                 case "RoadsMedium":
-                    return currentHour >= timeInfo.SunriseHour && currentHour <= timeInfo.SunsetHour;
+                    return currentHour >= config.MaintenanceSnowRoadsMediumStartHour && currentHour <= config.MaintenanceSnowRoadsMediumEndHour;
 
-                // maintian in the night
                 case "RoadsLarge":
-                case "RoadsHighway":
-                    return currentHour >= timeInfo.SunsetHour && currentHour <= timeInfo.SunriseHour;
+                    return currentHour >= config.MaintenanceSnowRoadsLargeStartHour && currentHour <= config.MaintenanceSnowRoadsLargeEndHour;
 
-                // maintian in the morning
+                case "RoadsHighway":
+                    return currentHour >= config.MaintenanceSnowRoadsHighwayStartHour && currentHour <= config.MaintenanceSnowRoadsHighwayEndHour;
+
                 default:
-                    return currentHour >= timeInfo.SunriseHour && currentHour <= 12f;
+                    return currentHour >= config.MaintenanceSnowRoadsOtherStartHour && currentHour <= config.MaintenanceSnowRoadsOtherEndHour;
             }
         }
 
@@ -592,6 +670,7 @@ namespace RealTime.CustomAI
                     buildingManager.UpdateBuildingColors(i);
                     if (!lightsOn && service != ItemClass.Service.Residential)
                     {
+                        DeactivatedVisually = true;
                         buildingManager.DeactivateVisually(i);
                     }
                 }
@@ -619,6 +698,7 @@ namespace RealTime.CustomAI
 
                 case ItemClass.Service.Office:
                 case ItemClass.Service.Commercial:
+                case ItemClass.Service.Hotel:
                     if (buildingManager.GetBuildingHeight(buildingId) > config.SwitchOffLightsMaxHeight)
                     {
                         return false;

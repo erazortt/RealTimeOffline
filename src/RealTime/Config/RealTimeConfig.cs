@@ -1,4 +1,4 @@
-﻿// <copyright file="RealTimeConfig.cs" company="dymanoid">
+// <copyright file="RealTimeConfig.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
@@ -7,6 +7,7 @@ namespace RealTime.Config
     using SkyTools.Configuration;
     using SkyTools.Tools;
     using SkyTools.UI;
+    using UnityEngine;
 
     /// <summary>
     /// The mod's configuration.
@@ -285,6 +286,230 @@ namespace RealTime.Config
         public uint MaxVacationLength { get; set; }
 
         /// <summary>
+        /// Gets or sets the daytime hour when the garbage service starts for residential buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 0)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageResidentialStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service ends for residential buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 1)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageResidentialEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service starts for commercial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 2)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageCommercialStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service ends for commercial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 3)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageCommercialEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service starts for industrial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 4)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageIndustrialStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service ends for industrial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 5)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageIndustrialEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service starts for office buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 6)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageOfficeStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service ends for office buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 7)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageOfficeEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service starts for other buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 8)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageOtherStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the garbage service ends for other buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 9)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float GarbageOtherEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service starts for residential buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 10)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailResidentialStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service ends for residential buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 11)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailResidentialEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service starts for commercial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 12)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailCommercialStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service ends for commercial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 13)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailCommercialEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service starts for industrial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 12)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailIndustrialStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service ends for industrial buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 13)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailIndustrialEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service starts for office buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 14)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailOfficeStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service ends for office buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 15)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailOfficeEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service starts for other buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 16)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailOtherStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the mail service ends for other buildings.
+        /// </summary>
+        [ConfigItem("5BuildingService", 17)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MailOtherEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the park maintenance service starts.
+        /// </summary>
+        [ConfigItem("5BuildingService", 18)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float ParkMaintenanceStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the park maintenance service ends.
+        /// </summary>
+        [ConfigItem("5BuildingService", 19)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float ParkMaintenanceEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service starts for small roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 0)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsSmallStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service ends for small roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 1)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsSmallEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service starts for medium roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 2)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsMediumStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service ends for medium roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 3)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsMediumEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service starts for large roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 4)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsLargeStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service ends for large roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 5)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsLargeEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service starts for highway roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 6)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsHighwayStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service ends for highway roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 7)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsHighwayEndHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service starts for other roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 8)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsOtherStartHour { get; set; }
+
+        /// <summary>
+        /// Gets or sets the daytime hour when the maintenance and snow service ends for other roads.
+        /// </summary>
+        [ConfigItem("6RoadService", 9)]
+        [ConfigItemSlider(0f, 24f, 0.5f, ValueType = SliderValueType.Time)]
+        public float MaintenanceSnowRoadsOtherEndHour { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the mod should show the incompatibility notifications.
         /// </summary>
         [ConfigItem("Tools", 0)]
@@ -353,6 +578,54 @@ namespace RealTime.Config
             SchoolEnd = FastMath.Clamp(SchoolEnd, 11f, 16f);
             MaxOvertime = FastMath.Clamp(MaxOvertime, 0f, 4f);
             MaxVacationLength = FastMath.Clamp(MaxVacationLength, 0u, 7u);
+
+            GarbageResidentialStartHour = FastMath.Clamp(GarbageResidentialStartHour, 0f, GarbageResidentialEndHour - 0.5f);
+            GarbageResidentialEndHour = FastMath.Clamp(GarbageResidentialEndHour, GarbageResidentialStartHour + 0.5f, 24f);
+
+            GarbageCommercialStartHour = FastMath.Clamp(GarbageCommercialStartHour, 0f, GarbageCommercialEndHour - 0.5f);
+            GarbageCommercialEndHour = FastMath.Clamp(GarbageCommercialEndHour, GarbageCommercialStartHour + 0.5f, 24f);
+
+            GarbageIndustrialStartHour = FastMath.Clamp(GarbageIndustrialStartHour, 0f, GarbageIndustrialEndHour - 0.5f);
+            GarbageIndustrialEndHour = FastMath.Clamp(GarbageIndustrialEndHour, GarbageIndustrialStartHour + 0.5f, 24f);
+
+            GarbageOfficeStartHour = FastMath.Clamp(GarbageOfficeStartHour, 0f, GarbageOfficeEndHour - 0.5f);
+            GarbageOfficeEndHour = FastMath.Clamp(GarbageOfficeEndHour, GarbageOfficeStartHour + 0.5f, 24f);
+
+            GarbageOtherStartHour = FastMath.Clamp(GarbageOtherStartHour, 0f, GarbageOtherEndHour - 0.5f);
+            GarbageOtherEndHour = FastMath.Clamp(GarbageOtherEndHour, GarbageOtherStartHour + 0.5f, 24f);
+
+            MailResidentialStartHour = FastMath.Clamp(MailResidentialStartHour, 0f, MailResidentialEndHour - 0.5f);
+            MailResidentialEndHour = FastMath.Clamp(MailResidentialEndHour, MailResidentialStartHour + 0.5f, 24f);
+
+            MailCommercialStartHour = FastMath.Clamp(MailCommercialStartHour, 0f, MailCommercialEndHour - 0.5f);
+            MailCommercialEndHour = FastMath.Clamp(MailCommercialEndHour, MailCommercialStartHour + 0.5f, 24f);
+
+            MailIndustrialStartHour = FastMath.Clamp(MailIndustrialStartHour, 0f, MailIndustrialEndHour - 0.5f);
+            MailIndustrialEndHour = FastMath.Clamp(MailIndustrialEndHour, MailIndustrialStartHour + 0.5f, 24f);
+
+            MailOfficeStartHour = FastMath.Clamp(MailOfficeStartHour, 0f, MailOfficeEndHour - 0.5f);
+            MailOfficeEndHour = FastMath.Clamp(MailOfficeEndHour, MailOfficeStartHour + 0.5f, 24f);
+
+            MailOtherStartHour = FastMath.Clamp(MailOtherStartHour, 0f, MailOtherEndHour - 0.5f);
+            MailOtherEndHour = FastMath.Clamp(MailOtherEndHour, MailOtherStartHour + 0.5f, 24f);
+
+            ParkMaintenanceStartHour = FastMath.Clamp(ParkMaintenanceStartHour, 0f, ParkMaintenanceEndHour - 0.5f);
+            ParkMaintenanceEndHour = FastMath.Clamp(ParkMaintenanceEndHour, ParkMaintenanceStartHour + 0.5f, 24f);
+
+            MaintenanceSnowRoadsSmallStartHour = FastMath.Clamp(MaintenanceSnowRoadsSmallStartHour, 0f, MaintenanceSnowRoadsSmallEndHour - 0.5f);
+            MaintenanceSnowRoadsSmallEndHour = FastMath.Clamp(MaintenanceSnowRoadsSmallEndHour, MaintenanceSnowRoadsSmallStartHour + 0.5f, 24f);
+
+            MaintenanceSnowRoadsMediumStartHour = FastMath.Clamp(MaintenanceSnowRoadsMediumStartHour, 0f, MaintenanceSnowRoadsMediumEndHour - 0.5f);
+            MaintenanceSnowRoadsMediumEndHour = FastMath.Clamp(MaintenanceSnowRoadsMediumEndHour, MaintenanceSnowRoadsMediumStartHour + 0.5f, 24f);
+
+            MaintenanceSnowRoadsLargeStartHour = FastMath.Clamp(MaintenanceSnowRoadsLargeStartHour, 0f, MaintenanceSnowRoadsLargeEndHour - 0.5f);
+            MaintenanceSnowRoadsLargeEndHour = FastMath.Clamp(MaintenanceSnowRoadsLargeEndHour, MaintenanceSnowRoadsLargeStartHour + 0.5f, 24f);
+
+            MaintenanceSnowRoadsHighwayStartHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayStartHour, 0f, MaintenanceSnowRoadsHighwayEndHour - 0.5f);
+            MaintenanceSnowRoadsHighwayEndHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayEndHour, MaintenanceSnowRoadsHighwayStartHour + 0.5f, 24f);
+
+            MaintenanceSnowRoadsOtherStartHour = FastMath.Clamp(MaintenanceSnowRoadsOtherStartHour, 0f, MaintenanceSnowRoadsOtherEndHour - 0.5f);
+            MaintenanceSnowRoadsOtherEndHour = FastMath.Clamp(MaintenanceSnowRoadsOtherEndHour, MaintenanceSnowRoadsOtherStartHour + 0.5f, 24f);
         }
 
         /// <summary>Resets all values to their defaults.</summary>
@@ -398,6 +671,42 @@ namespace RealTime.Config
             SchoolBegin = 8f;
             SchoolEnd = 14f;
             MaxVacationLength = 3u;
+
+            GarbageResidentialStartHour = 0f;
+            GarbageResidentialEndHour = 24f;
+            GarbageCommercialStartHour = 0f;
+            GarbageCommercialEndHour = 24f;
+            GarbageIndustrialStartHour = 0f;
+            GarbageIndustrialEndHour = 24f;
+            GarbageOfficeStartHour = 0f;
+            GarbageOfficeEndHour = 24f;
+            GarbageOtherStartHour = 0f;
+            GarbageOtherEndHour = 24f;
+
+            MailResidentialStartHour = 0f;
+            MailResidentialEndHour = 24f;
+            MailCommercialStartHour = 0f;
+            MailCommercialEndHour = 24f;
+            MailIndustrialStartHour = 0f;
+            MailIndustrialEndHour = 24f;
+            MailOfficeStartHour = 0f;
+            MailOfficeEndHour = 24f;
+            MailOtherStartHour = 0f;
+            MailOtherEndHour = 24f;
+
+            ParkMaintenanceStartHour = 0f;
+            ParkMaintenanceEndHour = 24f;
+
+            MaintenanceSnowRoadsSmallStartHour = 0f;
+            MaintenanceSnowRoadsSmallEndHour = 24f;
+            MaintenanceSnowRoadsMediumStartHour = 0f;
+            MaintenanceSnowRoadsMediumEndHour = 24f;
+            MaintenanceSnowRoadsLargeStartHour = 0f;
+            MaintenanceSnowRoadsLargeEndHour = 24f;
+            MaintenanceSnowRoadsHighwayStartHour = 0f;
+            MaintenanceSnowRoadsHighwayEndHour = 24f;
+            MaintenanceSnowRoadsOtherStartHour = 0f;
+            MaintenanceSnowRoadsOtherEndHour = 24f;
 
             ShowIncompatibilityNotifications = true;
         }
