@@ -1,13 +1,13 @@
-﻿// <copyright file="CustomVehicleInfoPanel.cs" company="dymanoid">
+// <copyright file="CustomVehicleInfoPanel.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
 namespace RealTime.UI
 {
     using System;
+    using HarmonyLib;
     using RealTime.CustomAI;
     using SkyTools.Localization;
-    using SkyTools.Patching;
     using UnityEngine;
 
     /// <summary>
@@ -26,15 +26,10 @@ namespace RealTime.UI
         {
             try
             {
-                passengerCarAIGetDriverInstance = FastDelegateFactory.Create<GetDriverInstanceDelegate<PassengerCarAI>>(
-                    typeof(PassengerCarAI),
-                    GetDriverInstanceMethodName,
-                    true);
+                passengerCarAIGetDriverInstance = AccessTools.MethodDelegate<GetDriverInstanceDelegate<PassengerCarAI>>(AccessTools.Method(typeof(PassengerCarAI), GetDriverInstanceMethodName));
 
-                bicycleAIGetDriverInstance = FastDelegateFactory.Create<GetDriverInstanceDelegate<BicycleAI>>(
-                    typeof(BicycleAI),
-                    GetDriverInstanceMethodName,
-                    true);
+                bicycleAIGetDriverInstance = AccessTools.MethodDelegate<GetDriverInstanceDelegate<BicycleAI>>(AccessTools.Method(typeof(BicycleAI), GetDriverInstanceMethodName));
+
             }
             catch (Exception ex)
             {

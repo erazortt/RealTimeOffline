@@ -2,37 +2,25 @@
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
-namespace RealTime.GameConnection.Patches
+namespace RealTime.Patches
 {
-    using System.Reflection;
+    using HarmonyLib;
     using RealTime.CustomAI;
-    using SkyTools.Patching;
 
     /// <summary>
     /// A static class that provides the patch objects for the game's transfer manager.
     /// </summary>
+    [HarmonyPatch]
     internal static class TransferManagerPatch
     {
-        /// <summary>Gets the patch object for the outgoing offer method.</summary>
-        public static IPatch AddOutgoingOffer { get; } = new TransferManager_AddOutgoingOffer();
-
-        /// <summary>Gets the patch object for the incoming offer method.</summary>
-        public static IPatch AddIncomingOffer { get; } = new TransferManager_AddIncomingOffer();
-
         /// <summary>Gets or sets the custom AI object for buildings.</summary>
         public static RealTimeBuildingAI RealTimeAI { get; set; }
 
-        private sealed class TransferManager_AddOutgoingOffer : PatchBase
+        [HarmonyPatch]
+        private sealed class TransferManager_AddOutgoingOffer
         {
-            protected override MethodInfo GetMethod() =>
-                typeof(TransferManager).GetMethod(
-                    "AddOutgoingOffer",
-                    BindingFlags.Instance | BindingFlags.Public,
-                    null,
-                    new[] { typeof(TransferManager.TransferReason), typeof(TransferManager.TransferOffer) },
-                    new ParameterModifier[0]);
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
+            [HarmonyPatch(typeof(TransferManager), "AddOutgoingOffer")]
+            [HarmonyPrefix]
             private static bool Prefix(TransferManager.TransferReason material, ref TransferManager.TransferOffer offer)
             {
                 switch (material)
@@ -58,11 +46,14 @@ namespace RealTime.GameConnection.Patches
                         return RealTimeAI.IsShoppingTarget(offer.Building);
 
                     case TransferManager.TransferReason.ParkMaintenance:
-                        return RealTimeAI.IsBuildingActive(offer.Building);
+                        return RealTimeAI.IsParkMaintenanceHours(offer.Building);
 
                     case TransferManager.TransferReason.Mail:
-                    case TransferManager.TransferReason.RoadMaintenance:
-                        return RealTimeAI.IsBuildingActive(offer.Building);
+                    case TransferManager.TransferReason.SortedMail:
+                        return RealTimeAI.IsMailHours(offer.Building);
+
+                    case TransferManager.TransferReason.Garbage:
+                        return RealTimeAI.IsGarbageHours(offer.Building);
 
                     default:
                         return true;
@@ -70,27 +61,27 @@ namespace RealTime.GameConnection.Patches
             }
         }
 
-        private sealed class TransferManager_AddIncomingOffer : PatchBase
+        [HarmonyPatch]
+        private sealed class TransferManager_AddIncomingOffer
         {
-            protected override MethodInfo GetMethod() =>
-                typeof(TransferManager).GetMethod(
-                    "AddIncomingOffer",
-                    BindingFlags.Instance | BindingFlags.Public,
-                    null,
-                    new[] { typeof(TransferManager.TransferReason), typeof(TransferManager.TransferOffer) },
-                    new ParameterModifier[0]);
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
+            [HarmonyPatch(typeof(TransferManager), "AddIncomingOffer")]
+            [HarmonyPrefix]
             private static bool Prefix(TransferManager.TransferReason material, ref TransferManager.TransferOffer offer)
             {
                 switch (material)
                 {
-                    case TransferManager.TransferReason.Mail:
+                    case TransferManager.TransferReason.UnsortedMail:
                         return RealTimeAI.IsMailHours(offer.Building);
 
                     case TransferManager.TransferReason.RoadMaintenance:
                     case TransferManager.TransferReason.Snow:
-                        return RealTimeAI.IsRoadServiceHours(offer.NetSegment);
+                        return RealTimeAI.IsMaintenanceSnowRoadServiceHours(offer.NetSegment);
+
+                    case TransferManager.TransferReason.ParkMaintenance:
+                        return RealTimeAI.IsParkMaintenanceHours(offer.Building);
+
+                    case TransferManager.TransferReason.Garbage:
+                        return RealTimeAI.IsGarbageHours(offer.Building);
 
                     default:
                         return true;

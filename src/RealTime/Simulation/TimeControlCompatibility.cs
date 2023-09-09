@@ -1,4 +1,4 @@
-﻿// <copyright file="TimeControlCompatibility.cs" company="dymanoid">
+// <copyright file="TimeControlCompatibility.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
@@ -9,12 +9,13 @@ namespace RealTime.Simulation
     using System.Linq;
     using System.Reflection;
     using ColossalFramework.Plugins;
-    using SkyTools.Patching;
+    using HarmonyLib;
     using SkyTools.Tools;
 
     /// <summary>
     /// A special class that handles compatibility with other time-changing mods by patching their methods.
     /// </summary>
+    [HarmonyPatch]
     internal static class TimeControlCompatibility
     {
         private const string SimulationStepMethodName = "SimulationStep";
@@ -24,21 +25,9 @@ namespace RealTime.Simulation
         private const ulong TimeWarpWorkshopId = 814698320ul;
         private const ulong UltimateEyecandyWorkshopId = 672248733ul;
 
-        /// <summary>Gets a collection of method patches that need to be applied to ensure this mod's compatibility
-        /// with other time-changing mods.</summary>
-        /// <returns>A collection of <see cref="IPatch"/> objects.</returns>
-        public static IEnumerable<IPatch> GetCompatibilityPatches()
-        {
-            var timeWarpType = GetManagerType(TimeWarpWorkshopId, TimeWarpManagerType);
-            var ultimateEyecandyType = GetManagerType(UltimateEyecandyWorkshopId, UltimateEyecandyManagerType);
-
-            return GetPatches(timeWarpType).Concat(GetPatches(ultimateEyecandyType));
-        }
-
         private static Type GetManagerType(ulong modId, string typeName)
         {
-            var mod = PluginManager.instance.GetPluginsInfo()
-                .FirstOrDefault(pi => pi.publishedFileID.AsUInt64 == modId);
+            var mod = PluginManager.instance.GetPluginsInfo().FirstOrDefault(pi => pi.publishedFileID.AsUInt64 == modId);
 
             if (mod?.isEnabled != true)
             {
@@ -63,39 +52,37 @@ namespace RealTime.Simulation
             }
         }
 
-        private static IEnumerable<IPatch> GetPatches(Type managerType)
+
+        [HarmonyPatch]
+        private sealed class SimulationStepPatch
         {
-            if (managerType != null)
-            {
-                yield return new SimulationStepPatch(managerType);
-                yield return new SetTimeOfDayPatch(managerType);
-            }
-        }
+            private static bool Prepare() => TargetMethods().Any();
 
-        private sealed class SimulationStepPatch : PatchBase
-        {
-            private readonly Type managerType;
-
-            public SimulationStepPatch(Type managerType)
+            private static IEnumerable<MethodBase> TargetMethods()
             {
-                this.managerType = managerType;
-            }
+                var timeWarpType = GetManagerType(TimeWarpWorkshopId, TimeWarpManagerType);
+                var ultimateEyecandyType = GetManagerType(UltimateEyecandyWorkshopId, UltimateEyecandyManagerType);
 
-            protected override MethodInfo GetMethod()
-            {
-                try
+                if (timeWarpType != null)
                 {
-                    return managerType?.GetMethod(SimulationStepMethodName, BindingFlags.Instance | BindingFlags.Public);
+                    var timeWarpSimulationStep = AccessTools.Method(timeWarpType, "SimulationStep");
+                    if (timeWarpSimulationStep != null)
+                    {
+                        yield return timeWarpSimulationStep;
+                    }
                 }
-                catch (Exception ex)
+                if (ultimateEyecandyType != null)
                 {
-                    Log.Warning($"'Real Time' compatibility check: the '{managerType.Name}' type doesn't contain the '{SimulationStepMethodName}' method: {ex}");
-                    return null;
+                    var ultimateEyecandySimulationStep = AccessTools.Method(ultimateEyecandyType, "SimulationStep");
+                    if (ultimateEyecandySimulationStep != null)
+                    {
+                        yield return ultimateEyecandySimulationStep;
+                    }
+
                 }
             }
 
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming Rules", "SA1313", Justification = "Harmony patch")]
+            [HarmonyPrefix]
             private static bool Prefix(ref uint ___dayOffsetFrames)
             {
                 bool result = SimulationManager.instance.SimulationPaused;
@@ -108,29 +95,36 @@ namespace RealTime.Simulation
             }
         }
 
-        private sealed class SetTimeOfDayPatch : PatchBase
+        [HarmonyPatch]
+        private sealed class SetTimeOfDayPatch
         {
-            private readonly Type managerType;
+            private static bool Prepare() => TargetMethods().Any();
 
-            public SetTimeOfDayPatch(Type managerType)
+            private static IEnumerable<MethodBase> TargetMethods()
             {
-                this.managerType = managerType;
+                var timeWarpType = GetManagerType(TimeWarpWorkshopId, TimeWarpManagerType);
+                var ultimateEyecandyType = GetManagerType(UltimateEyecandyWorkshopId, UltimateEyecandyManagerType);
+
+                if (timeWarpType != null)
+                {
+                    var timeWarpTimeOfDay = AccessTools.PropertySetter(timeWarpType, "TimeOfDay");
+                    if (timeWarpTimeOfDay != null)
+                    {
+                        yield return timeWarpTimeOfDay;
+                    }
+
+                }
+                if (ultimateEyecandyType != null)
+                {
+                    var ultimateEyecandyTimeOfDay = AccessTools.PropertySetter(ultimateEyecandyType, "TimeOfDay");
+                    if (ultimateEyecandyTimeOfDay != null)
+                    {
+                        yield return ultimateEyecandyTimeOfDay;
+                    }
+                }
             }
 
-            protected override MethodInfo GetMethod()
-            {
-                try
-                {
-                    return managerType?.GetMethod(TimeOfDayPropertySetter, BindingFlags.Instance | BindingFlags.Public);
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning($"'Real Time' compatibility check: the '{managerType.Name}' type doesn't contain the '{TimeOfDayPropertySetter}' method: {ex}");
-                    return null;
-                }
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
+            [HarmonyPrefix]
             private static void Prefix(float value)
             {
                 if (Math.Abs(value - SimulationManager.instance.m_currentDayTimeHour) >= 0.03f)

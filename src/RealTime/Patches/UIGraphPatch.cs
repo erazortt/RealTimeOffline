@@ -2,7 +2,7 @@
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
-namespace RealTime.GameConnection.Patches
+namespace RealTime.Patches
 {
     using System;
     using System.Collections.Generic;
@@ -10,14 +10,14 @@ namespace RealTime.GameConnection.Patches
     using System.Reflection;
     using ColossalFramework;
     using ColossalFramework.UI;
-    using SkyTools.Patching;
-    using SkyTools.Tools;
+    using HarmonyLib;
     using UnityEngine;
     using static ColossalFramework.UI.UIGraph;
 
     /// <summary>
     /// A static class that provides the patch objects for the statistics graph.
     /// </summary>
+    [HarmonyPatch]
     internal static class UIGraphPatch
     {
         private const int MinRangeInDays = 7;
@@ -25,15 +25,6 @@ namespace RealTime.GameConnection.Patches
         private const float GridIntervalX = 768f;
 
         private static CultureInfo currentCulture = CultureInfo.CurrentCulture;
-
-        /// <summary>Gets the patch object for the minimum data points method.</summary>
-        public static IPatch MinDataPoints { get; } = new UIGraph_GetMinDataPoints();
-
-        /// <summary>Gets the patch object for the visible end time method.</summary>
-        public static IPatch VisibleEndTime { get; } = new UIGraph_GetVisibleEndTime();
-
-        /// <summary>Gets the patch object for the build labels method.</summary>
-        public static IPatch BuildLabels { get; } = new UIGraph_BuildLabels();
 
         /// <summary>Translates the X-axis of the graph using the specified culture information.</summary>
         /// <param name="cultureInfo">The culture information to use for the X axis labels formatting.</param>
@@ -67,18 +58,11 @@ namespace RealTime.GameConnection.Patches
             return new DateTime(1, 1, 1);
         }
 
-        private sealed class UIGraph_GetMinDataPoints : PatchBase
+        [HarmonyPatch]
+        private sealed class UIGraph_GetMinDataPoints
         {
-            protected override MethodInfo GetMethod() =>
-                typeof(UIGraph).GetMethod(
-                    "GetMinDataPoints",
-                    BindingFlags.Instance | BindingFlags.NonPublic,
-                    null,
-                    new Type[0],
-                    new ParameterModifier[0]);
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming Rules", "SA1313", Justification = "Harmony patch")]
+            [HarmonyPatch(typeof(UIGraph), "GetMinDataPoints")]
+            [HarmonyPrefix]
             private static bool Prefix(List<CurveSettings> ___m_Curves, DateTime ___m_StartTime, DateTime ___m_EndTime, ref int __result)
             {
                 __result = GetMinDataPoints(___m_Curves, ___m_StartTime, ___m_EndTime);
@@ -86,18 +70,11 @@ namespace RealTime.GameConnection.Patches
             }
         }
 
-        private sealed class UIGraph_GetVisibleEndTime : PatchBase
+        [HarmonyPatch]
+        private sealed class UIGraph_GetVisibleEndTime
         {
-            protected override MethodInfo GetMethod() =>
-                typeof(UIGraph).GetMethod(
-                    "GetVisibleEndTime",
-                    BindingFlags.Instance | BindingFlags.NonPublic,
-                    null,
-                    new Type[0],
-                    new ParameterModifier[0]);
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming Rules", "SA1313", Justification = "Harmony patch")]
+            [HarmonyPatch(typeof(UIGraph), "GetVisibleEndTime")]
+            [HarmonyPrefix]
             private static bool Prefix(List<CurveSettings> ___m_Curves, DateTime ___m_StartTime, DateTime ___m_EndTime, ref DateTime __result)
             {
                 __result = GetVisibleEndTime(___m_Curves, ___m_StartTime, ___m_EndTime);
@@ -105,64 +82,18 @@ namespace RealTime.GameConnection.Patches
             }
         }
 
-        private sealed class UIGraph_BuildLabels : PatchBase
+        [HarmonyPatch]
+        private sealed class UIGraph_BuildLabels
         {
-            private static PixelsToUnitsDelegate pixelsToUnits;
-            private static AddSolidQuadDelegate addSolidQuad;
+            private delegate float PixelsToUnitsDelegate(UIComponent __instance);
+            private static readonly PixelsToUnitsDelegate pixelsToUnits = AccessTools.MethodDelegate<PixelsToUnitsDelegate>(typeof(UIComponent).GetMethod("PixelsToUnits", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
 
-            public UIGraph_BuildLabels()
-            {
-                try
-                {
-                    pixelsToUnits = FastDelegateFactory.Create<PixelsToUnitsDelegate>(typeof(UIComponent), "PixelsToUnits", instanceMethod: true);
-                    addSolidQuad = FastDelegateFactory.Create<AddSolidQuadDelegate>(typeof(UIGraph), "AddSolidQuad", instanceMethod: true);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("The 'Real Time' mod failed to create delegates for the UIGraph. Error message: " + ex);
-                }
-            }
+            private delegate void AddSolidQuadDelegate(UIGraph __instance, Vector2 corner1, Vector2 corner2, Color32 col, PoolList<Vector3> vertices, PoolList<int> indices, PoolList<Vector2> uvs, PoolList<Color32> colors);
+            private static readonly AddSolidQuadDelegate addSolidQuad = AccessTools.MethodDelegate<AddSolidQuadDelegate>(typeof(UIGraph).GetMethod("AddSolidQuad", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
 
-            private delegate float PixelsToUnitsDelegate(UIComponent instance);
-
-            private delegate void AddSolidQuadDelegate(
-                UIGraph instance,
-                Vector2 corner1,
-                Vector2 corner2,
-                Color32 col,
-                PoolList<Vector3> vertices,
-                PoolList<int> indices,
-                PoolList<Vector2> uvs,
-                PoolList<Color32> colors);
-
-            protected override MethodInfo GetMethod()
-            {
-                if (pixelsToUnits == null || addSolidQuad == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return typeof(UIGraph).GetMethod(
-                        "BuildLabels",
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        null,
-                        new[] { typeof(PoolList<Vector3>), typeof(PoolList<int>), typeof(PoolList<Vector2>), typeof(PoolList<Color32>) },
-                        new ParameterModifier[0]);
-                }
-            }
-
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1213", Justification = "Harmony patch")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming Rules", "SA1313", Justification = "Harmony patch")]
-            private static void Postfix(
-                UIGraph __instance,
-                List<CurveSettings> ___m_Curves,
-                Rect ___m_GraphRect,
-                PoolList<UIRenderData> ___m_RenderData,
-                PoolList<Vector3> vertices,
-                PoolList<int> indices,
-                PoolList<Vector2> uvs,
-                PoolList<Color32> colors)
+            [HarmonyPatch(typeof(UIGraph), "BuildLabels")]
+            [HarmonyPostfix]
+            private static void Postfix(UIGraph __instance, PoolList<Vector3> vertices, PoolList<int> indices, PoolList<Vector2> uvs, PoolList<Color32> colors, ref List<CurveSettings> ___m_Curves, ref Rect ___m_GraphRect, ref PoolList<UIRenderData> ___m_RenderData)
             {
                 // Note: this method is extracted from the original game and is slightly modified
                 if (___m_Curves.Count == 0)
@@ -210,15 +141,7 @@ namespace RealTime.GameConnection.Patches
                         float val = Mathf.Lerp(-0.5f + ___m_GraphRect.xMin, -0.5f + ___m_GraphRect.xMax, (currentTicks - startTicks) / (endTicks - startTicks));
                         var corner1 = new Vector2(val - units * __instance.HelpAxesWidth * aspectRatio, -0.5f + ___m_GraphRect.yMin);
                         var corner2 = new Vector2(val + units * __instance.HelpAxesWidth * aspectRatio, corner1.y + ___m_GraphRect.height);
-                        addSolidQuad(
-                            __instance,
-                            Vector3.Scale(corner1, size) + center,
-                            Vector3.Scale(corner2, size) + center,
-                            __instance.HelpAxesColor,
-                            vertices,
-                            indices,
-                            uvs,
-                            colors);
+                        addSolidQuad(__instance, Vector3.Scale(corner1, size) + center, Vector3.Scale(corner2, size) + center, __instance.HelpAxesColor, vertices, indices, uvs, colors);
                     }
                 }
             }

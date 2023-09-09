@@ -1,4 +1,4 @@
-﻿// <copyright file="RealTimeInfoPanelBase.cs" company="dymanoid">Copyright (c) dymanoid. All rights reserved.</copyright>
+// <copyright file="RealTimeInfoPanelBase.cs" company="dymanoid">Copyright (c) dymanoid. All rights reserved.</copyright>
 
 namespace RealTime.UI
 {
@@ -63,7 +63,7 @@ namespace RealTime.UI
                 return;
             }
 
-            ref CitizenSchedule schedule = ref residentAI.GetCitizenSchedule(citizenId);
+            ref var schedule = ref residentAI.GetCitizenSchedule(citizenId);
 
             if (schedule.LastScheduledState == scheduleCopy.LastScheduledState
                 && schedule.ScheduledStateTime == scheduleCopy.ScheduledStateTime

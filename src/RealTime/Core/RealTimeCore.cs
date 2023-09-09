@@ -6,19 +6,17 @@ namespace RealTime.Core
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using RealTime.Config;
     using RealTime.CustomAI;
     using RealTime.Events;
     using RealTime.Events.Storage;
     using RealTime.GameConnection;
-    using RealTime.GameConnection.Patches;
+    using RealTime.Patches;
     using RealTime.Simulation;
     using RealTime.UI;
     using SkyTools.Configuration;
     using SkyTools.GameTools;
     using SkyTools.Localization;
-    using SkyTools.Patching;
     using SkyTools.Storage;
     using SkyTools.Tools;
 
@@ -26,7 +24,6 @@ namespace RealTime.Core
     /// The core component of the Real Time mod. Activates and deactivates
     /// the different parts of the mod's logic.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is the entry point and needs to instantiate all parts")]
     internal sealed class RealTimeCore
     {
         private const string HarmonyId = "com.cities_skylines.dymanoid.realtime";
@@ -35,22 +32,22 @@ namespace RealTime.Core
         private readonly TimeAdjustment timeAdjustment;
         private readonly CustomTimeBar timeBar;
         private readonly RealTimeEventManager eventManager;
-        private readonly MethodPatcher patcher;
         private readonly VanillaEvents vanillaEvents;
 
         private bool isEnabled;
+
+        public static bool ApplyCitizenPatch = false;
+        public static bool ApplyBuildingPatch = false;
 
         private RealTimeCore(
             TimeAdjustment timeAdjustment,
             CustomTimeBar timeBar,
             RealTimeEventManager eventManager,
-            MethodPatcher patcher,
             VanillaEvents vanillaEvents)
         {
             this.timeAdjustment = timeAdjustment;
             this.timeBar = timeBar;
             this.eventManager = eventManager;
-            this.patcher = patcher;
             this.vanillaEvents = vanillaEvents;
             isEnabled = true;
         }
@@ -71,10 +68,8 @@ namespace RealTime.Core
         /// <param name="localizationProvider">The <see cref="ILocalizationProvider"/> to use for text translation.</param>
         /// <param name="setDefaultTime"><c>true</c> to initialize the game time to a default value (real world date and city wake up hour);
         /// <c>false</c> to leave the game time unchanged.</param>
-        /// <param name="compatibility">The compatibility checker object.</param>
         ///
         /// <returns>A <see cref="RealTimeCore"/> instance that can be used to stop the mod.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is the entry point and needs to instantiate all parts")]
         public static RealTimeCore Run(
             ConfigurationProvider<RealTimeConfig> configProvider,
             string rootPath,
@@ -102,16 +97,7 @@ namespace RealTime.Core
                 throw new ArgumentNullException(nameof(compatibility));
             }
 
-            var patches = GetMethodPatches(compatibility);
-            var patcher = new MethodPatcher(HarmonyId, patches);
-
-            var appliedPatches = patcher.Apply();
-            if (!CheckRequiredMethodPatches(appliedPatches))
-            {
-                Log.Error("The 'Real Time' mod failed to perform method redirections for required methods");
-                patcher.Revert();
-                return null;
-            }
+            CheckMethodPatches(compatibility);
 
             if (StorageBase.CurrentLevelStorage != null)
             {
@@ -147,7 +133,6 @@ namespace RealTime.Core
             if (!SetupCustomAI(timeInfo, configProvider.Configuration, gameConnections, eventManager, compatibility))
             {
                 Log.Error("The 'Real Time' mod failed to setup the customized AI and will now be deactivated.");
-                patcher.Revert();
                 return null;
             }
 
@@ -163,7 +148,7 @@ namespace RealTime.Core
 
             var vanillaEvents = VanillaEvents.Customize();
 
-            var result = new RealTimeCore(timeAdjustment, customTimeBar, eventManager, patcher, vanillaEvents);
+            var result = new RealTimeCore(timeAdjustment, customTimeBar, eventManager, vanillaEvents);
             eventManager.EventsChanged += result.CityEventsChanged;
 
             var statistics = new Statistics(timeInfo, localizationProvider);
@@ -185,24 +170,15 @@ namespace RealTime.Core
             SimulationHandler.Buildings = BuildingAIPatch.RealTimeAI;
             SimulationHandler.Buildings.UpdateFrameDuration();
 
-            if (appliedPatches.Contains(CitizenManagerPatch.CreateCitizenPatch1))
-            {
-                CitizenManagerPatch.NewCitizenBehavior = new NewCitizenBehavior(randomizer, configProvider.Configuration);
-            }
+            CitizenManagerPatch.NewCitizenBehavior = new NewCitizenBehavior(randomizer, configProvider.Configuration);
 
-            if (appliedPatches.Contains(BuildingAIPatch.GetColor))
-            {
-                SimulationHandler.Buildings.InitializeLightState();
-            }
+            SimulationHandler.Buildings.InitializeLightState();
 
             SimulationHandler.Statistics = statistics;
 
-            if (appliedPatches.Contains(WorldInfoPanelPatch.UpdateBindings))
-            {
-                WorldInfoPanelPatch.CitizenInfoPanel = CustomCitizenInfoPanel.Enable(ResidentAIPatch.RealTimeAI, localizationProvider);
-                WorldInfoPanelPatch.VehicleInfoPanel = CustomVehicleInfoPanel.Enable(ResidentAIPatch.RealTimeAI, localizationProvider);
-                WorldInfoPanelPatch.CampusWorldInfoPanel = CustomCampusWorldInfoPanel.Enable(localizationProvider);
-            }
+            WorldInfoPanelPatch.CitizenInfoPanel = CustomCitizenInfoPanel.Enable(ResidentAIPatch.RealTimeAI, localizationProvider);
+            WorldInfoPanelPatch.VehicleInfoPanel = CustomVehicleInfoPanel.Enable(ResidentAIPatch.RealTimeAI, localizationProvider);
+            WorldInfoPanelPatch.CampusWorldInfoPanel = CustomCampusWorldInfoPanel.Enable(localizationProvider);
 
             AwakeSleepSimulation.Install(configProvider.Configuration);
 
@@ -219,7 +195,6 @@ namespace RealTime.Core
 
             result.storageData.Add(configProvider);
             result.Translate(localizationProvider);
-            result.IsRestrictedMode = appliedPatches.Count != patches.Count;
 
             return result;
         }
@@ -233,9 +208,6 @@ namespace RealTime.Core
             {
                 return;
             }
-
-            Log.Info("The 'Real Time' mod reverts method patches.");
-            patcher.Revert();
 
             ResidentAIPatch.RealTimeAI = null;
             TouristAIPatch.RealTimeAI = null;
@@ -299,44 +271,16 @@ namespace RealTime.Core
             UIGraphPatch.Translate(localizationProvider.CurrentCulture);
         }
 
-        private static List<IPatch> GetMethodPatches(Compatibility compatibility)
+        private static void CheckMethodPatches(Compatibility compatibility)
         {
-            var patches = new List<IPatch>
-            {
-                BuildingAIPatch.GetConstructionTime,
-                BuildingAIPatch.HandleWorkers,
-                BuildingAIPatch.CommercialSimulation,
-                BuildingAIPatch.FishingMarketSimulation,
-                BuildingAIPatch.GetColor,
-                BuildingAIPatch.CalculateUnspawnPosition,
-                BuildingAIPatch.ProduceGoods,
-                BuildingAIPatch.TrySpawnBoot,
-                ResidentAIPatch.Location,
-                ResidentAIPatch.ArriveAtTarget,
-                ResidentAIPatch.StartMoving,
-                ResidentAIPatch.InstanceSimulationStep,
-                TouristAIPatch.Location,
-                TransferManagerPatch.AddOutgoingOffer,
-                TransferManagerPatch.AddIncomingOffer,
-                WorldInfoPanelPatch.UpdateBindings,
-                UIGraphPatch.MinDataPoints,
-                UIGraphPatch.VisibleEndTime,
-                UIGraphPatch.BuildLabels,
-                WeatherManagerPatch.SimulationStepImpl,
-                ParkPatch.DistrictParkSimulation,
-                OutsideConnectionAIPatch.DummyTrafficProbability,
-            };
-
             if (compatibility.IsAnyModActive(WorkshopMods.CitizenLifecycleRebalance, WorkshopMods.LifecycleRebalanceRevisited))
             {
+                ApplyCitizenPatch = true;
                 Log.Info("The 'Real Time' mod will not change the citizens aging because a 'Lifecycle Rebalance' mod is active.");
             }
             else
             {
-                patches.Add(ResidentAIPatch.UpdateAge);
-                patches.Add(ResidentAIPatch.CanMakeBabies);
-                patches.Add(CitizenManagerPatch.CreateCitizenPatch1);
-                patches.Add(CitizenManagerPatch.CreateCitizenPatch2);
+                ApplyCitizenPatch = false;
             }
 
             if (compatibility.IsAnyModActive(
@@ -347,34 +291,13 @@ namespace RealTime.Core
                 WorkshopMods.PloppableRicoRevisited,
                 WorkshopMods.PlopTheGrowables))
             {
+                ApplyBuildingPatch = true;
                 Log.Info("The 'Real Time' mod will not change the building construction and upgrading behavior because some building mod is active.");
             }
             else
             {
-                patches.Add(BuildingAIPatch.GetUpgradeInfo);
-                patches.Add(BuildingAIPatch.CreateBuilding);
+                ApplyBuildingPatch = false;
             }
-
-            patches.AddRange(TimeControlCompatibility.GetCompatibilityPatches());
-
-            return patches;
-        }
-
-        private static bool CheckRequiredMethodPatches(HashSet<IPatch> appliedPatches)
-        {
-            IPatch[] requiredPatches =
-            {
-                BuildingAIPatch.HandleWorkers,
-                BuildingAIPatch.CommercialSimulation,
-                BuildingAIPatch.FishingMarketSimulation,
-                ResidentAIPatch.Location,
-                ResidentAIPatch.ArriveAtTarget,
-                TouristAIPatch.Location,
-                TransferManagerPatch.AddOutgoingOffer,
-                TransferManagerPatch.AddIncomingOffer,
-            };
-
-            return requiredPatches.All(appliedPatches.Contains);
         }
 
         private static bool SetupCustomAI(

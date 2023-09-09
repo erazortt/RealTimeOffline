@@ -7,7 +7,6 @@ namespace RealTime.GameConnection
     using System.Collections.Generic;
     using System.Linq;
     using ColossalFramework;
-    using Epic.OnlineServices.Presence;
     using UnityEngine;
 
     /// <summary>
@@ -128,7 +127,7 @@ namespace RealTime.GameConnection
                 return;
             }
 
-            ref Building building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
+            ref var building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
             building.Info?.m_buildingAI.ModifyMaterialBuffer(buildingId, ref building, reason, ref delta);
         }
 
@@ -190,7 +189,7 @@ namespace RealTime.GameConnection
                     uint counter = 0;
                     while (buildingId != 0)
                     {
-                        ref Building building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
+                        ref var building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
                         if (building.Info?.m_class != null
                             && building.Info.m_class.m_service == service
                             && (subService == ItemClass.SubService.None || building.Info.m_class.m_subService == subService)
@@ -370,7 +369,7 @@ namespace RealTime.GameConnection
                 return;
             }
 
-            ref Building building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
+            ref var building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
             building.Info?.m_buildingAI.BuildingDeactivated(buildingId, ref building);
         }
 
@@ -576,7 +575,7 @@ namespace RealTime.GameConnection
             uint counter = 0;
             while (currentUnitId != 0)
             {
-                ref CitizenUnit currentUnit = ref citizenUnitBuffer[currentUnitId];
+                ref var currentUnit = ref citizenUnitBuffer[currentUnitId];
                 if ((currentUnit.m_flags & CitizenUnit.Flags.Visit) != 0
                     && (currentUnit.m_citizen0 == 0
                         || currentUnit.m_citizen1 == 0
