@@ -2,9 +2,12 @@
 
 namespace RealTime.Core
 {
+    using System.IO;
     using System.Linq;
+    using CitiesHarmony.API;
     using ColossalFramework;
     using ColossalFramework.Globalization;
+    using ColossalFramework.IO;
     using ColossalFramework.Plugins;
     using ICities;
     using RealTime.Config;
@@ -29,16 +32,6 @@ namespace RealTime.Core
         private ConfigUI configUI;
         private LocalizationProvider localizationProvider;
 
-#if BENCHMARK
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RealTimeMod"/> class.
-        /// </summary>
-        public RealTimeMod()
-        {
-            RealTimeBenchmark.Setup();
-        }
-#endif
-
         /// <summary>Gets the name of this mod.</summary>
         public string Name => "Real Time";
 
@@ -50,31 +43,30 @@ namespace RealTime.Core
         {
             Log.SetupDebug(Name, LogCategory.Generic, LogCategory.Simulation);
 
-            if (string.IsNullOrEmpty(modPath))
-            {
-                Log.Info($"The 'Real Time' mod version {modVersion} cannot be started because of no Steam Workshop");
-                return;
-            }
-
             Log.Info("The 'Real Time' mod has been enabled, version: " + modVersion);
             configProvider = new ConfigurationProvider<RealTimeConfig>(RealTimeConfig.StorageId, Name, () => new RealTimeConfig(latestVersion: true));
             configProvider.LoadDefaultConfiguration();
             localizationProvider = new LocalizationProvider(Name, modPath);
+            HarmonyHelper.DoOnHarmonyReady(() => PatchUtil.PatchAll());
         }
 
         /// <summary>Called when this mod is disabled.</summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Must be instance method due to C:S API")]
         public void OnDisabled()
         {
-            if (string.IsNullOrEmpty(modPath))
-            {
-                return;
-            }
+            //if (string.IsNullOrEmpty(modPath))
+            //{
+            //    return;
+            //}
 
             CloseConfigUI();
             if (configProvider?.IsDefault == true)
             {
                 configProvider.SaveDefaultConfiguration();
+            }
+
+            if (HarmonyHelper.IsHarmonyInstalled)
+            {
+                PatchUtil.UnpatchAll();
             }
 
             Log.Info("The 'Real Time' mod has been disabled.");
@@ -84,15 +76,8 @@ namespace RealTime.Core
         /// <param name="helper">
         /// An <see cref="UIHelperBase"/> reference that can be used to construct the mod's settings page.
         /// </param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Must be instance method due to C:S API")]
         public void OnSettingsUI(UIHelperBase helper)
         {
-            if (string.IsNullOrEmpty(modPath))
-            {
-                helper?.AddGroup(NoWorkshopMessage);
-                return;
-            }
-
             if (helper == null || configProvider == null)
             {
                 return;
@@ -116,12 +101,6 @@ namespace RealTime.Core
         /// <param name="mode">The <see cref="LoadMode"/> a game level is loaded in.</param>
         public override void OnLevelLoaded(LoadMode mode)
         {
-            if (string.IsNullOrEmpty(modPath))
-            {
-                MessageBox.Show("Sorry", NoWorkshopMessage);
-                return;
-            }
-
             switch (mode)
             {
                 case LoadMode.LoadGame:
@@ -135,7 +114,6 @@ namespace RealTime.Core
             }
 
             Log.Info($"The 'Real Time' mod starts, game mode {mode}.");
-            core?.Stop();
 
             var compatibility = Compatibility.Create(localizationProvider);
 
@@ -160,15 +138,9 @@ namespace RealTime.Core
         /// </summary>
         public override void OnLevelUnloading()
         {
-            if (string.IsNullOrEmpty(modPath))
-            {
-                return;
-            }
-
             if (core != null)
             {
                 Log.Info("The 'Real Time' mod stops.");
-                core.Stop();
                 core = null;
             }
 
@@ -177,6 +149,15 @@ namespace RealTime.Core
 
         private static string GetModPath()
         {
+            string addonsPath = Path.Combine(DataLocation.localApplicationData, "Addons");
+            string localModsPath = Path.Combine(addonsPath, "Mods");
+            string localModPath = Path.Combine(localModsPath, "RealTime");
+
+            if(Directory.Exists(localModPath))
+            {
+                return localModPath;
+            }
+
             var pluginInfo = PluginManager.instance.GetPluginsInfo()
                 .FirstOrDefault(pi => pi.publishedFileID.AsUInt64 == WorkshopId);
 
