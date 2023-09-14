@@ -53,7 +53,6 @@ namespace RealTime.CustomAI
         private int lightStateCheckFramesInterval;
         private int lightStateCheckCounter;
         private ushort lightCheckStep;
-        public bool DeactivatedVisually = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RealTimeBuildingAI"/> class.
@@ -701,7 +700,6 @@ namespace RealTime.CustomAI
                     buildingManager.UpdateBuildingColors(i);
                     if (!lightsOn && service != ItemClass.Service.Residential)
                     {
-                        DeactivatedVisually = true;
                         buildingManager.DeactivateVisually(i);
                     }
                 }
@@ -729,7 +727,6 @@ namespace RealTime.CustomAI
 
                 case ItemClass.Service.Office:
                 case ItemClass.Service.Commercial:
-                case ItemClass.Service.Hotel:
                     if (buildingManager.GetBuildingHeight(buildingId) > config.SwitchOffLightsMaxHeight)
                     {
                         return false;
