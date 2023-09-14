@@ -100,6 +100,8 @@ namespace RealTime.UI
                 var tabItem = itemFactory.CreateTabItem(tab.Key);
                 viewItems.Add(tabItem);
 
+                var scrollbarItem = itemFactory.CreateScrollBar(tabItem, "scrollpanel");
+
                 foreach (var group in tab.GroupBy(p => p.Attribute.GroupId).OrderBy(p => p.Key))
                 {
                     IContainerViewItem containerItem;
