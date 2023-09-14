@@ -19,7 +19,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CitiesHarmony.API" Version="2.2.0" />
-    <PackageReference Include="SkyTools.Common" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -30,6 +29,10 @@
     </Reference>
     <Reference Include="ICities">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+    </Reference>
+    <Reference Include="SkyTools.Common">
+      <HintPath>..\..\..\SkyTools\src\bin\Debug\SkyTools.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>

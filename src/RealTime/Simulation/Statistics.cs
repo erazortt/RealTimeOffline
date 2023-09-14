@@ -1,11 +1,10 @@
-﻿// <copyright file="Statistics.cs" company="dymanoid">
+// <copyright file="Statistics.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
 namespace RealTime.Simulation
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using ColossalFramework.Globalization;
