@@ -19,7 +19,7 @@ namespace RealTime.Core
     using SkyTools.UI;
 
     /// <summary>The main class of the Real Time mod.</summary>
-    public sealed class RealTimeMod : LoadingExtensionBase, IUserMod
+    public class RealTimeMod : LoadingExtensionBase, IUserMod
     {
         private const long WorkshopId = 1420955187;
         private const string NoWorkshopMessage = "Real Time can only run when subscribed to in Steam Workshop";
@@ -27,7 +27,7 @@ namespace RealTime.Core
         private readonly string modVersion = GitVersion.GetAssemblyVersion(typeof(RealTimeMod).Assembly);
         private readonly string modPath = GetModPath();
 
-        private ConfigurationProvider<RealTimeConfig> configProvider;
+        public static ConfigurationProvider<RealTimeConfig> configProvider;
         private RealTimeCore core;
         private ConfigUI configUI;
         private LocalizationProvider localizationProvider;
@@ -41,7 +41,7 @@ namespace RealTime.Core
         /// <summary>Called when this mod is enabled.</summary>
         public void OnEnabled()
         {
-            Log.SetupDebug(Name, LogCategory.Generic, LogCategory.Simulation);
+            Log.SetupDebug(Name, LogCategory.Schedule, LogCategory.Movement);
 
             Log.Info("The 'Real Time' mod has been enabled, version: " + modVersion);
             configProvider = new ConfigurationProvider<RealTimeConfig>(RealTimeConfig.StorageId, Name, () => new RealTimeConfig(latestVersion: true));
