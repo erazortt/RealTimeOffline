@@ -59,12 +59,7 @@ namespace RealTime.Patches
             [HarmonyPostfix]
             private static void Postfix(CityServiceWorldInfoPanel __instance, ref InstanceID ___m_InstanceID, ref UILabel ___m_Status)
             {
-                ushort building = ___m_InstanceID.Building;
-                var instance = Singleton<BuildingManager>.instance;
-			    var building2 = instance.m_buildings.m_buffer[building];
-			    var info = building2.Info;
-			    var buildingAI = info.m_buildingAI;
-                if(RealTimeAI.DeactivatedVisually)
+                if (RealTimeAI.ShouldSwitchBuildingLightsOff(___m_InstanceID.Building) && ___m_Status != null)
                 {
                     ___m_Status.text = "Closed";
                 }

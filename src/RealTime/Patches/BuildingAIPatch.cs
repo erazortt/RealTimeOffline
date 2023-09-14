@@ -8,11 +8,12 @@ namespace RealTime.Patches
     using System.Reflection;
     using ColossalFramework;
     using ColossalFramework.Math;
-    using ColossalFramework.UI;
     using HarmonyLib;
+    using RealTime.Config;
     using RealTime.Core;
     using RealTime.CustomAI;
     using RealTime.Simulation;
+    using SkyTools.Configuration;
     using UnityEngine;
 
     /// <summary>
@@ -260,7 +261,7 @@ namespace RealTime.Patches
                         return;
 
                     case InfoManager.InfoMode.None:
-                        if (RealTimeAI.DeactivatedVisually)
+                        if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
                         {
                             __result.a = 0f;
                         }
@@ -280,9 +281,8 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(CommonBuildingAI __instance, ushort buildingID, ref Building data)
             {
-                if (RealTimeAI.DeactivatedVisually)
+                if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
                 {
-                    RealTimeAI.DeactivatedVisually = false;
                     TransferManager.TransferOffer offer = default;
 	                offer.Building = buildingID;
 	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Garbage, offer);
@@ -316,68 +316,41 @@ namespace RealTime.Patches
         }
 
         [HarmonyPatch]
-        private sealed class PropInstance_RenderInstance
+        private sealed class BuildingAI_RenderMesh
         {
-
-            [HarmonyPatch(typeof(PropInstance), "RenderInstance",
-                new Type[] { typeof(RenderManager.CameraInfo), typeof(PropInfo), typeof(InstanceID), typeof(Vector3), typeof(float), typeof(float), typeof(Color), typeof(Vector4), typeof(bool) },
-                new ArgumentType[] {ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal } )]
-            [HarmonyPostfix]
-            private static void Postfix(RenderManager.CameraInfo cameraInfo, PropInfo info, InstanceID id, Vector3 position, float scale, float angle, Color color, Vector4 objectIndex, bool active)
+           [HarmonyPatch(typeof(BuildingAI), "RenderMesh",
+                new Type[] { typeof(RenderManager.CameraInfo), typeof(ushort), typeof(Building), typeof(BuildingInfo), typeof(RenderManager.Instance) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Ref })]
+            [HarmonyPrefix]
+            public static void Prefix(RenderManager.CameraInfo cameraInfo, ushort buildingID, ref Building data, BuildingInfo info, ref RenderManager.Instance instance)
             {
-                if (RealTimeAI.DeactivatedVisually)
+                if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
                 {
-                    if (Singleton<InfoManager>.instance.CurrentMode == InfoManager.InfoMode.None)
-                    {
-                        objectIndex.z = 0f;
-                    }
+                    instance.m_dataVector3.y = 44;
+                }
+                else
+                {
+                    instance.m_dataVector3.y = 0;
                 }
             }
 
-            [HarmonyPatch(typeof(PropInstance), "RenderInstance",
-                new Type[] { typeof(RenderManager.CameraInfo), typeof(PropInfo), typeof(InstanceID), typeof(Matrix4x4), typeof(Vector3), typeof(float), typeof(float), typeof(Color), typeof(Vector4), typeof(bool) },
-                new ArgumentType[] {ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal } )]
-            [HarmonyPostfix]
-            private static void Postfix1(RenderManager.CameraInfo cameraInfo, PropInfo info, InstanceID id, Matrix4x4 matrix, Vector3 position, float scale, float angle, Color color, Vector4 objectIndex, bool active)
-            {
-                if (RealTimeAI.DeactivatedVisually)
-                {
-                    if (Singleton<InfoManager>.instance.CurrentMode == InfoManager.InfoMode.None)
-                    {
-                        objectIndex.z = 0f;
-                    }
-                }
-            }
+            //[HarmonyPatch(typeof(BuildingAI), "RenderMesh",
+            //    new Type[] { typeof(RenderManager.CameraInfo), typeof(Building), typeof(BuildingInfo), typeof(BuildingInfoBase), typeof(Matrix4x4),  typeof(RenderManager.Instance) },
+            //    new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal,  ArgumentType.Ref })]
+            //[HarmonyPrefix]
+            //public static void Prefix1(RenderManager.CameraInfo cameraInfo, ref Building data, BuildingInfo info, BuildingInfoBase subInfo, Matrix4x4 matrix, ref RenderManager.Instance instance)
+            //{
+            //    if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
+            //    {
+            //        instance.m_dataVector3.y = 44;
+            //    }
+            //    else
+            //    {
+            //        instance.m_dataVector3.y = 0;
+            //    }
 
-            [HarmonyPatch(typeof(PropInstance), "RenderInstance",
-                new Type[] { typeof(RenderManager.CameraInfo), typeof(PropInfo), typeof(InstanceID), typeof(Vector3), typeof(float), typeof(float), typeof(Color), typeof(Vector4), typeof(bool), typeof(Texture), typeof(Vector4), typeof(Vector4) },
-                new ArgumentType[] {ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal } )]
-            [HarmonyPostfix]
-            private static void Postfix2(RenderManager.CameraInfo cameraInfo, PropInfo info, InstanceID id, Vector3 position, float scale, float angle, Color color, Vector4 objectIndex, bool active, Texture heightMap, Vector4 heightMapping, Vector4 surfaceMapping)
-            {
-                if (RealTimeAI.DeactivatedVisually)
-                {
-                    if (Singleton<InfoManager>.instance.CurrentMode == InfoManager.InfoMode.None)
-                    {
-                        objectIndex.z = 0f;
-                    }
-                }
-            }
+            //}
 
-            [HarmonyPatch(typeof(PropInstance), "RenderInstance",
-                new Type[] { typeof(RenderManager.CameraInfo), typeof(PropInfo), typeof(InstanceID), typeof(Vector3), typeof(float), typeof(float), typeof(Color), typeof(Vector4), typeof(bool), typeof(Texture), typeof(Vector4), typeof(Vector4), typeof(Texture), typeof(Vector4), typeof(Vector4) },
-                new ArgumentType[] {ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal } )]
-            [HarmonyPostfix]
-            private static void Postfix3(RenderManager.CameraInfo cameraInfo, PropInfo info, InstanceID id, Vector3 position, float scale, float angle, Color color, Vector4 objectIndex, bool active, Texture heightMap, Vector4 heightMapping, Vector4 surfaceMapping, Texture waterHeightMap, Vector4 waterHeightMapping, Vector4 waterSurfaceMapping)
-            {
-                if (RealTimeAI.DeactivatedVisually)
-                {
-                    if (Singleton<InfoManager>.instance.CurrentMode == InfoManager.InfoMode.None)
-                    {
-                        objectIndex.z = 0f;
-                    }
-                }
-            }
         }
     }
 }
