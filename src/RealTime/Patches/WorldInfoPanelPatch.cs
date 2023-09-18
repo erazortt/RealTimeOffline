@@ -59,10 +59,10 @@ namespace RealTime.Patches
             [HarmonyPostfix]
             private static void Postfix(CityServiceWorldInfoPanel __instance, ref InstanceID ___m_InstanceID, ref UILabel ___m_Status)
             {
-                if (RealTimeAI.ShouldSwitchBuildingLightsOff(___m_InstanceID.Building) && ___m_Status != null)
-                {
-                    ___m_Status.text = "Closed";
-                }
+                //if (RealTimeAI.ShouldSwitchBuildingLightsOff(___m_InstanceID.Building) && ___m_Status != null)
+                //{
+                //    ___m_Status.text = "Closed";
+                //}
             }
         }
     }

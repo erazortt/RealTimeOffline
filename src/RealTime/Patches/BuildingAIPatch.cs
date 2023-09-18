@@ -318,11 +318,9 @@ namespace RealTime.Patches
         [HarmonyPatch]
         private sealed class BuildingAI_RenderMesh
         {
-           [HarmonyPatch(typeof(BuildingAI), "RenderMesh",
-                new Type[] { typeof(RenderManager.CameraInfo), typeof(ushort), typeof(Building), typeof(BuildingInfo), typeof(RenderManager.Instance) },
-                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Ref })]
+            [HarmonyPatch(typeof(BuildingAI), "RenderMeshes")]
             [HarmonyPrefix]
-            public static void Prefix(RenderManager.CameraInfo cameraInfo, ushort buildingID, ref Building data, BuildingInfo info, ref RenderManager.Instance instance)
+            public static void RenderMeshes(RenderManager.CameraInfo cameraInfo, ushort buildingID, ref Building data, int layerMask, ref RenderManager.Instance instance)
             {
                 if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
                 {
@@ -333,23 +331,6 @@ namespace RealTime.Patches
                     instance.m_dataVector3.y = 0;
                 }
             }
-
-            //[HarmonyPatch(typeof(BuildingAI), "RenderMesh",
-            //    new Type[] { typeof(RenderManager.CameraInfo), typeof(Building), typeof(BuildingInfo), typeof(BuildingInfoBase), typeof(Matrix4x4),  typeof(RenderManager.Instance) },
-            //    new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal,  ArgumentType.Ref })]
-            //[HarmonyPrefix]
-            //public static void Prefix1(RenderManager.CameraInfo cameraInfo, ref Building data, BuildingInfo info, BuildingInfoBase subInfo, Matrix4x4 matrix, ref RenderManager.Instance instance)
-            //{
-            //    if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
-            //    {
-            //        instance.m_dataVector3.y = 44;
-            //    }
-            //    else
-            //    {
-            //        instance.m_dataVector3.y = 0;
-            //    }
-
-            //}
 
         }
     }
