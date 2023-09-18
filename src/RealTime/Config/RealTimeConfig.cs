@@ -282,224 +282,224 @@ namespace RealTime.Config
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service starts for residential buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 0)]
+        [ConfigItem("5BuildingService", "0Garbage", 2)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageResidentialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service ends for residential buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 1)]
+        [ConfigItem("5BuildingService", "0Garbage", 3)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageResidentialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service starts for commercial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 2)]
+        [ConfigItem("5BuildingService", "0Garbage", 4)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageCommercialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service ends for commercial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 3)]
+        [ConfigItem("5BuildingService", "0Garbage", 5)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageCommercialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service starts for industrial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 4)]
+        [ConfigItem("5BuildingService", "0Garbage", 6)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageIndustrialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service ends for industrial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 5)]
+        [ConfigItem("5BuildingService", "0Garbage", 7)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageIndustrialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service starts for office buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 6)]
+        [ConfigItem("5BuildingService", "0Garbage", 8)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageOfficeStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service ends for office buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 7)]
+        [ConfigItem("5BuildingService", "0Garbage", 9)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageOfficeEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service starts for other buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 8)]
+        [ConfigItem("5BuildingService", "0Garbage", 10)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageOtherStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the garbage service ends for other buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 9)]
+        [ConfigItem("5BuildingService", "0Garbage", 11)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float GarbageOtherEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for residential buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 10)]
+        [ConfigItem("5BuildingService", "1Mail", 0)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailResidentialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for residential buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 11)]
+        [ConfigItem("5BuildingService", "1Mail", 1)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailResidentialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for commercial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 12)]
+        [ConfigItem("5BuildingService", "1Mail", 2)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailCommercialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for commercial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 13)]
+        [ConfigItem("5BuildingService", "1Mail", 3)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailCommercialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for industrial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 14)]
+        [ConfigItem("5BuildingService", "1Mail", 4)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailIndustrialStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for industrial buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 15)]
+        [ConfigItem("5BuildingService", "1Mail", 5)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailIndustrialEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for office buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 16)]
+        [ConfigItem("5BuildingService", "1Mail", 6)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOfficeStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for office buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 17)]
+        [ConfigItem("5BuildingService", "1Mail", 7)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOfficeEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service starts for other buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 18)]
+        [ConfigItem("5BuildingService", "1Mail", 8)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOtherStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the mail service ends for other buildings.
         /// </summary>
-        [ConfigItem("5BuildingService", 19)]
+        [ConfigItem("5BuildingService", "1Mail", 9)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MailOtherEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the park maintenance service starts.
         /// </summary>
-        [ConfigItem("5BuildingService", 20)]
+        [ConfigItem("5BuildingService", "2Other", 0)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float ParkMaintenanceStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the park maintenance service ends.
         /// </summary>
-        [ConfigItem("5BuildingService", 21)]
+        [ConfigItem("5BuildingService", "2Other", 1)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float ParkMaintenanceEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service starts for small roads.
         /// </summary>
-        [ConfigItem("6RoadService", 0)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 2)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsSmallStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service ends for small roads.
         /// </summary>
-        [ConfigItem("6RoadService", 1)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 3)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsSmallEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service starts for medium roads.
         /// </summary>
-        [ConfigItem("6RoadService", 2)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 4)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsMediumStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service ends for medium roads.
         /// </summary>
-        [ConfigItem("6RoadService", 3)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 5)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsMediumEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service starts for large roads.
         /// </summary>
-        [ConfigItem("6RoadService", 4)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 6)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsLargeStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service ends for large roads.
         /// </summary>
-        [ConfigItem("6RoadService", 5)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 7)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsLargeEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service starts for highway roads.
         /// </summary>
-        [ConfigItem("6RoadService", 6)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 8)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsHighwayStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service ends for highway roads.
         /// </summary>
-        [ConfigItem("6RoadService", 7)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 9)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsHighwayEndHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service starts for other roads.
         /// </summary>
-        [ConfigItem("6RoadService", 8)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 8)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsOtherStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service ends for other roads.
         /// </summary>
-        [ConfigItem("6RoadService", 9)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 9)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsOtherEndHour { get; set; }
 
