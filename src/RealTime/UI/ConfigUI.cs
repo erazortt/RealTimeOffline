@@ -98,9 +98,8 @@ namespace RealTime.UI
             foreach (var tab in properties.GroupBy(p => p.Attribute.TabId).OrderBy(p => p.Key))
             {
                 var tabItem = itemFactory.CreateTabItem(tab.Key);
-                viewItems.Add(tabItem);
 
-                var scrollbarItem = itemFactory.CreateScrollBar(tabItem, "scrollpanel");
+                viewItems.Add(tabItem);
 
                 foreach (var group in tab.GroupBy(p => p.Attribute.GroupId).OrderBy(p => p.Key))
                 {
