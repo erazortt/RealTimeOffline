@@ -9,11 +9,9 @@ namespace RealTime.Patches
     using ColossalFramework;
     using ColossalFramework.Math;
     using HarmonyLib;
-    using RealTime.Config;
     using RealTime.Core;
     using RealTime.CustomAI;
     using RealTime.Simulation;
-    using SkyTools.Configuration;
     using UnityEngine;
 
     /// <summary>
@@ -126,7 +124,7 @@ namespace RealTime.Patches
         {
             [HarmonyPatch(typeof(BuildingAI), "CalculateUnspawnPosition",
                 new Type[] { typeof(ushort), typeof(Building), typeof(Randomizer), typeof(CitizenInfo), typeof(ushort), typeof(Vector3), typeof(Vector3), typeof(Vector2), typeof(CitizenInstance.Flags) },
-                new ArgumentType[] {ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Out, ArgumentType.Out, ArgumentType.Out, ArgumentType.Out } )]
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Out, ArgumentType.Out, ArgumentType.Out, ArgumentType.Out })]
             [HarmonyPostfix]
             private static void Postfix(BuildingAI __instance, ushort buildingID, ref Building data, ref Randomizer randomizer, CitizenInfo info, ref Vector3 position, ref Vector3 target, ref CitizenInstance.Flags specialFlags)
             {
@@ -172,7 +170,7 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(ref BuildingInfo __result, ushort buildingID, ref Building data)
             {
-                if(!RealTimeCore.ApplyBuildingPatch)
+                if (!RealTimeCore.ApplyBuildingPatch)
                 {
                     return true;
                 }
@@ -199,7 +197,7 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(BuildingInfo info, ref bool __result)
             {
-                if(!RealTimeCore.ApplyBuildingPatch)
+                if (!RealTimeCore.ApplyBuildingPatch)
                 {
                     return true;
                 }
@@ -217,7 +215,7 @@ namespace RealTime.Patches
             [HarmonyPostfix]
             private static void Postfix(bool __result, ref ushort building, BuildingInfo info)
             {
-                if(!RealTimeCore.ApplyBuildingPatch)
+                if (!RealTimeCore.ApplyBuildingPatch)
                 {
                     return;
                 }
@@ -247,7 +245,6 @@ namespace RealTime.Patches
         [HarmonyPatch]
         private sealed class CommonBuildingAI_GetColor
         {
-
             [HarmonyPatch(typeof(CommonBuildingAI), "GetColor")]
             [HarmonyPostfix]
             private static void Postfix(ushort buildingID, InfoManager.InfoMode infoMode, ref Color __result)
@@ -263,7 +260,7 @@ namespace RealTime.Patches
                     case InfoManager.InfoMode.None:
                         if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
                         {
-                            __result.a = 0f;
+                            __result.a = 0;
                         }
 
                         return;
@@ -284,23 +281,24 @@ namespace RealTime.Patches
                 if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
                 {
                     TransferManager.TransferOffer offer = default;
-	                offer.Building = buildingID;
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Garbage, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Crime, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Sick, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Sick2, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Dead, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Fire, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Fire2, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.ForestFire, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Collapsed, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Collapsed2, offer);
-	                Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Mail, offer);
-	                Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker0, offer);
-	                Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker1, offer);
-	                Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker2, offer);
-	                Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker3, offer);
-	                EmptyBuilding(__instance, buildingID, ref data, CitizenUnit.Flags.Created, onlyMoving: false);
+                    offer.Building = buildingID;
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Garbage, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Crime, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Sick, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Sick2, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Dead, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Fire, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Fire2, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.ForestFire, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Collapsed, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Collapsed2, offer);
+                    Singleton<TransferManager>.instance.RemoveOutgoingOffer(TransferManager.TransferReason.Mail, offer);
+                    Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker0, offer);
+                    Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker1, offer);
+                    Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker2, offer);
+                    Singleton<TransferManager>.instance.RemoveIncomingOffer(TransferManager.TransferReason.Worker3, offer);
+                    data.m_flags &= ~Building.Flags.Active;
+                    EmptyBuilding(__instance, buildingID, ref data, CitizenUnit.Flags.Created, onlyMoving: false);
                     return false;
                 }
                 return true;
@@ -316,22 +314,173 @@ namespace RealTime.Patches
         }
 
         [HarmonyPatch]
-        private sealed class BuildingAI_RenderMesh
+        private sealed class CommonBuildingAI_HandleCommonConsumption
         {
-            [HarmonyPatch(typeof(BuildingAI), "RenderMeshes")]
+            [HarmonyPatch(typeof(CommonBuildingAI), "HandleCommonConsumption")]
             [HarmonyPrefix]
-            public static void RenderMeshes(RenderManager.CameraInfo cameraInfo, ushort buildingID, ref Building data, int layerMask, ref RenderManager.Instance instance)
+            public static void HandleCommonConsumption(ushort buildingID, ref Building data, ref Building.Frame frameData, ref int electricityConsumption, ref int heatingConsumption, ref int waterConsumption, ref int sewageAccumulation, ref int garbageAccumulation, ref int mailAccumulation, int maxMail, DistrictPolicies.Services policies, ref int __result)
             {
-                if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
-                {
-                    instance.m_dataVector3.y = 44;
-                }
-                else
-                {
-                    instance.m_dataVector3.y = 0;
-                }
+                electricityConsumption /= 10;
+                heatingConsumption /= 10;
+                waterConsumption /= 10;
+                sewageAccumulation /= 10;
+                garbageAccumulation /= 10;
+                mailAccumulation /= 10;
             }
-
         }
+
+        [HarmonyPatch]
+        private sealed class FishFarmAI_GetColor
+        {
+            [HarmonyPatch(typeof(FishFarmAI), "GetColor")]
+            [HarmonyPrefix]
+            public static bool GetColor(FishFarmAI __instance, ushort buildingID, ref Building data, InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode, ref Color __result)
+            {
+                if(infoMode == InfoManager.InfoMode.Fishing)
+                {
+                    if(data.m_productionRate > 0)
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_activeColor;
+                    }
+                    else
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_inactiveColor;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class FishingHarborAI_GetColor
+        {
+            [HarmonyPatch(typeof(FishingHarborAI), "GetColor")]
+            [HarmonyPrefix]
+            public static bool GetColor(FishingHarborAI __instance, ushort buildingID, ref Building data, InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode, ref Color __result)
+            {
+                if (infoMode == InfoManager.InfoMode.Fishing)
+                {
+                    if (data.m_productionRate > 0)
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_activeColor;
+                    }
+                    else
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_inactiveColor;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class SchoolAI_GetColor
+        {
+            [HarmonyPatch(typeof(SchoolAI), "GetColor")]
+            [HarmonyPrefix]
+            public static bool GetColor(SchoolAI __instance, ushort buildingID, ref Building data, InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode, ref Color __result)
+            {
+                if (infoMode == InfoManager.InfoMode.Education)
+                {
+                    var level = ItemClass.Level.None;
+                    switch (subInfoMode)
+                    {
+                        case InfoManager.SubInfoMode.Default:
+                            level = ItemClass.Level.Level1;
+                            break;
+                        case InfoManager.SubInfoMode.WaterPower:
+                            level = ItemClass.Level.Level2;
+                            break;
+                        case InfoManager.SubInfoMode.WindPower:
+                            level = ItemClass.Level.Level3;
+                            break;
+                    }
+                    if (level == __instance.m_info.m_class.m_level && __instance.m_info.m_class.m_service == ItemClass.Service.Education)
+                    {
+                        if (data.m_productionRate > 0)
+                        {
+                            __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_activeColor;
+                        }
+                        else
+                        {
+                            __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_inactiveColor;
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class LibraryAI_GetColor
+        {
+            [HarmonyPatch(typeof(LibraryAI), "GetColor")]
+            [HarmonyPrefix]
+            public static bool GetColor(LibraryAI __instance, ushort buildingID, ref Building data, InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode, ref Color __result)
+            {
+                if (infoMode == InfoManager.InfoMode.Education && subInfoMode == InfoManager.SubInfoMode.LibraryEducation)
+                {
+                    if (data.m_productionRate > 0)
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_activeColor;
+                    }
+                    else
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_inactiveColor;
+                    }
+                    return false;
+                }
+                if (infoMode == InfoManager.InfoMode.Entertainment && subInfoMode == InfoManager.SubInfoMode.PipeWater)
+                {
+                    if (data.m_productionRate > 0)
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_activeColor;
+                    }
+                    else
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_inactiveColor;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class ParkAI_GetColor
+        {
+            [HarmonyPatch(typeof(ParkAI), "GetColor")]
+            [HarmonyPrefix]
+            public static bool GetColor(ParkAI __instance, ushort buildingID, ref Building data, InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode, ref Color __result)
+            {
+                if (infoMode == InfoManager.InfoMode.Entertainment)
+                {
+                    if(subInfoMode == InfoManager.SubInfoMode.WaterPower)
+                    {
+                        if (data.m_productionRate > 0)
+                        {
+                            __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_activeColor;
+                        }
+                        else
+                        {
+                            __result = Singleton<InfoManager>.instance.m_properties.m_modeProperties[(int)infoMode].m_inactiveColor;
+                        }
+                    }
+                    else
+                    {
+                        __result = Singleton<InfoManager>.instance.m_properties.m_neutralColor;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+
+
+
     }
 }
+
