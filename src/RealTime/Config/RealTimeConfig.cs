@@ -492,14 +492,14 @@ namespace RealTime.Config
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service starts for other roads.
         /// </summary>
-        [ConfigItem("6RoadService", "0MaintenanceSnow", 8)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 10)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsOtherStartHour { get; set; }
 
         /// <summary>
         /// Gets or sets the daytime hour when the maintenance and snow service ends for other roads.
         /// </summary>
-        [ConfigItem("6RoadService", "0MaintenanceSnow", 9)]
+        [ConfigItem("6RoadService", "0MaintenanceSnow", 11)]
         [ConfigItemSlider(0f, 23.5f, 0.5f, ValueType = SliderValueType.Time)]
         public float MaintenanceSnowRoadsOtherEndHour { get; set; }
 
@@ -616,11 +616,10 @@ namespace RealTime.Config
             MaintenanceSnowRoadsLargeEndHour = FastMath.Clamp(MaintenanceSnowRoadsLargeEndHour, 0f, 23.5f);
 
             MaintenanceSnowRoadsHighwayStartHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayStartHour, 0f, 23.5f);
-            MaintenanceSnowRoadsHighwayEndHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayEndHour, 0f, 23.75f);
+            MaintenanceSnowRoadsHighwayEndHour = FastMath.Clamp(MaintenanceSnowRoadsHighwayEndHour, 0f, 23.5f);
 
             MaintenanceSnowRoadsOtherStartHour = FastMath.Clamp(MaintenanceSnowRoadsOtherStartHour, 0f, 23.5f);
-            MaintenanceSnowRoadsOtherEndHour = FastMath.Clamp(MaintenanceSnowRoadsOtherEndHour, 0f, 23.75f);
-
+            MaintenanceSnowRoadsOtherEndHour = FastMath.Clamp(MaintenanceSnowRoadsOtherEndHour, 0f, 23.5f);
         }
 
         /// <summary>Resets all values to their defaults.</summary>
