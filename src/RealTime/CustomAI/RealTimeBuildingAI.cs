@@ -285,7 +285,17 @@ namespace RealTime.CustomAI
         /// <returns>
         ///   <c>true</c> if the lights should be switched off in the specified building; otherwise, <c>false</c>.
         /// </returns>
-        public bool ShouldSwitchBuildingLightsOff(ushort buildingId) => config.SwitchOffLightsAtNight && !lightStates[buildingId];
+        public bool ShouldSwitchBuildingLightsOff(ushort buildingId)
+        {
+            if(config != null && config.SwitchOffLightsAtNight)
+            {
+                if(lightStates != null && lightStates.Length > 0 && !lightStates[buildingId])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// Determines whether the building with the specified ID is an entertainment target.
