@@ -388,6 +388,17 @@ namespace RealTime.CustomAI
 
         private bool StartMovingToVisitBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort visitBuilding)
         {
+            var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
+            if (tourist_citizen.m_hotelBuilding != 0)
+            {
+                if (!touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, visitBuilding))
+                {
+                    CitizenProxy.SetVisitPlace(ref citizen, citizenId, 0);
+                    return false;
+                }
+
+                return true;
+            }
             CitizenProxy.SetVisitPlace(ref citizen, citizenId, visitBuilding);
             if (CitizenProxy.GetVisitBuilding(ref citizen) == 0)
             {
