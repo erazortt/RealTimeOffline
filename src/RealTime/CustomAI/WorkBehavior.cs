@@ -72,6 +72,7 @@ namespace RealTime.CustomAI
             {
                 case ItemClass.Service.Residential:
                 case ItemClass.Service.Tourism:
+                case ItemClass.Service.Hotel:
                 case ItemClass.Service.PoliceDepartment:
                 case ItemClass.Service.FireDepartment:
                 case ItemClass.Service.PublicTransport:
