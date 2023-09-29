@@ -11,6 +11,7 @@ namespace RealTime.Patches
     using static RealTime.GameConnection.ResidentAIConnection<ResidentAI, Citizen>;
     using RealTime.Core;
     using static MessageInfo;
+    using ColossalFramework;
 
     /// <summary>
     /// A static class that provides the patch objects and the game connection objects for the resident AI .
@@ -164,6 +165,49 @@ namespace RealTime.Patches
                 if ((citizenData.m_flags & (CitizenInstance.Flags.WaitingTaxi | CitizenInstance.Flags.WaitingTransport)) != 0)
                 {
                     RealTimeAI.ProcessWaitingForTransport(__instance, citizenData.m_citizen, instanceID);
+                }
+            }
+        }
+
+
+        [HarmonyPatch]
+        private sealed class ResidentAI_StartTransfer
+        {
+            [HarmonyPatch(typeof(ResidentAI), "StartTransfer")]
+            [HarmonyPrefix]
+            private static bool Prefix(ResidentAI __instance, uint citizenID, ref Citizen data, TransferManager.TransferReason reason, TransferManager.TransferOffer offer)
+            {
+                if (data.m_flags == Citizen.Flags.None || data.Dead && reason != TransferManager.TransferReason.Dead)
+                {
+                    return true;
+                }
+                switch (reason)
+                {
+                    case TransferManager.TransferReason.Shopping:
+                    case TransferManager.TransferReason.ShoppingB:
+                    case TransferManager.TransferReason.ShoppingC:
+                    case TransferManager.TransferReason.ShoppingD:
+                    case TransferManager.TransferReason.ShoppingE:
+                    case TransferManager.TransferReason.ShoppingF:
+                    case TransferManager.TransferReason.ShoppingG:
+                    case TransferManager.TransferReason.ShoppingH:
+                    case TransferManager.TransferReason.Entertainment:
+                    case TransferManager.TransferReason.EntertainmentB:
+                    case TransferManager.TransferReason.EntertainmentC:
+                    case TransferManager.TransferReason.EntertainmentD:
+                    case TransferManager.TransferReason.ElderCare:
+                    case TransferManager.TransferReason.ChildCare:
+                        if (data.m_homeBuilding != 0 && !data.Sick)
+                        {
+                            var building = Singleton<BuildingManager>.instance.m_buildings.m_buffer[offer.Building];
+                            if (building.Info.m_buildingAI is HotelAI && building.m_eventIndex == 0)
+                            {
+                                return false;
+                            }
+                        }
+                        return true;
+                    default:
+                        return true;
                 }
             }
         }
