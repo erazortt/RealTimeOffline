@@ -1,4 +1,4 @@
-﻿// <copyright file="RealTimeHumanAIBase.cs" company="dymanoid">
+// <copyright file="RealTimeHumanAIBase.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
@@ -132,7 +132,7 @@ namespace RealTime.CustomAI
         }
 
         /// <summary>
-        /// Searches for an upcoming event and checks whether the specified citizen ca attend it.
+        /// Searches for an upcoming event and checks whether the specified citizen can attend it.
         /// Returns null if no matching events found.
         /// </summary>
         ///
