@@ -303,18 +303,23 @@ namespace RealTime.CustomAI
 
                 case TouristTarget.Hotel:
                     var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-                    if (tourist_citizen.m_hotelBuilding == 0)
+                    if (tourist_citizen.m_hotelBuilding == 0) // generic tourist
                     {
-                        tourist_citizen.m_hotelBuilding = FindHotel(currentBuilding);
+                        ushort hotel = FindHotel(currentBuilding);
+                        if (hotel == 0)
+                        {
+                            goto case TouristTarget.LeaveCity;
+                        }
+                        StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, hotel);
                     }
-
-                    if (tourist_citizen.m_hotelBuilding == 0)
+                    else
                     {
-                        goto case TouristTarget.LeaveCity;
+                        // hotel dlc tourist
+                        touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, tourist_citizen.m_hotelBuilding);
                     }
 
                     Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} want to stay in a hotel {tourist_citizen.m_hotelBuilding}");
-                    StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, tourist_citizen.m_hotelBuilding);
+                    
                     break;
             }
         }
@@ -375,7 +380,8 @@ namespace RealTime.CustomAI
                 currentBuilding,
                 HotelSearchDistance,
                 ItemClass.Service.Commercial,
-                ItemClass.SubService.CommercialTourist);
+                ItemClass.SubService.CommercialTourist,
+                "hotel");
         }
 
         private bool StartMovingToVisitBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort visitBuilding)

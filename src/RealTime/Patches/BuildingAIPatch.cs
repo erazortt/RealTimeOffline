@@ -7,15 +7,18 @@ namespace RealTime.Patches
     using System;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
     using ColossalFramework;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
+    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
     using RealTime.CustomAI;
     using RealTime.Simulation;
     using UnityEngine;
+    using static ColossalFramework.DataBinding.BindPropertyByKey;
 
     /// <summary>
     /// A static class that provides the patch objects for the building AI game methods.
@@ -1185,6 +1188,91 @@ namespace RealTime.Patches
                     return false;
                 }
                 return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class PrivateBuildingAI_CreateBuilding
+        {
+            private delegate void CommonBuildingAICreateBuildingDelegate(CommonBuildingAI __instance, ushort buildingID, ref Building data);
+            private static readonly CommonBuildingAICreateBuildingDelegate BaseCreateBuilding = AccessTools.MethodDelegate<CommonBuildingAICreateBuildingDelegate>(typeof(CommonBuildingAI).GetMethod("CreateBuilding", BindingFlags.Instance | BindingFlags.Public), null, false);
+
+            [HarmonyPatch(typeof(PrivateBuildingAI), "CreateBuilding")]
+            [HarmonyPrefix]
+            public static bool CreateBuilding(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
+            {
+                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && data.Info.name.Contains("Hotel"))
+                {
+                    BaseCreateBuilding(__instance, buildingID, ref data);
+                    data.m_level = (byte)__instance.m_info.m_class.m_level;
+                    __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);
+                    __instance.AdjustWorkplaceCount(buildingID, ref data, ref level, ref level2, ref level3, ref level4);
+                    int workCount = level + level2 + level3 + level4;
+                    int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
+                    Singleton<CitizenManager>.instance.CreateUnits(out data.m_citizenUnits, ref Singleton<SimulationManager>.instance.m_randomizer, buildingID, 0, 0, workCount, 0, 0, 0, hotelCount);
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class PrivateBuildingAI_BuildingLoaded
+        {
+            private delegate void BuildingAIBuildingLoadedDelegate(BuildingAI __instance, ushort buildingID, ref Building data, uint version);
+            private static readonly BuildingAIBuildingLoadedDelegate BaseBuildingLoaded = AccessTools.MethodDelegate<BuildingAIBuildingLoadedDelegate>(typeof(BuildingAI).GetMethod("BuildingLoaded", BindingFlags.Instance | BindingFlags.Public), null, true);
+
+            private delegate void BuildingAIEnsureCitizenUnitsDelegate(BuildingAI __instance, ushort buildingID, ref Building data, int homeCount = 0, int workCount = 0, int visitCount = 0, int studentCount = 0, int hotelCount = 0);
+            private static readonly BuildingAIEnsureCitizenUnitsDelegate EnsureCitizenUnits = AccessTools.MethodDelegate<BuildingAIEnsureCitizenUnitsDelegate>(typeof(BuildingAI).GetMethod("EnsureCitizenUnits", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
+
+            [HarmonyPatch(typeof(PrivateBuildingAI), "BuildingLoaded")]
+            [HarmonyPrefix]
+            public static bool BuildingLoaded(PrivateBuildingAI __instance, ushort buildingID, ref Building data, uint version)
+            {
+                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && data.Info.name.Contains("Hotel"))
+                {
+                    data.m_level = (byte)Mathf.Max(data.m_level, (int)__instance.m_info.m_class.m_level);
+                    __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);
+                    __instance.AdjustWorkplaceCount(buildingID, ref data, ref level, ref level2, ref level3, ref level4);
+                    int workCount = level + level2 + level3 + level4;
+                    int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
+                    EnsureCitizenUnits(__instance, buildingID, ref data, 0, workCount, 0, 0, hotelCount);
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class PrivateBuildingAI_BuildingUpgraded
+        {
+            private delegate void BuildingAIEnsureCitizenUnitsDelegate(BuildingAI __instance, ushort buildingID, ref Building data, int homeCount = 0, int workCount = 0, int visitCount = 0, int studentCount = 0, int hotelCount = 0);
+            private static readonly BuildingAIEnsureCitizenUnitsDelegate EnsureCitizenUnits = AccessTools.MethodDelegate<BuildingAIEnsureCitizenUnitsDelegate>(typeof(BuildingAI).GetMethod("EnsureCitizenUnits", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
+
+            [HarmonyPatch(typeof(PrivateBuildingAI), "BuildingUpgraded")]
+            [HarmonyPrefix]
+            public static bool BuildingUpgraded(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
+            {
+                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && data.Info.name.Contains("Hotel"))
+                {
+                    data.m_level = (byte)Mathf.Max(data.m_level, (int)__instance.m_info.m_class.m_level);
+                    __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);
+                    __instance.AdjustWorkplaceCount(buildingID, ref data, ref level, ref level2, ref level3, ref level4);
+                    int workCount = level + level2 + level3 + level4;
+                    int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
+                    EnsureCitizenUnits(__instance, buildingID, ref data, 0, workCount, 0, 0, hotelCount);
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
 

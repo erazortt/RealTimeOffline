@@ -78,7 +78,8 @@ namespace RealTime.GameConnection
             ushort searchAreaCenterBuilding,
             float maxDistance,
             ItemClass.Service service,
-            ItemClass.SubService subService = ItemClass.SubService.None);
+            ItemClass.SubService subService = ItemClass.SubService.None,
+            string text = null);
 
         /// <summary>Finds an active building that matches the specified criteria and can accept visitors.</summary>
         /// <param name="position">The search area center point.</param>
@@ -90,7 +91,8 @@ namespace RealTime.GameConnection
             Vector3 position,
             float maxDistance,
             ItemClass.Service service,
-            ItemClass.SubService subService = ItemClass.SubService.None);
+            ItemClass.SubService subService = ItemClass.SubService.None,
+            string text = null);
 
         /// <summary>Gets the ID of an event that takes place in the building with specified ID.</summary>
         /// <param name="buildingId">The building ID to check.</param>

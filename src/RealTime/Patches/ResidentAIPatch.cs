@@ -232,7 +232,7 @@ namespace RealTime.Patches
                         {
                             target.Building = visitBuilding;
                             var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[visitBuilding].Info;
-                            if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                            if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
                             {
                                 __result = Locale.Get("CITIZEN_STATUS_HOTEL");
                             }
@@ -242,20 +242,20 @@ namespace RealTime.Patches
                 }
 
                 [HarmonyPatch(typeof(ResidentAI), "GetLocalizedStatus",
-                new Type[] { typeof(uint), typeof(CitizenInstance), typeof(InstanceID) },
+                new Type[] { typeof(ushort), typeof(CitizenInstance), typeof(InstanceID) },
                 new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Out })]
                 [HarmonyPostfix]
-                private static void Postfix2(ResidentAI __instance, uint citizenID, ref CitizenInstance data, out InstanceID target, ref string __result)
+                private static void Postfix2(ResidentAI __instance, ushort instanceID, ref CitizenInstance data, out InstanceID target, ref string __result)
                 {
                     var instance = Singleton<CitizenManager>.instance;
                     uint citizen = data.m_citizen;
                     ushort targetBuilding = data.m_targetBuilding;
                     target = InstanceID.Empty;
-                    ushort hotelBuilding = 0;
+                    ushort visitBuilding = 0;
                     ushort vehicle = 0;
                     if(citizen != 0)
                     {
-                        hotelBuilding = instance.m_citizens.m_buffer[citizen].m_hotelBuilding;
+                        visitBuilding = instance.m_citizens.m_buffer[citizen].m_visitBuilding;
                         vehicle = instance.m_citizens.m_buffer[citizen].m_vehicle;
                     }
                     if (targetBuilding != 0)
@@ -269,11 +269,11 @@ namespace RealTime.Patches
                             {
                                 if (info2.m_vehicleAI.GetOwnerID(vehicle, ref instance3.m_vehicles.m_buffer[vehicle]).Citizen == citizen)
                                 {
-                                    if (targetBuilding == hotelBuilding)
+                                    if (targetBuilding == visitBuilding)
                                     {
                                         target = InstanceID.Empty;
                                         var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
-                                        if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                                        if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
                                         {
                                             __result = Locale.Get("CITIZEN_STATUS_DRIVINGTO_HOTEL");
                                         }
@@ -284,11 +284,11 @@ namespace RealTime.Patches
                             }
                             else if (info2.m_class.m_service == ItemClass.Service.PublicTransport || info2.m_class.m_service == ItemClass.Service.Disaster)
                             {
-                                if (targetBuilding == hotelBuilding)
+                                if (targetBuilding == visitBuilding)
                                 {
                                     target = InstanceID.Empty;
                                     var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
-                                    if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                                    if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
                                     {
                                         __result = Locale.Get("CITIZEN_STATUS_TRAVELLINGTO_HOTEL");
                                     }
@@ -297,11 +297,11 @@ namespace RealTime.Patches
                         }
                         else
                         {
-                            if (targetBuilding == hotelBuilding)
+                            if (targetBuilding == visitBuilding)
                             {
                                 target = InstanceID.Empty;
                                 var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
-                                if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                                if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
                                 {
                                     __result = Locale.Get((!flag3) ? "CITIZEN_STATUS_GOINGTO_HOTEL" : "CITIZEN_STATUS_AT_HOTEL");
                                 }

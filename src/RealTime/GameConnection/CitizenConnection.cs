@@ -5,6 +5,9 @@
 namespace RealTime.GameConnection
 {
     using ColossalFramework;
+    using UnityEngine;
+    using static InvestmentAI;
+    using static RenderManager;
 
     /// <summary>
     /// A default implementation of the <see cref="ICitizenConnection{TCitizen}"/> interface.
@@ -224,16 +227,35 @@ namespace RealTime.GameConnection
             && citizen.m_instance == 0
             && citizen.m_vehicle == 0;
 
-
+        /// <summary>Sets the ID of the hotel building for the specified citizen.</summary>
+        /// <param name="citizen">The citizen to set the hotel building for.</param>
+        /// <param name="citizenId">The citizen ID.</param>
+        /// <param name="buildingId">The building ID to set as hotel.</param>
         public void SetHotel(ref Citizen citizen, uint citizenId, ushort buildingId)
         {
+            ResetHotel(ref citizen, citizenId);
             if (buildingId != 0)
             {
                 var instance3 = Singleton<BuildingManager>.instance;
                 if (citizen.AddToUnits(citizenId, instance3.m_buildings.m_buffer[buildingId].m_citizenUnits, CitizenUnit.Flags.Hotel))
                 {
                     citizen.m_hotelBuilding = buildingId;
+                    instance3.m_buildings.m_buffer[buildingId].m_roomUsed = (ushort)Mathf.Min(instance3.m_buildings.m_buffer[buildingId].m_roomUsed + 1, instance3.m_buildings.m_buffer[buildingId].m_roomMax);
                 }
+            }
+        }
+
+        /// <summary>Removes the ID of the hotel building for the specified citizen.</summary>
+        /// <param name="citizen">The citizen to remove the hotel building for.</param>
+        /// <param name="citizenId">The citizen ID.</param>
+        public void ResetHotel(ref Citizen citizen, uint citizenId)
+        {
+            if (citizen.m_hotelBuilding != 0)
+            {
+                var instance3 = Singleton<BuildingManager>.instance;
+                citizen.RemoveFromUnits(citizenId, instance3.m_buildings.m_buffer[citizen.m_hotelBuilding].m_citizenUnits, CitizenUnit.Flags.Hotel);
+                instance3.m_buildings.m_buffer[citizen.m_hotelBuilding].m_roomUsed = (ushort)Mathf.Max(instance3.m_buildings.m_buffer[citizen.m_hotelBuilding].m_roomUsed - 1, 0);
+                citizen.m_hotelBuilding = 0;
             }
         }
 

@@ -141,7 +141,8 @@ namespace RealTime.GameConnection
             ushort searchAreaCenterBuilding,
             float maxDistance,
             ItemClass.Service service,
-            ItemClass.SubService subService = ItemClass.SubService.None)
+            ItemClass.SubService subService = ItemClass.SubService.None,
+            string text = null)
         {
             if (searchAreaCenterBuilding == 0)
             {
@@ -149,7 +150,7 @@ namespace RealTime.GameConnection
             }
 
             var currentPosition = BuildingManager.instance.m_buildings.m_buffer[searchAreaCenterBuilding].m_position;
-            return FindActiveBuilding(currentPosition, maxDistance, service, subService);
+            return FindActiveBuilding(currentPosition, maxDistance, service, subService, text);
         }
 
         /// <summary>Finds an active building that matches the specified criteria and can accept visitors.</summary>
@@ -162,7 +163,8 @@ namespace RealTime.GameConnection
             Vector3 position,
             float maxDistance,
             ItemClass.Service service,
-            ItemClass.SubService subService = ItemClass.SubService.None)
+            ItemClass.SubService subService = ItemClass.SubService.None,
+            string text = null)
         {
             if (position == Vector3.zero)
             {
@@ -193,7 +195,8 @@ namespace RealTime.GameConnection
                         if (building.Info?.m_class != null
                             && building.Info.m_class.m_service == service
                             && (subService == ItemClass.SubService.None || building.Info.m_class.m_subService == subService)
-                            && (building.m_flags & combinedFlags) == requiredFlags)
+                            && (building.m_flags & combinedFlags) == requiredFlags
+                            && text != null & building.Info.name.Contains(text))
                         {
                             float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
                             if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId))
