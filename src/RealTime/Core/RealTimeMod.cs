@@ -41,7 +41,7 @@ namespace RealTime.Core
         /// <summary>Called when this mod is enabled.</summary>
         public void OnEnabled()
         {
-            Log.SetupDebug(Name, LogCategory.Schedule, LogCategory.Movement);
+            Log.SetupDebug(Name, LogCategory.Generic, LogCategory.Simulation, LogCategory.Schedule, LogCategory.Movement);
 
             Log.Info("The 'Real Time' mod has been enabled, version: " + modVersion);
             configProvider = new ConfigurationProvider<RealTimeConfig>(RealTimeConfig.StorageId, Name, () => new RealTimeConfig(latestVersion: true));
