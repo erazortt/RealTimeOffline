@@ -196,7 +196,7 @@ namespace RealTime.GameConnection
                             && building.Info.m_class.m_service == service
                             && (subService == ItemClass.SubService.None || building.Info.m_class.m_subService == subService)
                             && (building.m_flags & combinedFlags) == requiredFlags
-                            && text != null & building.Info.name.Contains(text))
+                            && text != null ? building.Info.name.Contains(text) : true)
                         {
                             float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
                             if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId))

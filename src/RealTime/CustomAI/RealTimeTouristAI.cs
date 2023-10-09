@@ -186,23 +186,28 @@ namespace RealTime.CustomAI
             }
 
             var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-
-            if (tourist_citizen.m_hotelBuilding == 0)
+            if (tourist_citizen.m_hotelBuilding == 0) // generic tourist or dlc tourist without a hotel, set a generic hotel
             {
-                tourist_citizen.m_hotelBuilding = FindHotel(targetBuildingId);
-            }
-
-
-            if (tourist_citizen.m_hotelBuilding != 0)
-            {
-                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {tourist_citizen.m_hotelBuilding} because of time or weather");
-                StartMovingToHotelBuilding(instance, citizenId, ref citizen, 0, tourist_citizen.m_hotelBuilding);
+                ushort hotel = FindHotel(targetBuildingId);
+                if (hotel == 0)
+                {
+                    Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} leaves the city because of time or weather");
+                    touristAI.FindVisitPlace(instance, citizenId, 0, touristAI.GetLeavingReason(instance, citizenId, ref citizen));
+                }
+                else
+                {
+                    Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {tourist_citizen.m_hotelBuilding} because of time or weather");
+                    StartMovingToHotelBuilding(instance, citizenId, ref citizen, 0, hotel);
+                }
+                
             }
             else
             {
-                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} leaves the city because of time or weather");
-                touristAI.FindVisitPlace(instance, citizenId, 0, touristAI.GetLeavingReason(instance, citizenId, ref citizen));
+                // hotel dlc tourist visiting their own hotel
+                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {tourist_citizen.m_hotelBuilding} because of time or weather");
+                touristAI.StartMoving(instance, citizenId, ref citizen, 0, tourist_citizen.m_hotelBuilding);
             }
+
         }
 
         private void ProcessVisit(TAI instance, uint citizenId, ref TCitizen citizen)
@@ -303,14 +308,17 @@ namespace RealTime.CustomAI
 
                 case TouristTarget.Hotel:
                     var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-                    if (tourist_citizen.m_hotelBuilding == 0) // generic tourist
+                    if (tourist_citizen.m_hotelBuilding == 0) // generic tourist or dlc tourist without a hotel
                     {
                         ushort hotel = FindHotel(currentBuilding);
                         if (hotel == 0)
                         {
                             goto case TouristTarget.LeaveCity;
                         }
-                        StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, hotel);
+                        else
+                        {
+                            StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, hotel);
+                        }
                     }
                     else
                     {
