@@ -4,8 +4,6 @@
 
 namespace RealTime.Patches
 {
-    using ColossalFramework;
-    using ColossalFramework.UI;
     using HarmonyLib;
     using RealTime.CustomAI;
     using RealTime.UI;
@@ -53,16 +51,16 @@ namespace RealTime.Patches
         }
 
         [HarmonyPatch]
-        private sealed class CityServiceWorldInfoPanel_UpdateBindings
+        private sealed class PlayerBuildingAI_GetLocalizedStatus
         {
-            [HarmonyPatch(typeof(CityServiceWorldInfoPanel), "UpdateBindings")]
+            [HarmonyPatch(typeof(PlayerBuildingAI), "GetLocalizedStatus")]
             [HarmonyPostfix]
-            private static void Postfix(CityServiceWorldInfoPanel __instance, ref InstanceID ___m_InstanceID, ref UILabel ___m_Status)
+            private static void postfix(ushort buildingID, ref Building data, ref string __result)
             {
-                //if (RealTimeAI.ShouldSwitchBuildingLightsOff(___m_InstanceID.Building) && ___m_Status != null)
-                //{
-                //    ___m_Status.text = "Closed";
-                //}
+                if (RealTimeAI != null && RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
+                {
+                    __result = "Closed";
+                }
             }
         }
     }
