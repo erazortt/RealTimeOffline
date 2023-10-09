@@ -12,6 +12,8 @@ namespace RealTime.Patches
     using RealTime.Core;
     using static MessageInfo;
     using ColossalFramework;
+    using ColossalFramework.Globalization;
+    using Epic.OnlineServices.Presence;
 
     /// <summary>
     /// A static class that provides the patch objects and the game connection objects for the resident AI .
@@ -208,6 +210,104 @@ namespace RealTime.Patches
                         return true;
                     default:
                         return true;
+                }
+            }
+
+
+            [HarmonyPatch]
+            private sealed class ResidentAI_GetLocalizedStatus
+            {
+                [HarmonyPatch(typeof(ResidentAI), "GetLocalizedStatus",
+                new Type[] { typeof(uint), typeof(Citizen), typeof(InstanceID) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Out })]
+                [HarmonyPostfix]
+                private static void Postfix1(ResidentAI __instance, uint citizenID, ref Citizen data, out InstanceID target, ref string __result)
+                {
+                    target = InstanceID.Empty;
+                    var currentLocation = data.CurrentLocation;
+                    if(currentLocation == Citizen.Location.Visit)
+                    {
+                        ushort visitBuilding = data.m_visitBuilding;
+                        if (visitBuilding != 0)
+                        {
+                            target.Building = visitBuilding;
+                            var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[visitBuilding].Info;
+                            if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                            {
+                                __result = Locale.Get("CITIZEN_STATUS_HOTEL");
+                            }
+                        }
+                        
+                    }
+                }
+
+                [HarmonyPatch(typeof(ResidentAI), "GetLocalizedStatus",
+                new Type[] { typeof(uint), typeof(CitizenInstance), typeof(InstanceID) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Out })]
+                [HarmonyPostfix]
+                private static void Postfix2(ResidentAI __instance, uint citizenID, ref CitizenInstance data, out InstanceID target, ref string __result)
+                {
+                    var instance = Singleton<CitizenManager>.instance;
+                    uint citizen = data.m_citizen;
+                    ushort targetBuilding = data.m_targetBuilding;
+                    target = InstanceID.Empty;
+                    ushort hotelBuilding = 0;
+                    ushort vehicle = 0;
+                    if(citizen != 0)
+                    {
+                        hotelBuilding = instance.m_citizens.m_buffer[citizen].m_hotelBuilding;
+                        vehicle = instance.m_citizens.m_buffer[citizen].m_vehicle;
+                    }
+                    if (targetBuilding != 0)
+                    {
+                        bool flag3 = data.m_path == 0 && (data.m_flags & CitizenInstance.Flags.HangAround) != 0;
+                        if (vehicle != 0)
+                        {
+                            var instance3 = Singleton<VehicleManager>.instance;
+                            var info2 = instance3.m_vehicles.m_buffer[vehicle].Info;
+                            if (info2.m_class.m_service == ItemClass.Service.Residential && info2.m_vehicleType != VehicleInfo.VehicleType.Bicycle)
+                            {
+                                if (info2.m_vehicleAI.GetOwnerID(vehicle, ref instance3.m_vehicles.m_buffer[vehicle]).Citizen == citizen)
+                                {
+                                    if (targetBuilding == hotelBuilding)
+                                    {
+                                        target = InstanceID.Empty;
+                                        var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
+                                        if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                                        {
+                                            __result = Locale.Get("CITIZEN_STATUS_DRIVINGTO_HOTEL");
+                                        }
+                                    }
+                                    
+
+                                }
+                            }
+                            else if (info2.m_class.m_service == ItemClass.Service.PublicTransport || info2.m_class.m_service == ItemClass.Service.Disaster)
+                            {
+                                if (targetBuilding == hotelBuilding)
+                                {
+                                    target = InstanceID.Empty;
+                                    var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
+                                    if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                                    {
+                                        __result = Locale.Get("CITIZEN_STATUS_TRAVELLINGTO_HOTEL");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (targetBuilding == hotelBuilding)
+                            {
+                                target = InstanceID.Empty;
+                                var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
+                                if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                                {
+                                    __result = Locale.Get((!flag3) ? "CITIZEN_STATUS_GOINGTO_HOTEL" : "CITIZEN_STATUS_AT_HOTEL");
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

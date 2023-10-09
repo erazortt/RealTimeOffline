@@ -50,16 +50,40 @@ namespace RealTime.Patches
 
             [HarmonyPatch(typeof(CommercialBuildingAI), "SimulationStepActive")]
             [HarmonyPostfix]
-            private static void Postfix(CommercialBuildingAI __instance, ushort buildingID, ref Building buildingData, byte __state, ref int ___totalCount)
+            private static void Postfix(CommercialBuildingAI __instance, ushort buildingID, ref Building buildingData, byte __state)
             {
                 if (__state != buildingData.m_outgoingProblemTimer)
                 {
                     RealTimeAI.ProcessBuildingProblems(buildingID, __state);
                 }
-                if(buildingData.Info.m_class.m_service == ItemClass.Service.Commercial && buildingData.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                if(buildingData.Info.m_class.m_service == ItemClass.Service.Commercial && buildingData.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && buildingData.Info.name.Contains("Hotel"))
                 {
-                    buildingData.m_roomUsed = (ushort)___totalCount;
+                    int aliveCount = 0;
+                    int totalCount = 0;
+                    Citizen.BehaviourData behaviour = default;
+                    GetVisitBehaviour(buildingID, ref buildingData, ref behaviour, ref aliveCount, ref totalCount);
+                    buildingData.m_roomUsed = (ushort)totalCount;
                     buildingData.m_roomMax = (ushort)__instance.CalculateVisitplaceCount(buildingData.Info.m_class.m_level, new Randomizer(buildingID), buildingData.Width, buildingData.Length);
+                }
+            }
+
+            private static void GetVisitBehaviour(ushort buildingID, ref Building buildingData, ref Citizen.BehaviourData behaviour, ref int aliveCount, ref int totalCount)
+            {
+                var instance = Singleton<CitizenManager>.instance;
+                uint num = buildingData.m_citizenUnits;
+                int num2 = 0;
+                while (num != 0)
+                {
+                    if ((instance.m_units.m_buffer[num].m_flags & CitizenUnit.Flags.Visit) != 0)
+                    {
+                        instance.m_units.m_buffer[num].GetCitizenVisitBehaviour(ref behaviour, ref aliveCount, ref totalCount);
+                    }
+                    num = instance.m_units.m_buffer[num].m_nextUnit;
+                    if (++num2 > 524288)
+                    {
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        break;
+                    }
                 }
             }
         }
@@ -104,13 +128,13 @@ namespace RealTime.Patches
                 var buildingInfo = buildingData.Info;
 
                 // Is this a hotel building?
-                if (buildingInfo.GetAI() is CommercialBuildingAI && buildingInfo.m_class.m_service == ItemClass.Service.Commercial && buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist)
+                if (buildingInfo.GetAI() is CommercialBuildingAI && buildingInfo.m_class.m_service == ItemClass.Service.Commercial && buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist && buildingInfo.name.Contains("Hotel"))
                 {
                     // Hotel show the label
                     s_hotelLabel.Show();
 
                     // Display hotel rooms ocuppied count out of max hotel rooms.
-                    s_hotelLabel.text = buildingData.m_roomUsed + " / " + buildingData.m_roomMax;
+                    s_hotelLabel.text = buildingData.m_roomUsed + " / " + buildingData.m_roomMax + " Rooms";
 
                 }
                 else
