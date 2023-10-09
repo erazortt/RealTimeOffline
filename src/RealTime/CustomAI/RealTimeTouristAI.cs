@@ -186,20 +186,17 @@ namespace RealTime.CustomAI
             }
 
             var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-            ushort hotel;
-            if (tourist_citizen.m_hotelBuilding != 0)
+
+            if (tourist_citizen.m_hotelBuilding == 0)
             {
-                hotel = tourist_citizen.m_hotelBuilding;
-            }
-            else
-            {
-                hotel = FindHotel(targetBuildingId);
+                tourist_citizen.m_hotelBuilding = FindHotel(targetBuildingId);
             }
 
-            if (hotel != 0)
+
+            if (tourist_citizen.m_hotelBuilding != 0)
             {
-                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {hotel} because of time or weather");
-                StartMovingToVisitBuilding(instance, citizenId, ref citizen, 0, hotel);
+                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {tourist_citizen.m_hotelBuilding} because of time or weather");
+                StartMovingToHotelBuilding(instance, citizenId, ref citizen, 0, tourist_citizen.m_hotelBuilding);
             }
             else
             {
@@ -306,23 +303,18 @@ namespace RealTime.CustomAI
 
                 case TouristTarget.Hotel:
                     var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-                    ushort hotel;
-                    if (tourist_citizen.m_hotelBuilding != 0)
+                    if (tourist_citizen.m_hotelBuilding == 0)
                     {
-                        hotel = tourist_citizen.m_hotelBuilding;
-                    }
-                    else
-                    {
-                        hotel = FindHotel(currentBuilding);
+                        tourist_citizen.m_hotelBuilding = FindHotel(currentBuilding);
                     }
 
-                    if (hotel == 0)
+                    if (tourist_citizen.m_hotelBuilding == 0)
                     {
                         goto case TouristTarget.LeaveCity;
                     }
 
-                    Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} want to stay in a hotel {hotel}");
-                    StartMovingToVisitBuilding(instance, citizenId, ref citizen, currentBuilding, hotel);
+                    Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} want to stay in a hotel {tourist_citizen.m_hotelBuilding}");
+                    StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, tourist_citizen.m_hotelBuilding);
                     break;
             }
         }
@@ -388,17 +380,6 @@ namespace RealTime.CustomAI
 
         private bool StartMovingToVisitBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort visitBuilding)
         {
-            var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-            if (tourist_citizen.m_hotelBuilding != 0)
-            {
-                if (!touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, visitBuilding))
-                {
-                    CitizenProxy.SetVisitPlace(ref citizen, citizenId, 0);
-                    return false;
-                }
-
-                return true;
-            }
             CitizenProxy.SetVisitPlace(ref citizen, citizenId, visitBuilding);
             if (CitizenProxy.GetVisitBuilding(ref citizen) == 0)
             {
@@ -409,6 +390,24 @@ namespace RealTime.CustomAI
             if (!touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, visitBuilding))
             {
                 CitizenProxy.SetVisitPlace(ref citizen, citizenId, 0);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool StartMovingToHotelBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort hotelBuilding)
+        {
+            CitizenProxy.SetHotel(ref citizen, citizenId, hotelBuilding);
+            if (CitizenProxy.GetHotelBuilding(ref citizen) == 0)
+            {
+                // Building is full and doesn't accept visitors anymore
+                return false;
+            }
+
+            if (!touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, hotelBuilding))
+            {
+                CitizenProxy.SetHotel(ref citizen, citizenId, 0);
                 return false;
             }
 

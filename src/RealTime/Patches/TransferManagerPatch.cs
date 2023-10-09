@@ -45,14 +45,11 @@ namespace RealTime.Patches
                     case TransferManager.TransferReason.ShoppingH:
                         return RealTimeAI.IsShoppingTarget(offer.Building);
 
-                    case TransferManager.TransferReason.ParkMaintenance:
-                        return RealTimeAI.IsParkMaintenanceHours(offer.Building);
-
-                    case TransferManager.TransferReason.Mail:
-                    case TransferManager.TransferReason.SortedMail:
+                    case TransferManager.TransferReason.Mail: // buildings request to send or recieve mail
+                    case TransferManager.TransferReason.UnsortedMail: // post offices request to pick up unsorted mail
                         return RealTimeAI.IsMailHours(offer.Building);
 
-                    case TransferManager.TransferReason.Garbage:
+                    case TransferManager.TransferReason.Garbage: // buildings sends outgoing offers for garbage
                         return RealTimeAI.IsGarbageHours(offer.Building);
 
                     default:
@@ -70,18 +67,15 @@ namespace RealTime.Patches
             {
                 switch (material)
                 {
-                    case TransferManager.TransferReason.UnsortedMail:
+                    case TransferManager.TransferReason.SortedMail: // post offices request to send then sorted mail
                         return RealTimeAI.IsMailHours(offer.Building);
 
-                    case TransferManager.TransferReason.RoadMaintenance:
+                    case TransferManager.TransferReason.RoadMaintenance: // road segments request snow amd road maintenance
                     case TransferManager.TransferReason.Snow:
                         return RealTimeAI.IsMaintenanceSnowRoadServiceHours(offer.NetSegment);
 
-                    case TransferManager.TransferReason.ParkMaintenance:
+                    case TransferManager.TransferReason.ParkMaintenance: // park buildings request maintenance
                         return RealTimeAI.IsParkMaintenanceHours(offer.Building);
-
-                    case TransferManager.TransferReason.Garbage:
-                        return RealTimeAI.IsGarbageHours(offer.Building);
 
                     default:
                         return true;

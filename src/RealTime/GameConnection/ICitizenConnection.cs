@@ -26,6 +26,11 @@ namespace RealTime.GameConnection
         /// <returns>The ID of the building currently visited by the citizen, or 0 if none found.</returns>
         ushort GetVisitBuilding(ref T citizen);
 
+        /// <summary>Gets the hotel building ID of the specified citizen.</summary>
+        /// <param name="citizen">The citizen to get the hotel building ID of.</param>
+        /// <returns>The ID of the citizen's hotel building, or 0 if none found.</returns>
+        ushort GetHotelBuilding(ref T citizen);
+
         /// <summary>Gets the instance ID of the specified citizen.</summary>
         /// <param name="citizen">The citizen to get the instance ID of.</param>
         /// <returns>The ID of the citizen's instance, or 0 if none found.</returns>
@@ -175,5 +180,11 @@ namespace RealTime.GameConnection
         /// <param name="citizen">The citizen to check.</param>
         /// <returns><c>true</c> if the specified citizen is empty; otherwise, <c>false</c>.</returns>
         bool IsEmpty(ref T citizen);
+
+        /// <summary>Sets the ID of the hotel building for the specified citizen.</summary>
+        /// <param name="citizen">The citizen to set the hotel building for.</param>
+        /// <param name="citizenId">The citizen ID.</param>
+        /// <param name="buildingId">The building ID to set as hotel.</param>
+        void SetHotel(ref T citizen, uint citizenId, ushort buildingId);
     }
 }

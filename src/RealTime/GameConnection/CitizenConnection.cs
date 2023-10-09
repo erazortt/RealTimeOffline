@@ -4,6 +4,8 @@
 
 namespace RealTime.GameConnection
 {
+    using ColossalFramework;
+
     /// <summary>
     /// A default implementation of the <see cref="ICitizenConnection{TCitizen}"/> interface.
     /// </summary>
@@ -111,6 +113,12 @@ namespace RealTime.GameConnection
         /// <returns>The ID of the citizen's work building, or 0 if none found.</returns>
         public ushort GetWorkBuilding(ref Citizen citizen) => citizen.m_workBuilding;
 
+
+        /// <summary>Gets the hotel building ID of the specified citizen.</summary>
+        /// <param name="citizen">The citizen to get the hotel building ID of.</param>
+        /// <returns>The ID of the citizen's hotel building, or 0 if none found.</returns>
+        public ushort GetHotelBuilding(ref Citizen citizen) => citizen.m_hotelBuilding;
+
         /// <summary>Determines whether the specified citizen is arrested.</summary>
         /// <param name="citizen">The citizen to check.</param>
         /// <returns>
@@ -215,5 +223,20 @@ namespace RealTime.GameConnection
             && citizen.m_visitBuilding == 0
             && citizen.m_instance == 0
             && citizen.m_vehicle == 0;
+
+
+        public void SetHotel(ref Citizen citizen, uint citizenId, ushort buildingId)
+        {
+            if (buildingId != 0)
+            {
+                var instance3 = Singleton<BuildingManager>.instance;
+                if (citizen.AddToUnits(citizenId, instance3.m_buildings.m_buffer[buildingId].m_citizenUnits, CitizenUnit.Flags.Hotel))
+                {
+                    citizen.m_hotelBuilding = buildingId;
+                }
+            }
+        }
+
+
     }
 }
