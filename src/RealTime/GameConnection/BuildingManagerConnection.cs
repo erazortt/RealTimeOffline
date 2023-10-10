@@ -136,13 +136,16 @@ namespace RealTime.GameConnection
         /// <param name="maxDistance">The maximum distance for search, the search area radius.</param>
         /// <param name="service">The building service type to find.</param>
         /// <param name="subService">The building sub-service type to find.</param>
+        /// <param name="textArr">The text the building name must include - array of names could be any of them.</param>
+        /// <param name="IgnoreSubServices">The building sub-service array types to ignore when searching for a building to find.</param>
         /// <returns>An ID of the first found building, or 0 if none found.</returns>
         public ushort FindActiveBuilding(
             ushort searchAreaCenterBuilding,
             float maxDistance,
             ItemClass.Service service,
             ItemClass.SubService subService = ItemClass.SubService.None,
-            string text = null)
+            string[] textArr = null,
+            ItemClass.SubService[] IgnoreSubServices = null)
         {
             if (searchAreaCenterBuilding == 0)
             {
@@ -150,7 +153,7 @@ namespace RealTime.GameConnection
             }
 
             var currentPosition = BuildingManager.instance.m_buildings.m_buffer[searchAreaCenterBuilding].m_position;
-            return FindActiveBuilding(currentPosition, maxDistance, service, subService, text);
+            return FindActiveBuilding(currentPosition, maxDistance, service, subService, textArr, IgnoreSubServices);
         }
 
         /// <summary>Finds an active building that matches the specified criteria and can accept visitors.</summary>
@@ -158,13 +161,16 @@ namespace RealTime.GameConnection
         /// <param name="maxDistance">The maximum distance for search, the search area radius.</param>
         /// <param name="service">The building service type to find.</param>
         /// <param name="subService">The building sub-service type to find.</param>
+        /// <param name="textArr">The text the building name must include - array of names could be any of them.</param>
+        /// <param name="IgnoreSubServices">The building sub-service array types to ignore when searching for a building to find.</param>
         /// <returns>An ID of the first found building, or 0 if none found.</returns>
         public ushort FindActiveBuilding(
             Vector3 position,
             float maxDistance,
             ItemClass.Service service,
             ItemClass.SubService subService = ItemClass.SubService.None,
-            string text = null)
+            string[] textArr = null,
+            ItemClass.SubService[] IgnoreSubServices = null)
         {
             if (position == Vector3.zero)
             {
@@ -195,11 +201,42 @@ namespace RealTime.GameConnection
                         if (building.Info?.m_class != null
                             && building.Info.m_class.m_service == service
                             && (subService == ItemClass.SubService.None || building.Info.m_class.m_subService == subService)
-                            && (building.m_flags & combinedFlags) == requiredFlags
-                            && text != null ? building.Info.name.Contains(text) : true)
+                            && (building.m_flags & combinedFlags) == requiredFlags)
                         {
+                            bool FoundText = false;
+                            if(textArr == null)
+                            {
+                                FoundText = true;
+                            }
+                            if(textArr != null && textArr.Length > 0)
+                            {
+                                for(int i = 0; i < textArr.Length; ++i)
+                                {
+                                    if (building.Info.name.Contains(textArr[i]))
+                                    {
+                                        FoundText = true;
+                                    }
+                                }
+                            }
+
+                            bool NoMatchSubService = false;
+                            if(IgnoreSubServices == null)
+                            {
+                                NoMatchSubService = true;
+                            }
+                            if (IgnoreSubServices != null && IgnoreSubServices.Length > 0)
+                            {
+                                for (int i = 0; i < IgnoreSubServices.Length; ++i)
+                                {
+                                    if (building.Info.m_class.m_subService == IgnoreSubServices[i])
+                                    {
+                                        NoMatchSubService = false;
+                                    }
+                                }
+                            }
+
                             float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
-                            if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId))
+                            if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId) && FoundText && NoMatchSubService)
                             {
                                 return buildingId;
                             }
