@@ -181,15 +181,20 @@ namespace RealTime.GameConnection
         /// <returns><c>true</c> if the specified citizen is empty; otherwise, <c>false</c>.</returns>
         bool IsEmpty(ref T citizen);
 
-        /// <summary>Sets the ID of the hotel building for the specified citizen.</summary>
+        /// <summary>
+        /// Sets the ID of the hotel building the specified citizen is currently staying at.
+        /// </summary>
         /// <param name="citizen">The citizen to set the hotel building for.</param>
         /// <param name="citizenId">The citizen ID.</param>
-        /// <param name="buildingId">The building ID to set as hotel.</param>
+        /// <param name="buildingId">The ID of the hotel building the citizen is staying at.</param>
         void SetHotel(ref T citizen, uint citizenId, ushort buildingId);
 
-        /// <summary>Removes the ID of the hotel building for the specified citizen.</summary>
-        /// <param name="citizen">The citizen to remove the hotel building for.</param>
+        /// <summary>
+        /// Removes the ID of the hotel building the specified citizen is currently staying at.
+        /// </summary>
+        /// <param name="citizen">The citizen to remove the hotel building from.</param>
         /// <param name="citizenId">The citizen ID.</param>
-        void ResetHotel(ref Citizen citizen, uint citizenId);
+        void ResetHotel(ref T citizen, uint citizenId);
+
     }
 }
