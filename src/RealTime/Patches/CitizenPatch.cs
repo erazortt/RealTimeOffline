@@ -4,7 +4,6 @@ namespace RealTime.Patches
     using HarmonyLib;
     using UnityEngine;
     using static Citizen;
-    using static ColossalFramework.DataBinding.BindPropertyByKey;
 
     internal class CitizenPatch
     {
