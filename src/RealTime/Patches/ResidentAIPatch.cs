@@ -10,10 +10,7 @@ namespace RealTime.Patches
     using static RealTime.GameConnection.HumanAIConnectionBase<ResidentAI, Citizen>;
     using static RealTime.GameConnection.ResidentAIConnection<ResidentAI, Citizen>;
     using RealTime.Core;
-    using static MessageInfo;
     using ColossalFramework;
-    using ColossalFramework.Globalization;
-    using Epic.OnlineServices.Presence;
 
     /// <summary>
     /// A static class that provides the patch objects and the game connection objects for the resident AI .
@@ -193,16 +190,34 @@ namespace RealTime.Patches
                     case TransferManager.TransferReason.ShoppingF:
                     case TransferManager.TransferReason.ShoppingG:
                     case TransferManager.TransferReason.ShoppingH:
+                        if (data.m_homeBuilding != 0 && !data.Sick)
+                        {
+                            var building = Singleton<BuildingManager>.instance.m_buildings.m_buffer[offer.Building];
+                            // dont shop in hotel buildings
+                            if (building.Info.m_buildingAI is HotelAI)
+                            {
+                                return false;
+                            }
+                            if(building.Info.m_class.m_service == ItemClass.Service.Commercial && (building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist || building.Info.m_class.m_subService == ItemClass.SubService.CommercialLeisure))
+                            {
+                                return false;
+                            }
+                        }
+                        return true;
                     case TransferManager.TransferReason.Entertainment:
                     case TransferManager.TransferReason.EntertainmentB:
                     case TransferManager.TransferReason.EntertainmentC:
                     case TransferManager.TransferReason.EntertainmentD:
-                    case TransferManager.TransferReason.ElderCare:
-                    case TransferManager.TransferReason.ChildCare:
                         if (data.m_homeBuilding != 0 && !data.Sick)
                         {
                             var building = Singleton<BuildingManager>.instance.m_buildings.m_buffer[offer.Building];
+                            // dont go to entertainment in hotel buildings with no events
                             if (building.Info.m_buildingAI is HotelAI && building.m_eventIndex == 0)
+                            {
+                                return false;
+                            }
+                            // dont go to entertainment in after the dark hotel buildings
+                            if (building.Info.m_class.m_service == ItemClass.Service.Commercial && building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (building.Info.name.Contains("hotel") || building.Info.name.Contains("Hotel")))
                             {
                                 return false;
                             }
@@ -210,104 +225,6 @@ namespace RealTime.Patches
                         return true;
                     default:
                         return true;
-                }
-            }
-
-
-            [HarmonyPatch]
-            private sealed class ResidentAI_GetLocalizedStatus
-            {
-                [HarmonyPatch(typeof(ResidentAI), "GetLocalizedStatus",
-                new Type[] { typeof(uint), typeof(Citizen), typeof(InstanceID) },
-                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Out })]
-                [HarmonyPostfix]
-                private static void Postfix1(ResidentAI __instance, uint citizenID, ref Citizen data, out InstanceID target, ref string __result)
-                {
-                    target = InstanceID.Empty;
-                    var currentLocation = data.CurrentLocation;
-                    if(currentLocation == Citizen.Location.Visit)
-                    {
-                        ushort visitBuilding = data.m_visitBuilding;
-                        if (visitBuilding != 0)
-                        {
-                            target.Building = visitBuilding;
-                            var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[visitBuilding].Info;
-                            if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
-                            {
-                                __result = Locale.Get("CITIZEN_STATUS_HOTEL");
-                            }
-                        }
-                        
-                    }
-                }
-
-                [HarmonyPatch(typeof(ResidentAI), "GetLocalizedStatus",
-                new Type[] { typeof(ushort), typeof(CitizenInstance), typeof(InstanceID) },
-                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Out })]
-                [HarmonyPostfix]
-                private static void Postfix2(ResidentAI __instance, ushort instanceID, ref CitizenInstance data, out InstanceID target, ref string __result)
-                {
-                    var instance = Singleton<CitizenManager>.instance;
-                    uint citizen = data.m_citizen;
-                    ushort targetBuilding = data.m_targetBuilding;
-                    target = InstanceID.Empty;
-                    ushort visitBuilding = 0;
-                    ushort vehicle = 0;
-                    if(citizen != 0)
-                    {
-                        visitBuilding = instance.m_citizens.m_buffer[citizen].m_visitBuilding;
-                        vehicle = instance.m_citizens.m_buffer[citizen].m_vehicle;
-                    }
-                    if (targetBuilding != 0)
-                    {
-                        bool flag3 = data.m_path == 0 && (data.m_flags & CitizenInstance.Flags.HangAround) != 0;
-                        if (vehicle != 0)
-                        {
-                            var instance3 = Singleton<VehicleManager>.instance;
-                            var info2 = instance3.m_vehicles.m_buffer[vehicle].Info;
-                            if (info2.m_class.m_service == ItemClass.Service.Residential && info2.m_vehicleType != VehicleInfo.VehicleType.Bicycle)
-                            {
-                                if (info2.m_vehicleAI.GetOwnerID(vehicle, ref instance3.m_vehicles.m_buffer[vehicle]).Citizen == citizen)
-                                {
-                                    if (targetBuilding == visitBuilding)
-                                    {
-                                        target = InstanceID.Empty;
-                                        var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
-                                        if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
-                                        {
-                                            __result = Locale.Get("CITIZEN_STATUS_DRIVINGTO_HOTEL");
-                                        }
-                                    }
-                                    
-
-                                }
-                            }
-                            else if (info2.m_class.m_service == ItemClass.Service.PublicTransport || info2.m_class.m_service == ItemClass.Service.Disaster)
-                            {
-                                if (targetBuilding == visitBuilding)
-                                {
-                                    target = InstanceID.Empty;
-                                    var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
-                                    if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
-                                    {
-                                        __result = Locale.Get("CITIZEN_STATUS_TRAVELLINGTO_HOTEL");
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (targetBuilding == visitBuilding)
-                            {
-                                target = InstanceID.Empty;
-                                var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding].Info;
-                                if (info != null && info.GetAI() is CommercialBuildingAI && info.m_class.m_service == ItemClass.Service.Commercial && info.m_class.m_subService == ItemClass.SubService.CommercialTourist && info.name.Contains("Hotel"))
-                                {
-                                    __result = Locale.Get((!flag3) ? "CITIZEN_STATUS_GOINGTO_HOTEL" : "CITIZEN_STATUS_AT_HOTEL");
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
