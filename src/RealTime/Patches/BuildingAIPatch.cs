@@ -7,18 +7,16 @@ namespace RealTime.Patches
     using System;
     using System.Linq;
     using System.Reflection;
-    using System.Runtime.CompilerServices;
     using ColossalFramework;
+    using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
-    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
     using RealTime.CustomAI;
     using RealTime.Simulation;
     using UnityEngine;
-    using static ColossalFramework.DataBinding.BindPropertyByKey;
 
     /// <summary>
     /// A static class that provides the patch objects for the building AI game methods.
@@ -1276,7 +1274,48 @@ namespace RealTime.Patches
             }
         }
 
-       
+        [HarmonyPatch]
+        private sealed class CommercialBuildingAI_GenerateName
+        {
+            [HarmonyPatch(typeof(CommercialBuildingAI), "GenerateName")]
+            [HarmonyPrefix]
+            public static bool GenerateName(CommercialBuildingAI __instance, ushort buildingID, InstanceID caller, ref string __result)
+            {
+                if (__instance.m_info.m_prefabDataIndex != -1)
+                {
+                    var randomizer = new Randomizer(buildingID);
+                    string key = PrefabCollection<BuildingInfo>.PrefabName((uint)__instance.m_info.m_prefabDataIndex);
+                    if(key == "3x4_winter_nightclub_02")
+                    {
+                        key = "3x4_winter_nightclub_01";
+                    }
+                    uint num = Locale.CountUnchecked("BUILDING_NAME", key);
+                    if (num != 0)
+                    {
+                        __result = Locale.Get("BUILDING_NAME", key, randomizer.Int32(num));
+                    }
+                    else if (__instance.m_info.m_class.isCommercialLowGeneric)
+                    {
+                        key = __instance.m_info.m_class.m_level.ToString();
+                        num = Locale.Count("COMMERCIAL_LOW_NAME", key);
+                        __result = Locale.Get("COMMERCIAL_LOW_NAME", key, randomizer.Int32(num));
+                    }
+                    else
+                    {
+                        key = __instance.m_info.m_class.m_level.ToString();
+                        num = Locale.Count("COMMERCIAL_HIGH_NAME", key);
+                        __result = Locale.Get("COMMERCIAL_HIGH_NAME", key, randomizer.Int32(num));
+                    }
+                }
+                else
+                {
+                    __result = null;
+                }
+                return false;
+            }
+        }
+
+
 
 
 
