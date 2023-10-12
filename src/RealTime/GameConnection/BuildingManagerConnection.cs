@@ -144,7 +144,6 @@ namespace RealTime.GameConnection
             float maxDistance,
             ItemClass.Service service,
             ItemClass.SubService subService = ItemClass.SubService.None,
-            string[] textArr = null,
             ItemClass.SubService[] IgnoreSubServices = null)
         {
             if (searchAreaCenterBuilding == 0)
@@ -153,7 +152,7 @@ namespace RealTime.GameConnection
             }
 
             var currentPosition = BuildingManager.instance.m_buildings.m_buffer[searchAreaCenterBuilding].m_position;
-            return FindActiveBuilding(currentPosition, maxDistance, service, subService, textArr, IgnoreSubServices);
+            return FindActiveBuilding(currentPosition, maxDistance, service, subService, IgnoreSubServices);
         }
 
         /// <summary>Finds an active building that matches the specified criteria and can accept visitors.</summary>
@@ -169,7 +168,6 @@ namespace RealTime.GameConnection
             float maxDistance,
             ItemClass.Service service,
             ItemClass.SubService subService = ItemClass.SubService.None,
-            string[] textArr = null,
             ItemClass.SubService[] IgnoreSubServices = null)
         {
             if (position == Vector3.zero)
@@ -203,21 +201,6 @@ namespace RealTime.GameConnection
                             && (subService == ItemClass.SubService.None || building.Info.m_class.m_subService == subService)
                             && (building.m_flags & combinedFlags) == requiredFlags)
                         {
-                            bool FoundText = false;
-                            if(textArr == null)
-                            {
-                                FoundText = true;
-                            }
-                            if(textArr != null && textArr.Length > 0)
-                            {
-                                for(int i = 0; i < textArr.Length; ++i)
-                                {
-                                    if (building.Info.name.Contains(textArr[i]))
-                                    {
-                                        FoundText = true;
-                                    }
-                                }
-                            }
 
                             bool NoMatchSubService = false;
                             if(IgnoreSubServices == null)
@@ -236,7 +219,81 @@ namespace RealTime.GameConnection
                             }
 
                             float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
-                            if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId) && FoundText && NoMatchSubService)
+                            if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId) && NoMatchSubService)
+                            {
+                                return buildingId;
+                            }
+                        }
+
+                        buildingId = building.m_nextGridBuilding;
+                        if (++counter >= BuildingManager.MAX_BUILDING_COUNT)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        /// <summary>Finds an active hotel building that matches the specified criteria.</summary>
+        /// <param name="searchAreaCenterBuilding">The building ID that represents the search area center point.</param>
+        /// <param name="maxDistance">The maximum distance for search, the search area radius.</param>
+        /// <param name="IgnoreSubServices">The building sub-service array types to ignore when searching for a building to find.</param>
+        /// <returns>An ID of the first found building, or 0 if none found.</returns>
+        public ushort FindActiveHotel(ushort searchAreaCenterBuilding, float maxDistance)
+        {
+            if (searchAreaCenterBuilding == 0)
+            {
+                return 0;
+            }
+
+            var currentPosition = BuildingManager.instance.m_buildings.m_buffer[searchAreaCenterBuilding].m_position;
+            return FindActiveHotel(currentPosition, maxDistance);
+        }
+
+        /// <summary>Finds an active hotel building that matches the specified criteria.</summary>
+        /// <param name="position">The search area center point.</param>
+        /// <param name="maxDistance">The maximum distance for search, the search area radius.</param>
+        /// <returns>An ID of the first found building, or 0 if none found.</returns>
+        public ushort FindActiveHotel(Vector3 position, float maxDistance)
+        {
+            if (position == Vector3.zero)
+            {
+                return 0;
+            }
+
+            const Building.Flags restrictedFlags = Building.Flags.Deleted | Building.Flags.Evacuating | Building.Flags.Flooded | Building.Flags.Collapsed
+                | Building.Flags.BurnedDown | Building.Flags.RoadAccessFailed;
+
+            const Building.Flags requiredFlags = Building.Flags.Created | Building.Flags.Completed | Building.Flags.Active;
+            const Building.Flags combinedFlags = requiredFlags | restrictedFlags;
+
+            int gridXFrom = Mathf.Max((int)((position.x - maxDistance) / BuildingManager.BUILDINGGRID_CELL_SIZE + BuildingGridMiddle), 0);
+            int gridZFrom = Mathf.Max((int)((position.z - maxDistance) / BuildingManager.BUILDINGGRID_CELL_SIZE + BuildingGridMiddle), 0);
+            int gridXTo = Mathf.Min((int)((position.x + maxDistance) / BuildingManager.BUILDINGGRID_CELL_SIZE + BuildingGridMiddle), MaxBuildingGridIndex);
+            int gridZTo = Mathf.Min((int)((position.z + maxDistance) / BuildingManager.BUILDINGGRID_CELL_SIZE + BuildingGridMiddle), MaxBuildingGridIndex);
+
+            float sqrMaxDistance = maxDistance * maxDistance;
+            for (int z = gridZFrom; z <= gridZTo; ++z)
+            {
+                for (int x = gridXFrom; x <= gridXTo; ++x)
+                {
+                    ushort buildingId = BuildingManager.instance.m_buildingGrid[z * BuildingManager.BUILDINGGRID_RESOLUTION + x];
+                    uint counter = 0;
+                    while (buildingId != 0)
+                    {
+                        ref var building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
+                        if (building.Info?.m_class != null
+                            && building.Info.m_class.m_service == ItemClass.Service.Commercial
+                            && building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist
+                            && (building.Info.name.Contains("Hotel") || building.Info.name.Contains("hotel"))
+                            && building.m_roomUsed < building.m_roomMax
+                            && (building.m_flags & combinedFlags) == requiredFlags)
+                        {
+                            float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
+                            if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId))
                             {
                                 return buildingId;
                             }

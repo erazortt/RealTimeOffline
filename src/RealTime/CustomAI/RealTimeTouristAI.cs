@@ -368,14 +368,7 @@ namespace RealTime.CustomAI
                 return 0;
             }
 
-            string[] textArr = new string[] { "hotel", "Hotel" };
-
-            return BuildingMgr.FindActiveBuilding(
-                currentBuilding,
-                HotelSearchDistance,
-                ItemClass.Service.Commercial,
-                ItemClass.SubService.CommercialTourist,
-                textArr);
+            return BuildingMgr.FindActiveHotel(currentBuilding, HotelSearchDistance);
         }
 
         private bool StartMovingToVisitBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort visitBuilding)

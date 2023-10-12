@@ -81,7 +81,6 @@ namespace RealTime.GameConnection
             float maxDistance,
             ItemClass.Service service,
             ItemClass.SubService subService = ItemClass.SubService.None,
-            string[] textArr = null,
             ItemClass.SubService[] IgnoreSubServices = null);
 
         /// <summary>Finds an active building that matches the specified criteria and can accept visitors.</summary>
@@ -97,8 +96,21 @@ namespace RealTime.GameConnection
             float maxDistance,
             ItemClass.Service service,
             ItemClass.SubService subService = ItemClass.SubService.None,
-            string[] textArr = null,
             ItemClass.SubService[] IgnoreSubServices = null);
+
+        /// <summary>Finds an active hotel building that matches the specified criteria and has enough rooms.</summary>
+        /// <param name="searchAreaCenterBuilding">
+        /// The building ID that represents the search area center point.
+        /// </param>
+        /// <param name="maxDistance">The maximum distance for search, the search area radius.</param>
+        /// <returns>An ID of the first found building, or 0 if none found.</returns>
+        ushort FindActiveHotel(ushort searchAreaCenterBuilding, float maxDistance);
+
+        /// <summary>Finds an active hotel building that matches the specified criteria and has enough rooms.</summary>
+        /// <param name="position">The search area center point.</param>
+        /// <param name="maxDistance">The maximum distance for search, the search area radius.</param>
+        /// <returns>An ID of the first found building, or 0 if none found.</returns>
+        ushort FindActiveHotel(Vector3 position, float maxDistance);
 
         /// <summary>Gets the ID of an event that takes place in the building with specified ID.</summary>
         /// <param name="buildingId">The building ID to check.</param>
