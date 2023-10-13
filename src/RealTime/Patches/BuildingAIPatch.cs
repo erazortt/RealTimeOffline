@@ -813,26 +813,23 @@ namespace RealTime.Patches
                         data.m_garbageBuffer += (ushort)garbageAccumulation;
                     }
                 }
-                if (garbageAccumulation != 0)
+                int garbageBuffer = data.m_garbageBuffer;
+                if (garbageBuffer >= 200 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0 && Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
                 {
-                    int garbageBuffer = data.m_garbageBuffer;
-                    if (garbageBuffer >= 200 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0 && Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
+                    int count = 0;
+                    int cargo = 0;
+                    int capacity = 0;
+                    int outside = 0;
+                    __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Garbage, ref count, ref cargo, ref capacity, ref outside);
+                    garbageBuffer -= capacity - cargo;
+                    if (garbageBuffer >= 200)
                     {
-                        int count = 0;
-                        int cargo = 0;
-                        int capacity = 0;
-                        int outside = 0;
-                        __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Garbage, ref count, ref cargo, ref capacity, ref outside);
-                        garbageBuffer -= capacity - cargo;
-                        if (garbageBuffer >= 200)
-                        {
-                            TransferManager.TransferOffer offer = default;
-                            offer.Priority = garbageBuffer / 1000;
-                            offer.Building = buildingID;
-                            offer.Position = data.m_position;
-                            offer.Amount = 1;
-                            Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Garbage, offer);
-                        }
+                        TransferManager.TransferOffer offer = default;
+                        offer.Priority = garbageBuffer / 1000;
+                        offer.Building = buildingID;
+                        offer.Position = data.m_position;
+                        offer.Amount = 1;
+                        Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Garbage, offer);
                     }
                 }
                 if (mailAccumulation != 0)
@@ -866,7 +863,7 @@ namespace RealTime.Patches
                         data.m_mailBuffer += (ushort)mailAccumulation;
                     }
                 }
-                if (Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.Industry) && Singleton<UnlockManager>.instance.Unlocked(ItemClass.SubService.PublicTransportPost) && mailAccumulation != 0 && maxMail != 0)
+                if (Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.Industry) && Singleton<UnlockManager>.instance.Unlocked(ItemClass.SubService.PublicTransportPost) && maxMail != 0)
                 {
                     int mailBuffer = data.m_mailBuffer;
                     if (mailBuffer >= maxMail / 8 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0)
