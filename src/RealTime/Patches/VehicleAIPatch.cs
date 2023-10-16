@@ -3,6 +3,7 @@ namespace RealTime.Patches
     using System;
     using HarmonyLib;
     using RealTime.CustomAI;
+    using UnityEngine;
 
     [HarmonyPatch]
     internal static class VehicleAIPatch
@@ -53,12 +54,14 @@ namespace RealTime.Patches
                 new Type[] { typeof(ushort), typeof(Vehicle), typeof(ushort), typeof(Building) },
                 new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Ref })]
             [HarmonyPrefix]
-            private static bool Prefix(FireTruckAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
+            private static bool Prefix(FireCopterAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
             {
                 if (RealTimeAI.ShouldExtinguishFire(buildingID))
                 {
                     return true;
                 }
+                int num2 = Mathf.Min(__instance.m_fireFightingRate, data.m_transferSize);
+                data.m_transferSize = (ushort)(data.m_transferSize - num2);
                 return false;
             }
 
