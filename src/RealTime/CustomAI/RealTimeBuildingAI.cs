@@ -1106,20 +1106,6 @@ namespace RealTime.CustomAI
             return true;
 
         }
-
-        //private int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
-        //{
-        //    float gridSizeX = (buildingInfoGen.m_max.x - buildingInfoGen.m_min.x) / 16f;
-        //    float gridSizeY = (buildingInfoGen.m_max.z - buildingInfoGen.m_min.z) / 16f;
-        //    float gridArea = gridSizeX * gridSizeY;
-
-        //    float volume = 0f;
-        //    float[] heights = buildingInfoGen.m_heights;
-        //    for (int i = 0; i < heights.Length; i++)
-        //    {
-        //        volume += gridArea * heights[i];
-        //    }
-        //    return (int)volume;
-        //}
+ 
     }
 }

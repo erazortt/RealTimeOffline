@@ -25,16 +25,6 @@ namespace RealTime.Patches
                 return false;
             }
 
-            [HarmonyPatch(typeof(FireTruckAI), "ArriveAtTarget")]
-            [HarmonyPrefix]
-            private static void ArriveAtTarget(ushort vehicleID, ref Vehicle data)
-            {
-                if (data.m_targetBuilding != 0)
-                {
-                    RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
-                }
-            }
-
             [HarmonyPatch(typeof(FireTruckAI), "SetTarget")]
             [HarmonyPrefix]
             private static void SetTarget(ushort vehicleID, ref Vehicle data, ushort targetBuilding)
@@ -63,16 +53,6 @@ namespace RealTime.Patches
                 int num2 = Mathf.Min(__instance.m_fireFightingRate, data.m_transferSize);
                 data.m_transferSize = (ushort)(data.m_transferSize - num2);
                 return false;
-            }
-
-            [HarmonyPatch(typeof(FireCopterAI), "ArriveAtTarget")]
-            [HarmonyPrefix]
-            private static void ArriveAtTarget(ushort vehicleID, ref Vehicle data)
-            {
-                if (data.m_targetBuilding != 0)
-                {
-                    RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
-                }
             }
 
             [HarmonyPatch(typeof(FireCopterAI), "SetTarget")]

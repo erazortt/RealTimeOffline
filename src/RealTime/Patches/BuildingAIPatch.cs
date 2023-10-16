@@ -431,6 +431,20 @@ namespace RealTime.Patches
         }
 
         [HarmonyPatch]
+        private sealed class CommonBuildingAI_BurnBuilding
+        {
+            [HarmonyPatch(typeof(CommonBuildingAI), "BurnBuilding")]
+            [HarmonyPostfix]
+            private static void Postfix(CommonBuildingAI __instance, ushort buildingID, ref Building data, InstanceManager.Group group, bool testOnly, ref bool __result)
+            {
+                if(__result)
+                {
+                    RealTimeAI.CreateBuildingFire(buildingID);
+                }
+            }
+        }
+
+        [HarmonyPatch]
         private sealed class FishingHarborAI_TrySpawnBoat
         {
             [HarmonyPatch(typeof(FishingHarborAI), "TrySpawnBoat")]
@@ -1435,14 +1449,14 @@ namespace RealTime.Patches
                 if (data.m_fireIntensity != 0)
                 {
                     int num5 = (fireTolerance == 0) ? 255 : ((data.m_fireIntensity + fireTolerance) / fireTolerance + 3 >> 2);
-                    if (!RealTimeAI.ShouldExtinguishFire(buildingID))
-                    {
-                        num5 = 0;
-                    }
                     if (num5 != 0)
                     {
                         num5 = Singleton<SimulationManager>.instance.m_randomizer.Int32(1, num5);
                         frameData.m_fireDamage = (byte)Mathf.Min(frameData.m_fireDamage + num5, 255);
+                        if (!RealTimeAI.ShouldExtinguishFire(buildingID))
+                        {
+                            frameData.m_fireDamage /= 2;
+                        }
                         HandleFireSpread(__instance, buildingID, ref data, frameData.m_fireDamage);
                         if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
                         {
@@ -1604,6 +1618,7 @@ namespace RealTime.Patches
                                     offer.Priority = Mathf.Max(8 - count - 1, 4);
                                     offer.Building = buildingID;
                                     offer.Position = data.m_position;
+                                    int volume = GetBuildingVolume(data.Info.m_generatedInfo);
                                     offer.Amount = 1;
                                     if ((policies & DistrictPolicies.Services.HelicopterPriority) != 0)
                                     {
@@ -1694,7 +1709,20 @@ namespace RealTime.Patches
             }
         }
 
+        private static int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
+        {
+            float gridSizeX = (buildingInfoGen.m_max.x - buildingInfoGen.m_min.x) / 16f;
+            float gridSizeY = (buildingInfoGen.m_max.z - buildingInfoGen.m_min.z) / 16f;
+            float gridArea = gridSizeX * gridSizeY;
 
+            float volume = 0f;
+            float[] heights = buildingInfoGen.m_heights;
+            for (int i = 0; i < heights.Length; i++)
+            {
+                volume += gridArea * heights[i];
+            }
+            return (int)volume;
+        }
 
     }
 }
