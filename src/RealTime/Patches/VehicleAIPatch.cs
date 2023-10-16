@@ -34,6 +34,16 @@ namespace RealTime.Patches
                 }
             }
 
+            [HarmonyPatch(typeof(FireTruckAI), "SetTarget")]
+            [HarmonyPrefix]
+            private static void SetTarget(ushort vehicleID, ref Vehicle data, ushort targetBuilding)
+            {
+                if (targetBuilding == 0)
+                {
+                    RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
+                }
+            }
+
         }
 
         [HarmonyPatch]
@@ -59,6 +69,16 @@ namespace RealTime.Patches
                 if (data.m_targetBuilding != 0)
                 {
                     RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
+                }
+            }
+
+            [HarmonyPatch(typeof(FireCopterAI), "SetTarget")]
+            [HarmonyPrefix]
+            private static void SetTarget(ushort vehicleID, ref Vehicle data, ushort targetBuilding)
+            {
+                if (targetBuilding == 0)
+                {
+                    RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
                 }
             }
 

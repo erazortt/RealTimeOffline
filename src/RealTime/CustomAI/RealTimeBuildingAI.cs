@@ -1067,6 +1067,9 @@ namespace RealTime.CustomAI
             }
         }
 
+
+        public void RemoveBuildingFire(ushort buildingID) => FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
+
         public bool ShouldExtinguishFire(ushort buildingID)
         {
             if (!config.RealisticFires)
@@ -1082,7 +1085,6 @@ namespace RealTime.CustomAI
                 }
                 else
                 {
-                    FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
                     return true;
                 }
             }
@@ -1097,13 +1099,12 @@ namespace RealTime.CustomAI
                     }
                     else
                     {
-                        FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
                         return true;
                     }
                 }
             }
-            FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
             return true;
+
         }
 
         //private int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
