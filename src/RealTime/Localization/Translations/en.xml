@@ -47,6 +47,10 @@
   <translation id="SwitchOffLightsMaxHeightTooltip" value="Residential, commercial, and office buildings taller than this value will not switch off lights at night" />
   <translation id="CanAbandonJourney" value="Better traffic jam and public transport waiting behavior" />
   <translation id="CanAbandonJourneyTooltip" value="If enabled, citizens can abandon their journeys when stuck in a traffic jam or waiting for public transport for too long" />
+  <translation id="RealisticFires" value="Realistic Fires random between 30 minutes to 4 hours" />
+  <translation id="RealisticFiresTooltip" value="If enabled, fires will take between 30 minutes to 4 hours to be extinguished" />
+
+  
 
   <translation id="2Quotas" value="Probabilities" />
   <translation id="SecondShiftQuota" value="Second shift workers" />

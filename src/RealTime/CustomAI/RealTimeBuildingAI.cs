@@ -1058,22 +1058,32 @@ namespace RealTime.CustomAI
             }
         }
 
+        public void CreateBuildingFire(ushort buildingID)
+        {
+            var burnTime = FireBurnTimeManager.GetBuildingBurnTime(buildingID);
+            if (burnTime.Equals(default(FireBurnTimeManager.BurnTime)))
+            {
+                FireBurnTimeManager.CreateBuildingBurnTime(buildingID, timeInfo);
+            }
+        }
+
         public bool ShouldExtinguishFire(ushort buildingID)
         {
             if (!config.RealisticFires)
             {
                 return true;
             }
-            var burnTime = FireBurnStartTimeManager.GetBuildingFireStartTime(buildingID, timeInfo);
+            var burnTime = FireBurnTimeManager.GetBuildingBurnTime(buildingID);
             if(burnTime.StartDate == timeInfo.Now.Date)
             {
-                if (burnTime.StartTime + burnTime.Duration >= timeInfo.CurrentHour)
+                if (timeInfo.CurrentHour < burnTime.StartTime + burnTime.Duration)
                 {
-                    return true;
+                    return false;
                 }
                 else
                 {
-                    return false;
+                    FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
+                    return true;
                 }
             }
             else if (burnTime.StartDate < timeInfo.Now.Date)
@@ -1081,16 +1091,18 @@ namespace RealTime.CustomAI
                 if (burnTime.StartTime + burnTime.Duration >= 24f)
                 {
                     float nextDayTime = burnTime.StartTime + burnTime.Duration - 24f;
-                    if (nextDayTime >= timeInfo.CurrentHour)
-                    {
-                        return true;
-                    }
-                    else
+                    if (timeInfo.CurrentHour < nextDayTime)
                     {
                         return false;
                     }
+                    else
+                    {
+                        FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
+                        return true;
+                    }
                 }
             }
+            FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
             return true;
         }
 

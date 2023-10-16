@@ -5,9 +5,8 @@ namespace RealTime.Serializer
     using System.Collections.Generic;
     using RealTime.CustomAI;
     using UnityEngine;
-    using static RealTime.CustomAI.FireBurnStartTimeManager;
 
-    public class FireBurnStartTimeSerializer
+    public class FireBurnTimeSerializer
     {
         // Some magic values to check we are line up correctly on the tuple boundaries
         private const uint uiTUPLE_START = 0xFEFEFEFE;
@@ -19,10 +18,10 @@ namespace RealTime.Serializer
         {
             // Write out metadata
             StorageData.WriteUInt16(iFIRE_BURN_START_TIME_DATA_VERSION, Data);
-            StorageData.WriteInt32(FireBurnStartTimeManager.FireBurnStartTime.Count, Data);
+            StorageData.WriteInt32(FireBurnTimeManager.FireBurnTime.Count, Data);
 
             // Write out each buffer settings
-            foreach (var kvp in FireBurnStartTimeManager.FireBurnStartTime)
+            foreach (var kvp in FireBurnTimeManager.FireBurnTime)
             {
                 // Write start tuple
                 StorageData.WriteUInt32(uiTUPLE_START, Data);
@@ -44,9 +43,9 @@ namespace RealTime.Serializer
             {
                 int iFireBurnStartTimeVersion = StorageData.ReadUInt16(Data, ref iIndex);
                 Debug.Log("Global: " + iGlobalVersion + " BufferVersion: " + iFireBurnStartTimeVersion + " DataLength: " + Data.Length + " Index: " + iIndex);
-                if (FireBurnStartTime == null)
+                if (FireBurnTimeManager.FireBurnTime == null)
                 {
-                    FireBurnStartTime = new Dictionary<ushort, BurnTime>();
+                    FireBurnTimeManager.FireBurnTime = new Dictionary<ushort, FireBurnTimeManager.BurnTime>();
                 }
                 int FireBurnStartTime_Count = StorageData.ReadInt32(Data, ref iIndex);
                 for (int i = 0; i < FireBurnStartTime_Count; i++)
@@ -59,14 +58,14 @@ namespace RealTime.Serializer
                     float StartTime = StorageData.ReadFloat(Data, ref iIndex);
                     float Duration = StorageData.ReadFloat(Data, ref iIndex);
 
-                    var burnTime = new BurnTime()
+                    var burnTime = new FireBurnTimeManager.BurnTime()
                     {
                         StartDate = StartDate,
                         StartTime = StartTime,
                         Duration = Duration
                     };
 
-                    FireBurnStartTime.Add(BuildingId, burnTime);
+                    FireBurnTimeManager.FireBurnTime.Add(BuildingId, burnTime);
                     CheckEndTuple($"Buffer({i})", iFireBurnStartTimeVersion, Data, ref iIndex);
                 }
             }

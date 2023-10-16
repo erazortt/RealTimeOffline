@@ -44,7 +44,7 @@ namespace RealTime.Serializer
                             while (Index < Data.Length)
                             {
                                 CheckStartTuple("FireBurnStartTimeSerializer", SaveGameFileVersion, Data, ref Index);
-                                FireBurnStartTimeSerializer.LoadData(SaveGameFileVersion, Data, ref Index);
+                                FireBurnTimeSerializer.LoadData(SaveGameFileVersion, Data, ref Index);
                                 CheckEndTuple("FireBurnStartTimeSerializer", SaveGameFileVersion, Data, ref Index);
                                 break;
                             }
@@ -92,7 +92,7 @@ namespace RealTime.Serializer
 
                     // AquacultureFarm settings
                     StorageData.WriteUInt32(uiTUPLE_START, Data);
-                    FireBurnStartTimeSerializer.SaveData(Data);
+                    FireBurnTimeSerializer.SaveData(Data);
                     StorageData.WriteUInt32(uiTUPLE_END, Data);
 
                     m_serializableData.SaveData(DataID, Data.ToArray());
