@@ -104,12 +104,12 @@ namespace RealTime.Core
             base.OnCreated(loading);
             try
             {
-                FireBurnStartTimeManager.Init();
+                FireBurnTimeManager.Init();
             }
             catch (Exception e)
             {
                 Debug.LogError(e.ToString());
-                FireBurnStartTimeManager.Deinit();
+                FireBurnTimeManager.Deinit();
             }
         }
 
