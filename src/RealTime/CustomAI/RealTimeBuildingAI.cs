@@ -11,7 +11,6 @@ namespace RealTime.CustomAI
     using RealTime.Config;
     using RealTime.GameConnection;
     using RealTime.Simulation;
-    using SkyTools.Tools;
     using static Constants;
 
     /// <summary>
@@ -1058,5 +1057,56 @@ namespace RealTime.CustomAI
                     return !workBehavior.IsBuildingWorking(service, subService);
             }
         }
+
+        public bool ShouldExtinguishFire(ushort buildingID)
+        {
+            if (!config.RealisticFires)
+            {
+                return true;
+            }
+            var burnTime = FireBurnStartTimeManager.GetBuildingFireStartTime(buildingID, timeInfo);
+            if(burnTime.StartDate == timeInfo.Now.Date)
+            {
+                if (burnTime.StartTime + burnTime.Duration >= timeInfo.CurrentHour)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (burnTime.StartDate < timeInfo.Now.Date)
+            {
+                if (burnTime.StartTime + burnTime.Duration >= 24f)
+                {
+                    float nextDayTime = burnTime.StartTime + burnTime.Duration - 24f;
+                    if (nextDayTime >= timeInfo.CurrentHour)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        //private int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
+        //{
+        //    float gridSizeX = (buildingInfoGen.m_max.x - buildingInfoGen.m_min.x) / 16f;
+        //    float gridSizeY = (buildingInfoGen.m_max.z - buildingInfoGen.m_min.z) / 16f;
+        //    float gridArea = gridSizeX * gridSizeY;
+
+        //    float volume = 0f;
+        //    float[] heights = buildingInfoGen.m_heights;
+        //    for (int i = 0; i < heights.Length; i++)
+        //    {
+        //        volume += gridArea * heights[i];
+        //    }
+        //    return (int)volume;
+        //}
     }
 }

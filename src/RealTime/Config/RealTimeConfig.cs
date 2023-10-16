@@ -106,15 +106,20 @@ namespace RealTime.Config
         /// Gets or sets the maximum height of a residential, commercial, or office building that will switch the lights off
         /// at night. All buildings higher than this value will not switch the lights off.
         /// </summary>
-        [ConfigItem("1General", "1Other", 4)]
+        [ConfigItem("1General", "1Other", 5)]
         [ConfigItemSlider(0, 100f, 5f, ValueType = SliderValueType.Default)]
         public float SwitchOffLightsMaxHeight { get; set; }
 
         /// <summary>Gets or sets a value indicating whether a citizen can abandon a journey when being too long in
         /// a traffic congestion or waiting too long for public transport.</summary>
-        [ConfigItem("1General", "1Other", 5)]
+        [ConfigItem("1General", "1Other", 6)]
         [ConfigItemCheckBox]
         public bool CanAbandonJourney { get; set; }
+
+        /// <summary>Gets or sets a value indicating whether buildings will have RealisticFires</summary>
+        [ConfigItem("1General", "1Other", 7)]
+        [ConfigItemCheckBox]
+        public bool RealisticFires { get; set; }
 
         /// <summary>
         /// Gets or sets a value that determines the percentage of the Cims that will work second shift.
@@ -642,6 +647,7 @@ namespace RealTime.Config
             SwitchOffLightsAtNight = true;
             SwitchOffLightsMaxHeight = 40f;
             CanAbandonJourney = true;
+            RealisticFires = false;
 
             SecondShiftQuota = 13;
             NightShiftQuota = 6;

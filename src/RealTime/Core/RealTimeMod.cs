@@ -2,6 +2,7 @@
 
 namespace RealTime.Core
 {
+    using System;
     using System.IO;
     using System.Linq;
     using CitiesHarmony.API;
@@ -11,12 +12,14 @@ namespace RealTime.Core
     using ColossalFramework.Plugins;
     using ICities;
     using RealTime.Config;
+    using RealTime.CustomAI;
     using RealTime.Localization;
     using RealTime.UI;
     using SkyTools.Configuration;
     using SkyTools.Localization;
     using SkyTools.Tools;
     using SkyTools.UI;
+    using UnityEngine;
 
     /// <summary>The main class of the Real Time mod.</summary>
     public class RealTimeMod : LoadingExtensionBase, IUserMod
@@ -93,6 +96,21 @@ namespace RealTime.Core
             CloseConfigUI();
             configUI = ConfigUI.Create(configProvider, itemFactory);
             ApplyLanguage();
+        }
+
+
+        public override void OnCreated(ILoading loading)
+        {
+            base.OnCreated(loading);
+            try
+            {
+                FireBurnStartTimeManager.Init();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
+                FireBurnStartTimeManager.Deinit();
+            }
         }
 
         /// <summary>

@@ -1312,7 +1312,387 @@ namespace RealTime.Patches
             }
         }
 
+        [HarmonyPatch]
+        private sealed class CommonBuildingAI_HandleFire
+        {
+            private delegate void HandleFireSpreadDelegate(CommonBuildingAI __instance, ushort buildingID, ref Building buildingData, int fireDamage);
+            private static readonly HandleFireSpreadDelegate HandleFireSpread = AccessTools.MethodDelegate<HandleFireSpreadDelegate>(typeof(CommonBuildingAI).GetMethod("HandleFireSpread", BindingFlags.Instance | BindingFlags.NonPublic), null, true);
 
+            private delegate int GetCollapseTimeDelegate(CommonBuildingAI __instance);
+            private static readonly GetCollapseTimeDelegate GetCollapseTime = AccessTools.MethodDelegate<GetCollapseTimeDelegate>(typeof(CommonBuildingAI).GetMethod("GetCollapseTime", BindingFlags.Instance | BindingFlags.NonPublic), null, true);
+
+            private delegate void RemovePeopleDelegate(CommonBuildingAI __instance, ushort buildingID, ref Building data, int killPercentage);
+            private static readonly RemovePeopleDelegate RemovePeople = AccessTools.MethodDelegate<RemovePeopleDelegate>(typeof(CommonBuildingAI).GetMethod("RemovePeople", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
+
+            [HarmonyPatch(typeof(CommonBuildingAI), "HandleFire")]
+            [HarmonyPrefix]
+            public static bool HandleFire(CommonBuildingAI __instance, ushort buildingID, ref Building data, ref Building.Frame frameData, DistrictPolicies.Services policies)
+            {
+                if (__instance.GetFireParameters(buildingID, ref data, out int fireHazard, out int fireSize, out int fireTolerance) && (policies & DistrictPolicies.Services.SmokeDetectors) != 0)
+                {
+                    fireHazard = fireHazard * 75 / 100;
+                    Singleton<EconomyManager>.instance.FetchResource(EconomyManager.Resource.PolicyCost, 32, __instance.m_info.m_class);
+                }
+                if (fireHazard != 0 && data.m_fireIntensity == 0 && frameData.m_fireDamage == 0 && Singleton<SimulationManager>.instance.m_randomizer.Int32(8388608u) < fireHazard && Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.FireDepartment) && !Singleton<BuildingManager>.instance.m_firesDisabled)
+                {
+                    float num = Singleton<TerrainManager>.instance.WaterLevel(VectorUtils.XZ(data.m_position));
+                    if (num <= data.m_position.y)
+                    {
+                        if (Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.NaturalDisasters))
+                        {
+                            var disasterInfo = DisasterManager.FindDisasterInfo<StructureFireAI>();
+                            if (disasterInfo is object)
+                            {
+                                var instance = Singleton<DisasterManager>.instance;
+                                if (instance.CreateDisaster(out ushort disasterIndex, disasterInfo))
+                                {
+                                    int num2 = Singleton<SimulationManager>.instance.m_randomizer.Int32(100u);
+                                    num2 = 10 + num2 * num2 * num2 * num2 / 1055699;
+                                    instance.m_disasters.m_buffer[disasterIndex].m_intensity = (byte)num2;
+                                    instance.m_disasters.m_buffer[disasterIndex].m_targetPosition = data.m_position;
+                                    disasterInfo.m_disasterAI.StartNow(disasterIndex, ref instance.m_disasters.m_buffer[disasterIndex]);
+                                    disasterInfo.m_disasterAI.ActivateNow(disasterIndex, ref instance.m_disasters.m_buffer[disasterIndex]);
+                                    InstanceID srcID = default;
+                                    InstanceID dstID = default;
+                                    srcID.Disaster = disasterIndex;
+                                    dstID.Building = buildingID;
+                                    Singleton<InstanceManager>.instance.CopyGroup(srcID, dstID);
+                                    data.m_flags &= ~Building.Flags.Flooded;
+                                    data.m_fireIntensity = (byte)fireSize;
+                                    frameData.m_fireDamage = 133;
+                                    __instance.BuildingDeactivated(buildingID, ref data);
+                                    Singleton<BuildingManager>.instance.UpdateBuildingRenderer(buildingID, updateGroup: true);
+                                    Singleton<BuildingManager>.instance.UpdateBuildingColors(buildingID);
+                                    Singleton<DisasterManager>.instance.m_disasters.m_buffer[disasterIndex].m_buildingFireCount++;
+                                    if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                                    {
+                                        int num3 = 0;
+                                        ushort subBuilding = data.m_subBuilding;
+                                        while (subBuilding != 0)
+                                        {
+                                            var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].Info;
+                                            if (info.m_buildingAI.GetFireParameters(subBuilding, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding], out int _, out int _, out int _))
+                                            {
+                                                dstID.Building = subBuilding;
+                                                Singleton<InstanceManager>.instance.CopyGroup(srcID, dstID);
+                                                Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].m_flags &= ~Building.Flags.Flooded;
+                                                Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].m_fireIntensity = (byte)fireSize;
+                                                var lastFrameData = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].GetLastFrameData();
+                                                lastFrameData.m_fireDamage = 133;
+                                                Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].SetLastFrameData(lastFrameData);
+                                                info.m_buildingAI.BuildingDeactivated(subBuilding, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding]);
+                                                Singleton<BuildingManager>.instance.UpdateBuildingRenderer(subBuilding, updateGroup: true);
+                                                Singleton<BuildingManager>.instance.UpdateBuildingColors(subBuilding);
+                                            }
+                                            subBuilding = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].m_subBuilding;
+                                            if (++num3 > 49152)
+                                            {
+                                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            data.m_flags &= ~Building.Flags.Flooded;
+                            data.m_fireIntensity = (byte)fireSize;
+                            frameData.m_fireDamage = 133;
+                            __instance.BuildingDeactivated(buildingID, ref data);
+                            Singleton<BuildingManager>.instance.UpdateBuildingRenderer(buildingID, updateGroup: true);
+                            Singleton<BuildingManager>.instance.UpdateBuildingColors(buildingID);
+                            if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                            {
+                                int num4 = 0;
+                                ushort subBuilding2 = data.m_subBuilding;
+                                while (subBuilding2 != 0)
+                                {
+                                    var info2 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].Info;
+                                    if (info2.m_buildingAI.GetFireParameters(subBuilding2, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2], out int _, out int _, out int _))
+                                    {
+                                        Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].m_flags &= ~Building.Flags.Flooded;
+                                        Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].m_fireIntensity = (byte)fireSize;
+                                        var lastFrameData2 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].GetLastFrameData();
+                                        lastFrameData2.m_fireDamage = 133;
+                                        Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].SetLastFrameData(lastFrameData2);
+                                        info2.m_buildingAI.BuildingDeactivated(subBuilding2, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2]);
+                                        Singleton<BuildingManager>.instance.UpdateBuildingRenderer(subBuilding2, updateGroup: true);
+                                        Singleton<BuildingManager>.instance.UpdateBuildingColors(subBuilding2);
+                                    }
+                                    subBuilding2 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].m_subBuilding;
+                                    if (++num4 > 49152)
+                                    {
+                                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (data.m_fireIntensity != 0)
+                {
+                    int num5 = (fireTolerance == 0) ? 255 : ((data.m_fireIntensity + fireTolerance) / fireTolerance + 3 >> 2);
+                    if (!RealTimeAI.ShouldExtinguishFire(buildingID))
+                    {
+                        num5 = 0;
+                    }
+                    if (num5 != 0)
+                    {
+                        num5 = Singleton<SimulationManager>.instance.m_randomizer.Int32(1, num5);
+                        frameData.m_fireDamage = (byte)Mathf.Min(frameData.m_fireDamage + num5, 255);
+                        HandleFireSpread(__instance, buildingID, ref data, frameData.m_fireDamage);
+                        if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                        {
+                            int num6 = 0;
+                            ushort subBuilding3 = data.m_subBuilding;
+                            while (subBuilding3 != 0)
+                            {
+                                var info3 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3].Info;
+                                if (info3.m_buildingAI.GetFireParameters(subBuilding3, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3], out int _, out int _, out int _))
+                                {
+                                    var lastFrameData3 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3].GetLastFrameData();
+                                    lastFrameData3.m_fireDamage = frameData.m_fireDamage;
+                                    Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3].SetLastFrameData(lastFrameData3);
+                                }
+                                subBuilding3 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3].m_subBuilding;
+                                if (++num6 > 49152)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    break;
+                                }
+                            }
+                        }
+                        if (frameData.m_fireDamage == byte.MaxValue)
+                        {
+                            frameData.m_constructState = (byte)Mathf.Max(0, frameData.m_constructState - 1088 / GetCollapseTime(__instance));
+                            data.SetFrameData(Singleton<SimulationManager>.instance.m_currentFrameIndex, frameData);
+                            InstanceID id = default;
+                            id.Building = buildingID;
+                            var group = Singleton<InstanceManager>.instance.GetGroup(id);
+                            if (group != null && (data.m_flags & Building.Flags.Collapsed) == 0)
+                            {
+                                ushort disaster = group.m_ownerInstance.Disaster;
+                                if (disaster != 0)
+                                {
+                                    Singleton<DisasterManager>.instance.m_disasters.m_buffer[disaster].m_collapsedCount++;
+                                }
+                            }
+                            if (frameData.m_constructState == 0)
+                            {
+                                Singleton<InstanceManager>.instance.SetGroup(id, null);
+                            }
+                            data.m_levelUpProgress = 0;
+                            data.m_fireIntensity = 0;
+                            data.m_garbageBuffer = 0;
+                            data.m_flags = (data.m_flags & (Building.Flags.ContentMask | Building.Flags.IncomingOutgoing | Building.Flags.CapacityFull | Building.Flags.Created | Building.Flags.Deleted | Building.Flags.Original | Building.Flags.CustomName | Building.Flags.Untouchable | Building.Flags.FixedHeight | Building.Flags.RateReduced | Building.Flags.HighDensity | Building.Flags.RoadAccessFailed | Building.Flags.Evacuating | Building.Flags.Completed | Building.Flags.Active | Building.Flags.Abandoned | Building.Flags.Demolishing | Building.Flags.ZonesUpdated | Building.Flags.Downgrading | Building.Flags.Collapsed | Building.Flags.Upgrading | Building.Flags.SecondaryLoading | Building.Flags.Hidden | Building.Flags.EventActive | Building.Flags.Flooded | Building.Flags.Filling)) | Building.Flags.Collapsed;
+                            RemovePeople(__instance, buildingID, ref data, 90);
+                            __instance.BuildingDeactivated(buildingID, ref data);
+                            if (__instance is CampusBuildingAI campusBuildingAI)
+                            {
+                                var instance2 = Singleton<DistrictManager>.instance;
+                                byte area = campusBuildingAI.GetArea(buildingID, ref data);
+                                instance2.m_parks.m_buffer[area].DeactivateCampusBuilding(campusBuildingAI.m_campusAttractiveness);
+                            }
+                            if (__instance.m_info.m_hasParkingSpaces != 0)
+                            {
+                                Singleton<BuildingManager>.instance.UpdateParkingSpaces(buildingID, ref data);
+                            }
+                            Singleton<BuildingManager>.instance.UpdateBuildingRenderer(buildingID, updateGroup: true);
+                            Singleton<BuildingManager>.instance.UpdateBuildingColors(buildingID);
+                            var properties = Singleton<GuideManager>.instance.m_properties;
+                            if (properties is object)
+                            {
+                                Singleton<BuildingManager>.instance.m_buildingOnFire.Deactivate(buildingID, soft: false);
+                            }
+                            if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                            {
+                                int num7 = 0;
+                                ushort subBuilding4 = data.m_subBuilding;
+                                while (subBuilding4 != 0)
+                                {
+                                    var info4 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].Info;
+                                    if (frameData.m_constructState == 0)
+                                    {
+                                        id.Building = subBuilding4;
+                                        Singleton<InstanceManager>.instance.SetGroup(id, null);
+                                    }
+                                    Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].m_levelUpProgress = 0;
+                                    Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].m_fireIntensity = 0;
+                                    Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].m_garbageBuffer = 0;
+                                    Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].m_flags |= Building.Flags.Collapsed;
+                                    var lastFrameData4 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].GetLastFrameData();
+                                    lastFrameData4.m_constructState = frameData.m_constructState;
+                                    Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].SetLastFrameData(lastFrameData4);
+                                    info4.m_buildingAI.BuildingDeactivated(subBuilding4, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4]);
+                                    if (info4.m_hasParkingSpaces != 0)
+                                    {
+                                        Singleton<BuildingManager>.instance.UpdateParkingSpaces(subBuilding4, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4]);
+                                    }
+                                    Singleton<BuildingManager>.instance.UpdateBuildingRenderer(subBuilding4, updateGroup: true);
+                                    Singleton<BuildingManager>.instance.UpdateBuildingColors(subBuilding4);
+                                    Singleton<BuildingManager>.instance.UpdateFlags(subBuilding4, Building.Flags.Collapsed);
+                                    subBuilding4 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding4].m_subBuilding;
+                                    if (++num7 > 49152)
+                                    {
+                                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            float num8 = Singleton<TerrainManager>.instance.WaterLevel(VectorUtils.XZ(data.m_position));
+                            if (num8 > data.m_position.y + 1f)
+                            {
+                                InstanceID id2 = default;
+                                id2.Building = buildingID;
+                                Singleton<InstanceManager>.instance.SetGroup(id2, null);
+                                data.m_fireIntensity = 0;
+                                var flags = data.m_flags;
+                                if (data.m_productionRate != 0 && (data.m_flags & Building.Flags.Evacuating) == 0)
+                                {
+                                    data.m_flags |= Building.Flags.Active;
+                                }
+                                var flags2 = data.m_flags;
+                                Singleton<BuildingManager>.instance.UpdateBuildingRenderer(buildingID, frameData.m_fireDamage == 0 || (data.m_flags & (Building.Flags.Abandoned | Building.Flags.Collapsed)) != 0);
+                                Singleton<BuildingManager>.instance.UpdateBuildingColors(buildingID);
+                                if (flags2 != flags)
+                                {
+                                    Singleton<BuildingManager>.instance.UpdateFlags(buildingID, flags2 ^ flags);
+                                }
+                                var properties2 = Singleton<GuideManager>.instance.m_properties;
+                                if (properties2 is object)
+                                {
+                                    Singleton<BuildingManager>.instance.m_buildingOnFire.Deactivate(buildingID, soft: false);
+                                }
+                                if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                                {
+                                    int num9 = 0;
+                                    ushort subBuilding5 = data.m_subBuilding;
+                                    while (subBuilding5 != 0)
+                                    {
+                                        id2.Building = subBuilding5;
+                                        Singleton<InstanceManager>.instance.SetGroup(id2, null);
+                                        Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding5].m_fireIntensity = 0;
+                                        Singleton<BuildingManager>.instance.UpdateBuildingRenderer(subBuilding5, updateGroup: true);
+                                        Singleton<BuildingManager>.instance.UpdateBuildingColors(subBuilding5);
+                                        subBuilding5 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding5].m_subBuilding;
+                                        if (++num9 > 49152)
+                                        {
+                                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                fireSize = Mathf.Min(5000, data.m_fireIntensity * data.Width * data.Length);
+                                int count = 0;
+                                int cargo = 0;
+                                int capacity = 0;
+                                int outside = 0;
+                                __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Fire, ref count, ref cargo, ref capacity, ref outside);
+                                __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Fire2, ref count, ref cargo, ref capacity, ref outside);
+                                if (capacity * 25 < fireSize)
+                                {
+                                    TransferManager.TransferOffer offer = default;
+                                    offer.Priority = Mathf.Max(8 - count - 1, 4);
+                                    offer.Building = buildingID;
+                                    offer.Position = data.m_position;
+                                    offer.Amount = 1;
+                                    if ((policies & DistrictPolicies.Services.HelicopterPriority) != 0)
+                                    {
+                                        var instance3 = Singleton<DistrictManager>.instance;
+                                        byte district = instance3.GetDistrict(data.m_position);
+                                        instance3.m_districts.m_buffer[district].m_servicePoliciesEffect |= DistrictPolicies.Services.HelicopterPriority;
+                                        offer.Amount = 2;
+                                        Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire2, offer);
+                                    }
+                                    else if ((data.m_flags & Building.Flags.RoadAccessFailed) != 0)
+                                    {
+                                        offer.Amount = 2;
+                                        Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire2, offer);
+                                    }
+                                    else
+                                    {
+                                        Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire, offer);
+                                        Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire2, offer);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (data.m_fireIntensity != 0)
+                    {
+                        if (frameData.m_fireDamage >= 192)
+                        {
+                            data.m_problems = Notification.AddProblems(data.m_problems, Notification.Problem1.Fire | Notification.Problem1.MajorProblem);
+                        }
+                        else
+                        {
+                            data.m_problems = Notification.AddProblems(data.m_problems, Notification.Problem1.Fire);
+                        }
+                        var position = data.CalculateSidewalkPosition();
+                        if (PathManager.FindPathPosition(position, ItemClass.Service.Road, NetInfo.LaneType.Vehicle | NetInfo.LaneType.TransportVehicle, VehicleInfo.VehicleType.Car, VehicleInfo.VehicleCategory.All, allowUnderground: false, requireConnect: false, 32f, excludeLaneWidth: false, checkPedestrianStreet: false, out var pathPos))
+                        {
+                            Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].AddTraffic(65535, 0);
+                        }
+                        float num10 = VectorUtils.LengthXZ(__instance.m_info.m_size) * 0.5f;
+                        int num11 = Mathf.Max(10, Mathf.RoundToInt((float)(int)data.m_fireIntensity * Mathf.Min(1f, num10 / 33.75f)));
+                        Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Burned, num11, num11, data.m_position, num10, refresh: true);
+                    }
+                    return false;
+                }
+                if (frameData.m_fireDamage != 0 && (data.m_flags & Building.Flags.Collapsed) == 0)
+                {
+                    frameData.m_fireDamage = (byte)Mathf.Max(frameData.m_fireDamage - 1, 0);
+                    if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                    {
+                        int num12 = 0;
+                        ushort subBuilding6 = data.m_subBuilding;
+                        while (subBuilding6 != 0)
+                        {
+                            var lastFrameData5 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding6].GetLastFrameData();
+                            lastFrameData5.m_fireDamage = (byte)Mathf.Min(frameData.m_fireDamage, lastFrameData5.m_fireDamage);
+                            Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding6].SetLastFrameData(lastFrameData5);
+                            subBuilding6 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding6].m_subBuilding;
+                            if (++num12 > 49152)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                    }
+                    if (frameData.m_fireDamage == 0)
+                    {
+                        data.SetFrameData(Singleton<SimulationManager>.instance.m_currentFrameIndex, frameData);
+                        Singleton<BuildingManager>.instance.UpdateBuildingRenderer(buildingID, updateGroup: true);
+                        if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
+                        {
+                            int num13 = 0;
+                            ushort subBuilding7 = data.m_subBuilding;
+                            while (subBuilding7 != 0)
+                            {
+                                Singleton<BuildingManager>.instance.UpdateBuildingRenderer(subBuilding7, updateGroup: true);
+                                subBuilding7 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding7].m_subBuilding;
+                                if (++num13 > 49152)
+                                {
+                                    CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                data.m_problems = Notification.RemoveProblems(data.m_problems, Notification.Problem1.Fire);
+                return false;
+            }
+        }
 
 
 

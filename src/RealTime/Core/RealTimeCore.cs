@@ -212,6 +212,7 @@ namespace RealTime.Core
             ResidentAIPatch.RealTimeAI = null;
             TouristAIPatch.RealTimeAI = null;
             BuildingAIPatch.RealTimeAI = null;
+            VehicleAIPatch.RealTimeAI = null;
             WorldInfoPanelPatch.RealTimeAI = null;
             BuildingAIPatch.WeatherInfo = null;
             TransferManagerPatch.RealTimeAI = null;
@@ -335,6 +336,7 @@ namespace RealTime.Core
 
             BuildingAIPatch.RealTimeAI = realTimePrivateBuildingAI;
             BuildingAIPatch.WeatherInfo = gameConnections.WeatherInfo;
+            VehicleAIPatch.RealTimeAI = realTimePrivateBuildingAI;
             TransferManagerPatch.RealTimeAI = realTimePrivateBuildingAI;
             WorldInfoPanelPatch.RealTimeAI = realTimePrivateBuildingAI;
 
