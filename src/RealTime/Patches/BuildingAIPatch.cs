@@ -1656,6 +1656,7 @@ namespace RealTime.Patches
                         if (PathManager.FindPathPosition(position, ItemClass.Service.Road, NetInfo.LaneType.Vehicle | NetInfo.LaneType.TransportVehicle, VehicleInfo.VehicleType.Car, VehicleInfo.VehicleCategory.All, allowUnderground: false, requireConnect: false, 32f, excludeLaneWidth: false, checkPedestrianStreet: false, out var pathPos))
                         {
                             Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].AddTraffic(65535, 0);
+                            BlockSegmentsOnBothSides(pathPos);
                         }
                         float num10 = VectorUtils.LengthXZ(__instance.m_info.m_size) * 0.5f;
                         int num11 = Mathf.Max(10, Mathf.RoundToInt((float)(int)data.m_fireIntensity * Mathf.Min(1f, num10 / 33.75f)));
@@ -1722,6 +1723,30 @@ namespace RealTime.Patches
                 volume += gridArea * heights[i];
             }
             return (int)volume;
+        }
+
+        private static void BlockSegmentsOnBothSides(PathUnit.Position pathPos)
+        {
+            ushort segment = pathPos.m_segment;
+
+            ushort end_node = Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].m_endNode;
+
+            ushort start_node = Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].m_startNode;
+
+
+            Singleton<NetManager>.instance.m_segments.m_buffer[segment].GetLeftAndRightSegments(end_node, out ushort endLeftSegment, out ushort endRightSegment);
+
+            Singleton<NetManager>.instance.m_segments.m_buffer[endLeftSegment].AddTraffic(65535, 0);
+
+            Singleton<NetManager>.instance.m_segments.m_buffer[endRightSegment].AddTraffic(65535, 0);
+
+
+            Singleton<NetManager>.instance.m_segments.m_buffer[segment].GetLeftAndRightSegments(start_node, out ushort startLeftSegment, out ushort startRightSegment);
+
+            Singleton<NetManager>.instance.m_segments.m_buffer[startLeftSegment].AddTraffic(65535, 0);
+
+            Singleton<NetManager>.instance.m_segments.m_buffer[startRightSegment].AddTraffic(65535, 0);
+
         }
 
     }
