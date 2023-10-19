@@ -293,7 +293,15 @@ namespace RealTime.GameConnection
                             && (building.m_flags & combinedFlags) == requiredFlags)
                         {
                             float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
-                            if (sqrDistance < sqrMaxDistance && BuildingCanBeVisited(buildingId))
+                            if (sqrDistance < sqrMaxDistance && HotelCanBeCheckedInTo(buildingId))
+                            {
+                                return buildingId;
+                            }
+                        }
+                        else if (building.Info?.m_class != null && building.Info.m_class.m_service == ItemClass.Service.Hotel && building.m_roomUsed < building.m_roomMax && (building.m_flags & combinedFlags) == requiredFlags)
+                        {
+                            float sqrDistance = Vector3.SqrMagnitude(position - building.m_position);
+                            if (sqrDistance < sqrMaxDistance && HotelCanBeCheckedInTo(buildingId))
                             {
                                 return buildingId;
                             }
@@ -674,6 +682,36 @@ namespace RealTime.GameConnection
             {
                 ref var currentUnit = ref citizenUnitBuffer[currentUnitId];
                 if ((currentUnit.m_flags & CitizenUnit.Flags.Visit) != 0
+                    && (currentUnit.m_citizen0 == 0
+                        || currentUnit.m_citizen1 == 0
+                        || currentUnit.m_citizen2 == 0
+                        || currentUnit.m_citizen3 == 0
+                        || currentUnit.m_citizen4 == 0))
+                {
+                    return true;
+                }
+
+                currentUnitId = currentUnit.m_nextUnit;
+                if (++counter >= unitBufferSize)
+                {
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HotelCanBeCheckedInTo(ushort buildingId)
+        {
+            var citizenUnitBuffer = Singleton<CitizenManager>.instance.m_units.m_buffer;
+            uint currentUnitId = BuildingManager.instance.m_buildings.m_buffer[buildingId].m_citizenUnits;
+            int unitBufferSize = citizenUnitBuffer.Length;
+
+            uint counter = 0;
+            while (currentUnitId != 0)
+            {
+                ref var currentUnit = ref citizenUnitBuffer[currentUnitId];
+                if ((currentUnit.m_flags & CitizenUnit.Flags.Hotel) != 0
                     && (currentUnit.m_citizen0 == 0
                         || currentUnit.m_citizen1 == 0
                         || currentUnit.m_citizen2 == 0

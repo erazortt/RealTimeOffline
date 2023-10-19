@@ -5,9 +5,7 @@
 namespace RealTime.CustomAI
 {
     using System;
-    using System.Security.Cryptography;
     using ColossalFramework;
-    using ICities;
     using RealTime.Config;
     using RealTime.Events;
     using RealTime.GameConnection;
@@ -185,20 +183,19 @@ namespace RealTime.CustomAI
                 return;
             }
 
-            var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-            if (tourist_citizen.m_hotelBuilding == 0)
+            if (Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding == 0)
             {
-                tourist_citizen.m_hotelBuilding = FindHotel(targetBuildingId);
+                Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding = FindHotel(targetBuildingId);
             }
-            if (tourist_citizen.m_hotelBuilding == 0)
+            if (Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding == 0)
             {
                 Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} leaves the city because of time or weather");
                 touristAI.FindVisitPlace(instance, citizenId, 0, touristAI.GetLeavingReason(instance, citizenId, ref citizen));
             }
             else
             {
-                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {tourist_citizen.m_hotelBuilding} because of time or weather");
-                StartMovingToHotelBuilding(instance, citizenId, ref citizen, 0, tourist_citizen.m_hotelBuilding);
+                Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} changes the target and moves to a hotel {Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding} because of time or weather");
+                StartMovingToHotelBuilding(instance, citizenId, ref citizen, 0, Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding);
             }
         }
 
@@ -299,18 +296,17 @@ namespace RealTime.CustomAI
                     break;
 
                 case TouristTarget.Hotel:
-                    var tourist_citizen = Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId];
-                    if (tourist_citizen.m_hotelBuilding == 0)
+                    if (Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding == 0)
                     {
-                        tourist_citizen.m_hotelBuilding = FindHotel(currentBuilding);
+                        Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding = FindHotel(currentBuilding);
                     }
-                    if (tourist_citizen.m_hotelBuilding == 0)
+                    if (Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding == 0)
                     {
                         goto case TouristTarget.LeaveCity;
                     }
 
-                    StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, tourist_citizen.m_hotelBuilding);
-                    Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} want to stay in a hotel {tourist_citizen.m_hotelBuilding}");
+                    StartMovingToHotelBuilding(instance, citizenId, ref citizen, currentBuilding, Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding);
+                    Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} want to stay in a hotel {Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding}");
                     
                     break;
             }
