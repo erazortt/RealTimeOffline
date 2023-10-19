@@ -11,6 +11,7 @@ namespace RealTime.Patches
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
+    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
@@ -441,6 +442,62 @@ namespace RealTime.Patches
                 {
                     RealTimeAI.CreateBuildingFire(buildingID);
                 }
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class SchoolAI_GetCurrentRange
+        {
+            [HarmonyPatch(typeof(SchoolAI), "GetCurrentRange")]
+            [HarmonyPrefix]
+            private static bool Prefix(SchoolAI __instance, ushort buildingID, ref Building data, ref float __result)
+            {
+                if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
+                {
+                    int num = data.m_productionRate;
+                    if ((data.m_flags & (Building.Flags.Evacuating)) != 0)
+                    {
+                        num = 0;
+                    }
+                    else if ((data.m_flags & Building.Flags.RateReduced) != 0)
+                    {
+                        num = Mathf.Min(num, 50);
+                    }
+                    int budget = Singleton<EconomyManager>.instance.GetBudget(__instance.m_info.m_class);
+                    num = PlayerBuildingAI.GetProductionRate(num, budget);
+                    __result = (float)num * __instance.m_educationRadius * 0.01f;
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private sealed class LibraryAI_GetCurrentRange
+        {
+            [HarmonyPatch(typeof(LibraryAI), "GetCurrentRange",
+                new Type[] { typeof(ushort), typeof(Building), typeof(float) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal })]
+            [HarmonyPrefix]
+            private static bool Prefix(LibraryAI __instance, ushort buildingID, ref Building data, float radius, ref float __result)
+            {
+                if (RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
+                {
+                    int num = data.m_productionRate;
+                    if ((data.m_flags & (Building.Flags.Evacuating)) != 0)
+                    {
+                        num = 0;
+                    }
+                    else if ((data.m_flags & Building.Flags.RateReduced) != 0)
+                    {
+                        num = Mathf.Min(num, 50);
+                    }
+                    int budget = Singleton<EconomyManager>.instance.GetBudget(__instance.m_info.m_class);
+                    num = PlayerBuildingAI.GetProductionRate(num, budget);
+                    __result = (float)num * radius * 0.01f;
+                    return false;
+                }
+                return true;
             }
         }
 
@@ -1385,7 +1442,7 @@ namespace RealTime.Patches
                                         while (subBuilding != 0)
                                         {
                                             var info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding].Info;
-                                            if (info.m_buildingAI.GetFireParameters(subBuilding, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding], out int _, out int _, out int _))
+                                            if (info.m_buildingAI.GetFireParameters(subBuilding, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding], out _, out _, out _))
                                             {
                                                 dstID.Building = subBuilding;
                                                 Singleton<InstanceManager>.instance.CopyGroup(srcID, dstID);
@@ -1424,7 +1481,7 @@ namespace RealTime.Patches
                                 while (subBuilding2 != 0)
                                 {
                                     var info2 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].Info;
-                                    if (info2.m_buildingAI.GetFireParameters(subBuilding2, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2], out int _, out int _, out int _))
+                                    if (info2.m_buildingAI.GetFireParameters(subBuilding2, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2], out _, out _, out _))
                                     {
                                         Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].m_flags &= ~Building.Flags.Flooded;
                                         Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding2].m_fireIntensity = (byte)fireSize;
@@ -1453,10 +1510,6 @@ namespace RealTime.Patches
                     {
                         num5 = Singleton<SimulationManager>.instance.m_randomizer.Int32(1, num5);
                         frameData.m_fireDamage = (byte)Mathf.Min(frameData.m_fireDamage + num5, 255);
-                        if (!RealTimeAI.ShouldExtinguishFire(buildingID))
-                        {
-                            frameData.m_fireDamage /= 2;
-                        }
                         HandleFireSpread(__instance, buildingID, ref data, frameData.m_fireDamage);
                         if (data.m_subBuilding != 0 && data.m_parentBuilding == 0)
                         {
@@ -1465,7 +1518,7 @@ namespace RealTime.Patches
                             while (subBuilding3 != 0)
                             {
                                 var info3 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3].Info;
-                                if (info3.m_buildingAI.GetFireParameters(subBuilding3, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3], out int _, out int _, out int _))
+                                if (info3.m_buildingAI.GetFireParameters(subBuilding3, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3], out _, out _, out _))
                                 {
                                     var lastFrameData3 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[subBuilding3].GetLastFrameData();
                                     lastFrameData3.m_fireDamage = frameData.m_fireDamage;
@@ -1478,6 +1531,10 @@ namespace RealTime.Patches
                                     break;
                                 }
                             }
+                        }
+                        if(frameData.m_fireDamage >= 210 && !RealTimeAI.ShouldExtinguishFire(buildingID))
+                        {
+                            frameData.m_fireDamage = 150;
                         }
                         if (frameData.m_fireDamage == byte.MaxValue)
                         {
@@ -1605,20 +1662,21 @@ namespace RealTime.Patches
                             }
                             else
                             {
-                                fireSize = Mathf.Min(5000, data.m_fireIntensity * data.Width * data.Length);
+                                // fireSize = Mathf.Min(5000, data.m_fireIntensity * data.Width * data.Length);
                                 int count = 0;
                                 int cargo = 0;
                                 int capacity = 0;
                                 int outside = 0;
+                                int truckCount = GetFireTruckCount(ref data);
+                                int helicopterCount = GetFireHelicopterCount(ref data);
                                 __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Fire, ref count, ref cargo, ref capacity, ref outside);
                                 __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Fire2, ref count, ref cargo, ref capacity, ref outside);
-                                if (capacity * 25 < fireSize)
+                                if (count < helicopterCount)
                                 {
                                     TransferManager.TransferOffer offer = default;
                                     offer.Priority = Mathf.Max(8 - count - 1, 4);
                                     offer.Building = buildingID;
                                     offer.Position = data.m_position;
-                                    int volume = GetBuildingVolume(data.Info.m_generatedInfo);
                                     offer.Amount = 1;
                                     if ((policies & DistrictPolicies.Services.HelicopterPriority) != 0)
                                     {
@@ -1635,9 +1693,17 @@ namespace RealTime.Patches
                                     }
                                     else
                                     {
-                                        Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire, offer);
                                         Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire2, offer);
                                     }
+                                }
+                                if((policies & DistrictPolicies.Services.HelicopterPriority) == 0 && (data.m_flags & Building.Flags.RoadAccessFailed) == 0 && count < truckCount)
+                                {
+                                    TransferManager.TransferOffer offer = default;
+                                    offer.Priority = Mathf.Max(8 - count - 1, 4);
+                                    offer.Building = buildingID;
+                                    offer.Position = data.m_position;
+                                    offer.Amount = 1;
+                                    Singleton<TransferManager>.instance.AddOutgoingOffer(TransferManager.TransferReason.Fire, offer);
                                 }
                             }
                         }
@@ -1708,6 +1774,20 @@ namespace RealTime.Patches
                 data.m_problems = Notification.RemoveProblems(data.m_problems, Notification.Problem1.Fire);
                 return false;
             }
+        }
+
+        private static int GetFireTruckCount(ref Building data)
+        {
+            int buildingVolume = GetBuildingVolume(data.Info.m_generatedInfo);
+            int fireTruckCount = buildingVolume < 10000 ? 1 : buildingVolume / 10000 + 1;
+            return fireTruckCount;
+        }
+
+        private static int GetFireHelicopterCount(ref Building data)
+        {
+            int buildingVolume = GetBuildingVolume(data.Info.m_generatedInfo);
+            int fireHelicopterCount = buildingVolume < 10000 ? 1 : buildingVolume / 20000;
+            return fireHelicopterCount;
         }
 
         private static int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
