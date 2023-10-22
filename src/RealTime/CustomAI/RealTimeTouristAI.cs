@@ -89,6 +89,10 @@ namespace RealTime.CustomAI
                     ProcessVisit(instance, citizenId, ref citizen);
                     break;
 
+                case Citizen.Location.Hotel:
+                    ProcessHotel(instance, citizenId, ref citizen);
+                    break;
+
                 case Citizen.Location.Moving:
                     ProcessMoving(instance, citizenId, ref citizen);
                     break;
@@ -224,13 +228,6 @@ namespace RealTime.CustomAI
                     }
 
                     return;
-
-                // Tourist is sleeping in a hotel
-                case ItemClass.Service.Commercial
-                    when BuildingMgr.GetBuildingSubService(visitBuilding) == ItemClass.SubService.CommercialTourist
-                        && !Random.ShouldOccur(GetHotelLeaveChance()):
-                case ItemClass.Service.Hotel when !Random.ShouldOccur(GetHotelLeaveChance()):
-                    return;
             }
 
             var currentEvent = EventMgr.GetCityEvent(visitBuilding);
@@ -256,6 +253,34 @@ namespace RealTime.CustomAI
             }
 
             FindRandomVisitPlace(instance, citizenId, ref citizen, 0, visitBuilding);
+        }
+
+        private void ProcessHotel(TAI instance, uint citizenId, ref TCitizen citizen)
+        {
+            ushort hotelBuilding = CitizenProxy.GetHotelBuilding(ref citizen);
+            if (hotelBuilding == 0)
+            {
+                CitizenMgr.ReleaseCitizen(citizenId);
+                return;
+            }
+
+            if (BuildingMgr.BuildingHasFlags(hotelBuilding, Building.Flags.Evacuating))
+            {
+                touristAI.FindEvacuationPlace(instance, citizenId, hotelBuilding, touristAI.GetEvacuationReason(instance, hotelBuilding));
+                return;
+            }
+
+            switch (BuildingMgr.GetBuildingService(hotelBuilding))
+            {
+                // Tourist is sleeping in a hotel
+                case ItemClass.Service.Commercial
+                    when BuildingMgr.GetBuildingSubService(hotelBuilding) == ItemClass.SubService.CommercialTourist
+                        && !Random.ShouldOccur(GetHotelLeaveChance()):
+                case ItemClass.Service.Hotel when !Random.ShouldOccur(GetHotelLeaveChance()):
+                    return;
+            }
+
+            FindRandomVisitPlace(instance, citizenId, ref citizen, 0, hotelBuilding);
         }
 
         private void FindRandomVisitPlace(TAI instance, uint citizenId, ref TCitizen citizen, int doNothingProbability, ushort currentBuilding)
