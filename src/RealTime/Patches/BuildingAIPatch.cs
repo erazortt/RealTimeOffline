@@ -116,7 +116,7 @@ namespace RealTime.Patches
                     var workerLabel = infoPanel.Find("HighlyEducatedWorkers");
                     if (situationLabel != null && workerLabel != null)
                     {
-                        s_hotelLabel.absolutePosition = new Vector2(situationLabel.absolutePosition.x, workerLabel.absolutePosition.y + 25f);
+                        s_hotelLabel.absolutePosition = new Vector2(situationLabel.absolutePosition.x + 200f, workerLabel.absolutePosition.y + 25f);
                     }
                     else
                     {
