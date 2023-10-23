@@ -130,7 +130,7 @@ namespace RealTime.Patches
                 var buildingInfo = buildingData.Info;
 
                 // Is this a hotel building?
-                if (buildingInfo.GetAI() is CommercialBuildingAI && buildingInfo.m_class.m_service == ItemClass.Service.Commercial && buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist && buildingInfo.name.Contains("Hotel"))
+                if (buildingInfo.GetAI() is CommercialBuildingAI && buildingInfo.m_class.m_service == ItemClass.Service.Commercial && buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist && (buildingInfo.name.Contains("Hotel") || buildingInfo.name.Contains("hotel")))
                 {
                     // Hotel show the label
                     s_hotelLabel.Show();

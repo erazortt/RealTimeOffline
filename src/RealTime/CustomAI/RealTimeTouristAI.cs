@@ -50,12 +50,12 @@ namespace RealTime.CustomAI
 
         private enum TouristTarget
         {
-            DoNothing = 0,
-            LeaveCity = 1,
-            Shopping = 2,
-            Relaxing = 3,
+            DoNothing,
+            LeaveCity,
+            Shopping,
+            Relaxing,
             Party,
-            Hotel,
+            Hotel
         }
 
         /// <summary>
@@ -158,7 +158,6 @@ namespace RealTime.CustomAI
                 BuildingMgr.GetBuildingService(targetBuildingId, out var targetService, out var targetSubService);
                 switch (targetService)
                 {
-                    // Heading to a hotel, no need to change anything
                     case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialTourist:
                     case ItemClass.Service.Hotel:
                         return;
@@ -285,10 +284,11 @@ namespace RealTime.CustomAI
 
         private void FindRandomVisitPlace(TAI instance, uint citizenId, ref TCitizen citizen, int doNothingProbability, ushort currentBuilding)
         {
-            var target = (TouristTarget)touristAI.GetRandomTargetType(instance, doNothingProbability, ref citizen);
-            target = AdjustTargetToTimeAndWeather(ref citizen, target);
+            var target = touristAI.GetRandomTargetType(instance, doNothingProbability, ref citizen);
+            var tourist_target = ConvertToTouristTarget(target);
+            tourist_target = AdjustTargetToTimeAndWeather(ref citizen, tourist_target);
 
-            switch (target)
+            switch (tourist_target)
             {
                 case TouristTarget.LeaveCity:
                     Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} decides to leave the city");
@@ -334,6 +334,26 @@ namespace RealTime.CustomAI
                     Log.Debug(LogCategory.Movement, TimeInfo.Now, $"Tourist {GetCitizenDesc(citizenId, ref citizen)} want to stay in a hotel {Singleton<CitizenManager>.instance.m_citizens.m_buffer[citizenId].m_hotelBuilding}");
                     
                     break;
+            }
+        }
+
+        private TouristTarget ConvertToTouristTarget(TouristAI.Target target)
+        {
+            switch (target)
+            {
+                case TouristAI.Target.Shopping:
+                case TouristAI.Target.Entertainment:
+                case TouristAI.Target.Nature:
+                case TouristAI.Target.Business:
+                    return TouristTarget.Relaxing;
+                case TouristAI.Target.Nothing:
+                    return TouristTarget.DoNothing;
+                case TouristAI.Target.Leaving:
+                    return TouristTarget.LeaveCity;
+                case TouristAI.Target.Hotel:
+                    return TouristTarget.Hotel;
+                default:
+                    return TouristTarget.DoNothing;
             }
         }
 
