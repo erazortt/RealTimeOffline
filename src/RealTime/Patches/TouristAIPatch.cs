@@ -83,5 +83,63 @@ namespace RealTime.Patches
             }
         }
 
+        [HarmonyPatch]
+        private sealed class TouristAI_StartTransfer
+        {
+            [HarmonyPatch(typeof(TouristAI), "StartTransfer")]
+            [HarmonyPrefix]
+            private static bool Prefix(TouristAI __instance, uint citizenID, ref Citizen data, TransferManager.TransferReason material, TransferManager.TransferOffer offer)
+            {
+                if (data.m_flags == Citizen.Flags.None || data.Dead || data.Sick)
+                {
+                    return true;
+                }
+                switch (material)
+                {
+                    case TransferManager.TransferReason.Shopping:
+                    case TransferManager.TransferReason.Entertainment:
+                    case TransferManager.TransferReason.ShoppingB:
+                    case TransferManager.TransferReason.ShoppingC:
+                    case TransferManager.TransferReason.ShoppingD:
+                    case TransferManager.TransferReason.ShoppingE:
+                    case TransferManager.TransferReason.ShoppingF:
+                    case TransferManager.TransferReason.ShoppingG:
+                    case TransferManager.TransferReason.ShoppingH:
+                    case TransferManager.TransferReason.EntertainmentB:
+                    case TransferManager.TransferReason.EntertainmentC:
+                    case TransferManager.TransferReason.EntertainmentD:
+                    case TransferManager.TransferReason.TouristA:
+                    case TransferManager.TransferReason.TouristB:
+                    case TransferManager.TransferReason.TouristC:
+                    case TransferManager.TransferReason.TouristD:
+                    case TransferManager.TransferReason.BusinessA:
+                    case TransferManager.TransferReason.BusinessB:
+                    case TransferManager.TransferReason.BusinessC:
+                    case TransferManager.TransferReason.BusinessD:
+                    case TransferManager.TransferReason.NatureA:
+                    case TransferManager.TransferReason.NatureB:
+                    case TransferManager.TransferReason.NatureC:
+                    case TransferManager.TransferReason.NatureD:
+                        // if tourist has a hotel building don't go to other hotels
+                        if (data.m_hotelBuilding != 0)
+                        {
+                            var building = Singleton<BuildingManager>.instance.m_buildings.m_buffer[offer.Building];
+                            if (building.Info.m_buildingAI is HotelAI)
+                            {
+                                return false;
+                            }
+                            if (building.Info.m_class.m_service == ItemClass.Service.Commercial && building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (building.Info.name.Contains("Hotel") || building.Info.name.Contains("hotel")))
+                            {
+                                return false;
+                            }
+                        }
+                        return true;
+
+                    default:
+                        return true;
+                }
+            }
+        }
+
     }
 }
