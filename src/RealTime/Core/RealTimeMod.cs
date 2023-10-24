@@ -24,7 +24,7 @@ namespace RealTime.Core
     /// <summary>The main class of the Real Time mod.</summary>
     public class RealTimeMod : LoadingExtensionBase, IUserMod
     {
-        private const long WorkshopId = 1420955187;
+        private const long WorkshopId = 3059406297;
         private const string NoWorkshopMessage = "Real Time can only run when subscribed to in Steam Workshop";
 
         private readonly string modVersion = GitVersion.GetAssemblyVersion(typeof(RealTimeMod).Assembly);
@@ -56,11 +56,6 @@ namespace RealTime.Core
         /// <summary>Called when this mod is disabled.</summary>
         public void OnDisabled()
         {
-            //if (string.IsNullOrEmpty(modPath))
-            //{
-            //    return;
-            //}
-
             CloseConfigUI();
             if (configProvider?.IsDefault == true)
             {
