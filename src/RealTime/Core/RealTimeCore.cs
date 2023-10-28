@@ -277,12 +277,12 @@ namespace RealTime.Core
         {
             if (compatibility.IsAnyModActive(WorkshopMods.CitizenLifecycleRebalance, WorkshopMods.LifecycleRebalanceRevisited))
             {
-                ApplyCitizenPatch = true;
+                ApplyCitizenPatch = false;
                 Log.Info("The 'Real Time' mod will not change the citizens aging because a 'Lifecycle Rebalance' mod is active.");
             }
             else
             {
-                ApplyCitizenPatch = false;
+                ApplyCitizenPatch = true;
             }
 
             if (compatibility.IsAnyModActive(
@@ -293,12 +293,12 @@ namespace RealTime.Core
                 WorkshopMods.PloppableRicoRevisited,
                 WorkshopMods.PlopTheGrowables))
             {
-                ApplyBuildingPatch = true;
+                ApplyBuildingPatch = false;
                 Log.Info("The 'Real Time' mod will not change the building construction and upgrading behavior because some building mod is active.");
             }
             else
             {
-                ApplyBuildingPatch = false;
+                ApplyBuildingPatch = true;
             }
         }
 

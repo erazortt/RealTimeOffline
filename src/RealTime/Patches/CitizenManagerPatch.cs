@@ -21,7 +21,7 @@ namespace RealTime.Patches
         /// </summary>
         public static INewCitizenBehavior NewCitizenBehavior { get; set; }
 
-        private static void UpdateCizizenAge(uint citizenId)
+        private static void UpdateCitizenAge(uint citizenId)
         {
             ref var citizen = ref CitizenManager.instance.m_citizens.m_buffer[citizenId];
             citizen.Age = NewCitizenBehavior.AdjustCitizenAge(citizen.Age);
@@ -55,7 +55,7 @@ namespace RealTime.Patches
                 {
                     // This method is called by the game in two cases only: a new child is born or a citizen joins the city.
                     // So we tailor the age here.
-                    UpdateCizizenAge(citizen);
+                    UpdateCitizenAge(citizen);
                     UpdateCitizenEducation(citizen);
                 }
             }
