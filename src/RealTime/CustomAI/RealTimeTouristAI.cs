@@ -432,7 +432,11 @@ namespace RealTime.CustomAI
 
         private bool StartMovingToHotelBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort hotelBuilding)
         {
-            CitizenProxy.SetHotel(ref citizen, citizenId, hotelBuilding);
+            uint empty_room = Singleton<BuildingManager>.instance.m_buildings.m_buffer[hotelBuilding].GetNotFullCitizenUnit(CitizenUnit.Flags.Hotel);
+            if(empty_room != 0)
+            {
+                CitizenProxy.SetHotel(ref citizen, citizenId, hotelBuilding, empty_room);
+            }
             if (CitizenProxy.GetHotelBuilding(ref citizen) == 0)
             {
                 // Building is full and doesn't accept visitors anymore

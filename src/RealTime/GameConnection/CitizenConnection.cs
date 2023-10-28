@@ -233,8 +233,9 @@ namespace RealTime.GameConnection
         /// <param name="citizen">The citizen to set the hotel building for.</param>
         /// <param name="citizenId">The citizen ID.</param>
         /// <param name="buildingId">The ID of the hotel building the citizen is staying at.</param>
-        public void SetHotel(ref Citizen citizen, uint citizenId, ushort buildingId)
-            => citizen.SetHotel(citizenId, buildingId, 0u);
+        /// <param name="unitID">The ID of the not full unit in the hotel building to add the citizen to.</param>
+        public void SetHotel(ref Citizen citizen, uint citizenId, ushort buildingId, uint unitID)
+            => citizen.SetHotel(citizenId, buildingId, unitID);
 
         /// <summary>
         /// Removes the ID of the hotel building the specified citizen is currently staying at.
