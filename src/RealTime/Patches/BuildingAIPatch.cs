@@ -212,6 +212,98 @@ namespace RealTime.Patches
         }
 
         [HarmonyPatch]
+        private sealed class CommonBuildingAI_SimulationStepActive
+        {
+            private delegate bool CanEvacuateDelegate(CommonBuildingAI __instance);
+            private static readonly CanEvacuateDelegate CanEvacuate = AccessTools.MethodDelegate<CanEvacuateDelegate>(typeof(CommonBuildingAI).GetMethod("CanEvacuate", BindingFlags.Instance | BindingFlags.NonPublic), null, true);
+
+            private delegate void SetEvacuatingDelegate(CommonBuildingAI __instance, ushort buildingID, ref Building data, bool evacuating);
+            private static readonly SetEvacuatingDelegate SetEvacuating = AccessTools.MethodDelegate<SetEvacuatingDelegate>(typeof(CommonBuildingAI).GetMethod("SetEvacuating", BindingFlags.Instance | BindingFlags.NonPublic), null, true);
+
+
+            [HarmonyPatch(typeof(CommonBuildingAI), "SimulationStepActive")]
+            [HarmonyPrefix]
+            private static bool Prefix(CommonBuildingAI __instance, ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
+            {
+                var problemStruct = Notification.RemoveProblems(buildingData.m_problems, Notification.Problem1.Garbage);
+                if (buildingData.m_garbageBuffer >= 40000)
+                {
+                    int num = buildingData.m_garbageBuffer / 2000;
+                    if (Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0)
+                    {
+                        num = UniqueFacultyAI.DecreaseByBonus(UniqueFacultyAI.FacultyBonus.Science, num);
+                        Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, num, num, buildingData.m_position, 0f);
+                    }
+                    int num2 = ((!(__instance is MainCampusBuildingAI) && !(__instance is ParkGateAI) && !(__instance is MainIndustryBuildingAI)) ? 3 : 4);
+                    if (num >= num2)
+                    {
+                        if (Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
+                        {
+                            int num3 = ((!(__instance is MainCampusBuildingAI) && !(__instance is ParkGateAI) && !(__instance is MainIndustryBuildingAI)) ? 6 : 8);
+                            problemStruct = ((num < num3) ? Notification.AddProblems(problemStruct, Notification.Problem1.Garbage) : Notification.AddProblems(problemStruct, Notification.Problem1.Garbage | Notification.Problem1.MajorProblem));
+                            var properties = Singleton<GuideManager>.instance.m_properties;
+                            if (properties is object)
+                            {
+                                int publicServiceIndex = ItemClass.GetPublicServiceIndex(ItemClass.Service.Garbage);
+                                Singleton<GuideManager>.instance.m_serviceNeeded[publicServiceIndex].Activate(properties.m_serviceNeeded, ItemClass.Service.Garbage);
+                            }
+                        }
+                        else
+                        {
+                            buildingData.m_garbageBuffer = 4000;
+                        }
+                    }
+                }
+                buildingData.m_problems = problemStruct;
+                float radius = (buildingData.Width + buildingData.Length) * 2.5f;
+                if (buildingData.m_crimeBuffer != 0)
+                {
+                    Singleton<ImmaterialResourceManager>.instance.AddResource(ImmaterialResourceManager.Resource.CrimeRate, buildingData.m_crimeBuffer, buildingData.m_position, radius);
+                }
+                if (__instance.GetFireParameters(buildingID, ref buildingData, out int fireHazard, out int fireSize, out int fireTolerance))
+                {
+                    var instance = Singleton<DistrictManager>.instance;
+                    byte district = instance.GetDistrict(buildingData.m_position);
+                    var servicePolicies = instance.m_districts.m_buffer[district].m_servicePolicies;
+                    var cityPlanningPolicies = instance.m_districts.m_buffer[district].m_cityPlanningPolicies;
+                    if ((servicePolicies & DistrictPolicies.Services.SmokeDetectors) != 0)
+                    {
+                        fireHazard = fireHazard * 75 / 100;
+                    }
+                    if ((cityPlanningPolicies & DistrictPolicies.CityPlanning.LightningRods) != 0)
+                    {
+                        Singleton<EconomyManager>.instance.FetchResource(EconomyManager.Resource.PolicyCost, 10, __instance.m_info.m_class);
+                    }
+                }
+                fireHazard = 100 - (10 + fireTolerance) * 50000 / ((100 + fireHazard) * (100 + fireSize));
+                if (fireHazard > 0)
+                {
+                    fireHazard = fireHazard * buildingData.Width * buildingData.Length;
+                    Singleton<ImmaterialResourceManager>.instance.AddResource(ImmaterialResourceManager.Resource.FireHazard, fireHazard, buildingData.m_position, radius);
+                }
+                Singleton<ImmaterialResourceManager>.instance.AddResource(ImmaterialResourceManager.Resource.FirewatchCoverage, 50, buildingData.m_position, 100f);
+                if (Singleton<DisasterManager>.instance.IsEvacuating(buildingData.m_position))
+                {
+                    if ((buildingData.m_flags & Building.Flags.Evacuating) == 0 && CanEvacuate(__instance))
+                    {
+                        Singleton<ImmaterialResourceManager>.instance.CheckLocalResource(ImmaterialResourceManager.Resource.RadioCoverage, buildingData.m_position, out int local);
+                        if (Singleton<SimulationManager>.instance.m_randomizer.Int32(100u) < local + 10)
+                        {
+                            SetEvacuating(__instance, buildingID, ref buildingData, evacuating: true);
+                        }
+                    }
+                }
+                else if ((buildingData.m_flags & Building.Flags.Evacuating) != 0)
+                {
+                    SetEvacuating(__instance, buildingID, ref buildingData, evacuating: false);
+                }
+                return false;
+            }
+
+
+        }
+
+        [HarmonyPatch]
         private sealed class PrivateBuildingAI_HandleWorkers
         {
             [HarmonyPatch(typeof(PrivateBuildingAI), "HandleWorkers")]
@@ -533,12 +625,6 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             public static bool HandleCommonConsumption(CommonBuildingAI __instance, ushort buildingID, ref Building data, ref Building.Frame frameData, ref int electricityConsumption, ref int heatingConsumption, ref int waterConsumption, ref int sewageAccumulation, ref int garbageAccumulation, ref int mailAccumulation, int maxMail, DistrictPolicies.Services policies, ref int __result)
             {
-                electricityConsumption /= 10;
-                heatingConsumption /= 10;
-                waterConsumption /= 10;
-                sewageAccumulation /= 10;
-                garbageAccumulation /= 10;
-                mailAccumulation /= 10;
                 int num = 100;
                 var instance = Singleton<DistrictManager>.instance;
                 var problemStruct = Notification.RemoveProblems(data.m_problems, Notification.Problem1.Electricity | Notification.Problem1.Water | Notification.Problem1.Sewage | Notification.Problem1.Flood | Notification.Problem1.Heating);
@@ -885,7 +971,7 @@ namespace RealTime.Patches
                     }
                 }
                 int garbageBuffer = data.m_garbageBuffer;
-                if (garbageBuffer >= 200 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0 && Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
+                if (garbageBuffer >= 20000 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0 && Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
                 {
                     int count = 0;
                     int cargo = 0;
@@ -937,7 +1023,7 @@ namespace RealTime.Patches
                 if (Singleton<LoadingManager>.instance.SupportsExpansion(Expansion.Industry) && Singleton<UnlockManager>.instance.Unlocked(ItemClass.SubService.PublicTransportPost) && maxMail != 0)
                 {
                     int mailBuffer = data.m_mailBuffer;
-                    if (mailBuffer >= maxMail / 8 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0)
+                    if (mailBuffer >= maxMail / 4 && Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0)
                     {
                         int count2 = 0;
                         int cargo2 = 0;
@@ -945,10 +1031,10 @@ namespace RealTime.Patches
                         int outside2 = 0;
                         __instance.CalculateGuestVehicles(buildingID, ref data, TransferManager.TransferReason.Mail, ref count2, ref cargo2, ref capacity2, ref outside2);
                         mailBuffer -= capacity2 - cargo2;
-                        if (mailBuffer >= maxMail / 8)
+                        if (mailBuffer >= maxMail / 4)
                         {
                             TransferManager.TransferOffer offer2 = default;
-                            offer2.Priority = mailBuffer * 8 / maxMail;
+                            offer2.Priority = mailBuffer * 4 / maxMail;
                             offer2.Building = buildingID;
                             offer2.Position = data.m_position;
                             offer2.Amount = 1;
