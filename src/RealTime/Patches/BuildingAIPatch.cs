@@ -11,7 +11,6 @@ namespace RealTime.Patches
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
-    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
@@ -625,6 +624,11 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             public static bool HandleCommonConsumption(CommonBuildingAI __instance, ushort buildingID, ref Building data, ref Building.Frame frameData, ref int electricityConsumption, ref int heatingConsumption, ref int waterConsumption, ref int sewageAccumulation, ref int garbageAccumulation, ref int mailAccumulation, int maxMail, DistrictPolicies.Services policies, ref int __result)
             {
+                if((data.m_flags & Building.Flags.Active) == 0)
+                {
+                    garbageAccumulation = 0;
+                    mailAccumulation = 0;
+                }
                 int num = 100;
                 var instance = Singleton<DistrictManager>.instance;
                 var problemStruct = Notification.RemoveProblems(data.m_problems, Notification.Problem1.Electricity | Notification.Problem1.Water | Notification.Problem1.Sewage | Notification.Problem1.Flood | Notification.Problem1.Heating);
