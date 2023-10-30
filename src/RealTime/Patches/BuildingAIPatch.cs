@@ -1374,14 +1374,12 @@ namespace RealTime.Patches
                     return true;
                 }
             }
+
         }
 
         [HarmonyPatch]
         private sealed class PrivateBuildingAI_BuildingLoaded
         {
-            private delegate void BuildingAIEnsureCitizenUnitsDelegate(BuildingAI __instance, ushort buildingID, ref Building data, int homeCount = 0, int workCount = 0, int visitCount = 0, int studentCount = 0, int hotelCount = 0);
-            private static readonly BuildingAIEnsureCitizenUnitsDelegate EnsureCitizenUnits = AccessTools.MethodDelegate<BuildingAIEnsureCitizenUnitsDelegate>(typeof(BuildingAI).GetMethod("EnsureCitizenUnits", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
-
             [HarmonyPatch(typeof(PrivateBuildingAI), "BuildingLoaded")]
             [HarmonyPrefix]
             public static bool BuildingLoaded(PrivateBuildingAI __instance, ushort buildingID, ref Building data, uint version)
@@ -1394,7 +1392,7 @@ namespace RealTime.Patches
                     int workCount = level + level2 + level3 + level4;
                     int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
-                    EnsureCitizenUnits(__instance, buildingID, ref data, 0, workCount, visitCount, 0, hotelCount);
+                    EnsureCitizenUnits(buildingID, ref data, 0, workCount, visitCount, 0, hotelCount);
                     return false;
                 }
                 else
@@ -1402,35 +1400,74 @@ namespace RealTime.Patches
                     return true;
                 }
             }
-        }
 
-        [HarmonyPatch]
-        private sealed class PrivateBuildingAI_BuildingUpgraded
-        {
-            private delegate void BuildingAIEnsureCitizenUnitsDelegate(BuildingAI __instance, ushort buildingID, ref Building data, int homeCount = 0, int workCount = 0, int visitCount = 0, int studentCount = 0, int hotelCount = 0);
-            private static readonly BuildingAIEnsureCitizenUnitsDelegate EnsureCitizenUnits = AccessTools.MethodDelegate<BuildingAIEnsureCitizenUnitsDelegate>(typeof(BuildingAI).GetMethod("EnsureCitizenUnits", BindingFlags.Instance | BindingFlags.NonPublic), null, false);
-
-            [HarmonyPatch(typeof(PrivateBuildingAI), "BuildingUpgraded")]
-            [HarmonyPrefix]
-            public static bool BuildingUpgraded(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
+            private static void EnsureCitizenUnits(ushort buildingID, ref Building data, int homeCount = 0, int workCount = 0, int visitCount = 0, int studentCount = 0, int hotelCount = 0)
             {
-                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (data.Info.name.Contains("hotel") || data.Info.name.Contains("Hotel")))
+                if ((data.m_flags & (Building.Flags.Abandoned | Building.Flags.Collapsed)) != 0)
                 {
-                    data.m_level = (byte)Mathf.Max(data.m_level, (int)__instance.m_info.m_class.m_level);
-                    __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);
-                    __instance.AdjustWorkplaceCount(buildingID, ref data, ref level, ref level2, ref level3, ref level4);
-                    int workCount = level + level2 + level3 + level4;
-                    int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
-                    int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
-                    EnsureCitizenUnits(__instance, buildingID, ref data, 0, workCount, visitCount, 0, hotelCount);
-                    return false;
+                    return;
                 }
-                else
+                var wealthLevel = Citizen.GetWealthLevel((ItemClass.Level)data.m_level);
+                var instance = Singleton<CitizenManager>.instance;
+                uint num = 0u;
+                uint num2 = data.m_citizenUnits;
+                int num3 = 0;
+                while (num2 != 0)
                 {
-                    return true;
+                    var flags = instance.m_units.m_buffer[num2].m_flags;
+                    if ((flags & CitizenUnit.Flags.Home) != 0)
+                    {
+                        instance.m_units.m_buffer[num2].SetWealthLevel(wealthLevel);
+                        homeCount--;
+                    }
+                    if ((flags & CitizenUnit.Flags.Work) != 0)
+                    {
+                        workCount -= 5;
+                    }
+                    if ((flags & CitizenUnit.Flags.Visit) != 0)
+                    {
+                        visitCount -= 5;
+                    }
+                    if ((flags & CitizenUnit.Flags.Student) != 0)
+                    {
+                        studentCount -= 5;
+                    }
+                    if ((flags & CitizenUnit.Flags.Hotel) != 0)
+                    {
+                        hotelCount -= 5;
+                    }
+                    num = num2;
+                    num2 = instance.m_units.m_buffer[num2].m_nextUnit;
+                    if (++num3 > 524288)
+                    {
+                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                        break;
+                    }
+                }
+                homeCount = Mathf.Max(0, homeCount);
+                workCount = Mathf.Max(0, workCount);
+                visitCount = Mathf.Max(0, visitCount);
+                studentCount = Mathf.Max(0, studentCount);
+                hotelCount = Mathf.Max(0, hotelCount);
+                if (homeCount == 0 && workCount == 0 && visitCount == 0 && studentCount == 0 && hotelCount == 0)
+                {
+                    return;
+                }
+                if (instance.CreateUnits(out uint firstUnit, ref Singleton<SimulationManager>.instance.m_randomizer, buildingID, 0, homeCount, workCount, visitCount, 0, studentCount, hotelCount))
+                {
+                    if (num != 0)
+                    {
+                        instance.m_units.m_buffer[num].m_nextUnit = firstUnit;
+                    }
+                    else
+                    {
+                        data.m_citizenUnits = firstUnit;
+                    }
                 }
             }
         }
+
+        
 
         [HarmonyPatch]
         private sealed class CommercialBuildingAI_GenerateName
