@@ -50,8 +50,6 @@
   <translation id="RealisticFires" value="Realistic Fires last between 30 minutes to 4 hours at random" />
   <translation id="RealisticFiresTooltip" value="If enabled, fires will take between 30 minutes to 4 hours to be extinguished" />
 
-  
-
   <translation id="2Quotas" value="Probabilities" />
   <translation id="SecondShiftQuota" value="Second shift workers" />
   <translation id="SecondShiftQuotaTooltip" value="The percentage of the citizens that work second shift" />
@@ -169,7 +167,6 @@
   <translation id="MaintenanceSnowRoadsOtherStartHourTooltip" value="The daytime when maintenance and snow services starts to operate for other roads" />
   <translation id="MaintenanceSnowRoadsOtherEndHour" value="Other roads end hour" />
   <translation id="MaintenanceSnowRoadsOtherEndHourTooltip" value="The daytime when maintenance and snow services stop to operate for other roads" />
-
 
   <translation id="ScheduledAction" value="Now" />
   <translation id="NextScheduledAction" value="Until" />
