@@ -23,17 +23,20 @@ namespace RealTime.Patches
             [HarmonyPostfix]
             private static void Postfix(byte parkID)
             {
-                ref var park = ref DistrictManager.instance.m_parks.m_buffer[parkID];
-
-                if (!SpareTimeBehavior.AreFireworksAllowed)
+                if(parkID != 0)
                 {
-                    park.m_flags &= ~DistrictPark.Flags.SpecialMode;
-                    return;
-                }
+                    ref var park = ref DistrictManager.instance.m_parks.m_buffer[parkID];
 
-                if (park.m_dayNightCount == 6 || (park.m_parkPolicies & DistrictPolicies.Park.FireworksBoost) != 0)
-                {
-                    park.m_flags |= DistrictPark.Flags.SpecialMode;
+                    if (SpareTimeBehavior!= null && !SpareTimeBehavior.AreFireworksAllowed)
+                    {
+                        park.m_flags &= ~DistrictPark.Flags.SpecialMode;
+                        return;
+                    }
+
+                    if (park.m_dayNightCount == 6 || (park.m_parkPolicies & DistrictPolicies.Park.FireworksBoost) != 0)
+                    {
+                        park.m_flags |= DistrictPark.Flags.SpecialMode;
+                    }
                 }
             }
         }
