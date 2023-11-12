@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<language id="th" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <translation id="Warning" value="คำเตือน"/>
+  <translation id="RestrictedModeMessage" value="Real Time ทํางานอยู่ในโหมดจํากัด ฟังก์ชันการทํางานบางอย่างถูกปิดใช้งาน นี่เป็นเพราะปัญหาทางเทคนิคกับไลบรารีหรือความไม่ลงรอยกันของม็อด หากคุณต้องการความช่วยเหลือโปรดแบ่งปันไฟล์บันทึกเกม(log file) ของคุณกับผู้พัฒนาม็อด"/>
+  <translation id="ModNotWorkingMessage" value="อ๊ะ! มีบางอย่างผิดพลาด - ไม่สามารถเปิดใช้งานม็อด &apos;Real Time&apos; ได้ โปรดแบ่งปันไฟล์บันทึกเกม(log file) ของคุณกับผู้พัฒนาม็อด"/>
+  <translation id="IncompatibleModsFoundMessage" value="Real Time ตรวจพบม็อดที่เข้ากันไม่ได้หนึ่งตัว (หรืออย่างน้อยก็เข้ากันไม่ได้บางส่วน) ขอแนะนําให้ยกเลิกการสมัคม็อดนั้น คุณสามารถเสี่ยงเล่นต่อไปได้ หากรู้ดีว่ากำลังทำอะไรอยู่ แต่ในกรณีนี้บางสิ่งอาจทํางานไม่ถูกต้องหรือแม้แต่ทําให้เกมล่ม"/>
+  <translation id="Minutes" value="นาที"/>
+
+  <translation id="Tools" value="เครื่องมือ"/>
+  <translation id="ShowIncompatibilityNotifications" value="แสดงการแจ้งเตือนความเข้ากันไม่ได้กับม็อดอื่นๆ"/>
+  <translation id="UseEnglishUSFormats" value="ใช้รูปแบบเวลาและวันที่ของสหรัฐอเมริกาด้วยภาษาอังกฤษ"/>
+  <translation id="UseEnglishUSFormatsTooltip" value="การเปลี่ยนรูปแบบเวลาจําเป็นต้องเริ่มเกมใหม่"/>
+  <translation id="ResetToDefaults" value="รีเซ็ตทั้งหมดเป็นค่าเริ่มต้น"/>
+  <translation id="UseForNewGames" value="ใช้ค่าปัจจุบันสําหรับเกมใหม่"/>
+
+  <translation id="1General" value="ทั่วไป"/>
+  <translation id="0Time" value="การตั้งค่าเวลา"/>
+  <translation id="1Other" value="การตั้งค่าอื่นๆ"/>
+  <translation id="WakeUpHour" value="เวลาตื่นนอนของชาวเมือง"/>
+  <translation id="WakeUpHourTooltip" value="เวลาที่ประชาชนส่วนใหญ่เริ่มตื่นนอน งบประมาณและความเร็วของเกมจะเป็นโหมด &apos;กลางวัน&apos;!"/>
+  <translation id="GoToSleepHour" value="เวลาเข้านอนของชาวเมือง"/>
+  <translation id="GoToSleepHourTooltip" value="เวลาที่ประชาชนส่วนใหญ่เริ่มเข้านอ นงบประมาณและความเร็วของเกมจะเป็นโหมด &apos;กลางคืน&apos;!"/>
+  <translation id="DayTimeSpeed" value="ความเร็วระยะเวลา (กลางวัน)"/>
+  <translation id="DayTimeSpeedTooltip" value="ความเร็วของระยะเวลาในช่วงกลางวัน &apos;1&apos; ช้ามาก - เกือบสมจริง!"/>
+  <translation id="NightTimeSpeed" value="ความเร็วระยะเวลา (กลางคืน)"/>
+  <translation id="NightTimeSpeedTooltip" value="ความเร็วของระยะเวลาในช่วงกลางคืน &apos;1&apos; ช้ามาก - เกือบสมจริง!"/>
+  <translation id="IsDynamicDayLengthEnabled" value="ระยะเวลาแบบไดนามิก"/>
+  <translation id="IsDynamicDayLengthEnabledTooltip" value="ความยาวของวันจะขึ้นอยู่กับธีมและวันของปี เช่นในฤดูหนาวเวลาจะสั้นกว่าปกติ"/>
+  <translation id="VirtualCitizens" value="โหมดการจำลองพลเมือง (จริงและเสมือน)"/>
+  <translation id="VirtualCitizensTooltip" value="เลือก &apos;ทุกคน&apos; สำหรับจำลองเมืองจริงๆ (แต่จะจำลองได้มากสุดที่ 65,535 คน) เลือก &apos;วานิลลา&apos; ถ้าสเปคพีซีไม่ได้สูงหรือเมืองใหญ่มากจริงๆ"/>
+  <translation id="VirtualCitizens.None" value="ชาวเมืองทุกคนมีอยู่จริง"/>
+  <translation id="VirtualCitizens.Vanilla" value="แบบวานิลลา(ค่าเดิมของเกม)"/>
+  <translation id="UseSlowAging" value="อายุขัยและอัตราการเกิดที่ดีขึ้น"/>
+  <translation id="UseSlowAgingTooltip" value="หากเปิดใช้งาน 1 วันในเกมหมายถึง 1 ปีของชาวเมือง หากปิดการใช้งาน 1 เกมวันหมายถึง 10 (ที่ความเร็วเวลา 6) ถึง 340 (ที่ความเร็วเวลา 1) ปีของชาวเมือง"/>
+  <translation id="IsWeekendEnabled" value="เปิดใช้งานวันหยุดสุดสัปดาห์"/>
+  <translation id="IsWeekendEnabledTooltip" value="ชาวเมืองไม่ไปทำงานหรือโรงเรียนในวันหยุดสุดสัปดาห์"/>
+  <translation id="IsLunchtimeEnabled" value="เปิดใช้งานมื้อกลางวัน"/>
+  <translation id="IsLunchtimeEnabledTooltip" value="ชาวเมืองควรออกไปทานอาหารกลางวัน"/>
+  <translation id="StopConstructionAtNight" value="หยุดการก่อสร้างอาคารและอัปเกรดในเวลากลางคืน"/>
+  <translation id="StopConstructionAtNightTooltip" value="คนงานในสถานที่ก่อสร้างต้องนอนด้วย"/>
+  <translation id="ConstructionSpeed" value="ความเร็วในการก่อสร้าง"/>
+  <translation id="ConstructionSpeedTooltip" value="ความเร็วในการก่อสร้างอาคารและอัปเกรด"/>
+  <translation id="SwitchOffLightsAtNight" value="ปิดไฟอาคารในเวลากลางคืน"/>
+  <translation id="SwitchOffLightsAtNightTooltip" value="อาคารที่อยู่อาศัยจะปิดไฟ เมื่อประชาชนนอนหลับ เช่นเดียวกับอาคารอื่นๆ และสวนสาธารณะ - เมื่อไม่มีใครทำงานที่นั่น"/>
+  <translation id="SwitchOffLightsMaxHeight" value="เปิดไฟไว้ตลอดสำหรับอาคารสูง"/>
+  <translation id="SwitchOffLightsMaxHeightTooltip" value="อาคารที่อยู่อาศัย อาคารพาณิชย์ และสำนักงานที่สูงกว่าค่านี้จะไม่ปิดไฟในเวลากลางคืน"/>
+  <translation id="CanAbandonJourney" value="พฤติกรรมเมื่อพบการจราจรที่ติดขัดและรอรถโดยสารที่ดียิ่งขึ้น"/>
+  <translation id="CanAbandonJourneyTooltip" value="หากเปิดใช้งานประชาชนสามารถละทิ้งการเดินทาง เมื่อพบการจราจรที่ติดขัดหรือรอการขนส่งสาธารณะเป็นเวลานานเกินไป"/>
+  <translation id="RealisticFires" value="อัคคีภัยที่เหมือนจริง - จะสุ่มระยะเวลาในการดับไฟ 30 นาที ถึง 4 ชั่วโมง"/>
+  <translation id="RealisticFiresTooltip" value="หากเปิดใช้งานอัคคีภัยจะใช้เวลาในการดับ ระหว่าง 30 นาทีถึง 4 ชั่วโมง"/>
+
+  <translation id="2Quotas" value="ตั้งค่าอัตราส่วน"/>
+  <translation id="SecondShiftQuota" value="ทำงานกะที่สอง"/>
+  <translation id="SecondShiftQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่ทำงานกะที่สอง"/>
+  <translation id="NightShiftQuota" value="ทำงานกะกลางคืน"/>
+  <translation id="NightShiftQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่ทำงานกะกลางคืน"/>
+  <translation id="LunchQuota" value="ออกไปทานมื้อกลางวัน"/>
+  <translation id="LunchQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่จะออกไปทานอาหารกลางวัน"/>
+  <translation id="LocalBuildingSearchQuota" value="ชื่นชอบการซื้อของท้องถิ่น"/>
+  <translation id="LocalBuildingSearchQuotaTooltip" value="เปอร์เซ็นต์ของประชากรที่จะค้นหาแหล่งซื้อสินค้าในท้องถิ่น"/>
+  <translation id="ShoppingForFunQuota" value="ช้อปปิ้งเพื่อความสนุกสนาน"/>
+  <translation id="ShoppingForFunQuotaTooltip" value="เปอร์เซ็นต์ของประชากรที่จะไปช็อปปิ้งเพื่อความสนุกสนาน แม้ว่าพวกเขาไม่ได้ต้องการสินค้าก็ตาม"/>
+  <translation id="OnTimeQuota" value="ความตรงต่อเวลา"/>
+  <translation id="OnTimeQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่จะเข้าออกงานตรงเวลา"/>
+
+  <translation id="3Events" value="อีเว้นท์"/>
+  <translation id="AreEventsEnabled" value="เปิดใช้งานอีเว้นท์แบบกำหนดเอง"/>
+  <translation id="AreEventsEnabledTooltip" value="หากปิดการใช้งานเหตุการณ์ปกติของเกมเท่านั้นที่สามารถเกิดขึ้นได้ในเมือง"/>
+  <translation id="EarliestHourEventStartWeekday" value="จัดอีเว้นท์ในวันธรรมดาเร็วสุด"/>
+  <translation id="EarliestHourEventStartWeekdayTooltip" value="ช่วงเวลาจัดอีเว้นท์ในวันธรรมดาเร็วสุด"/>
+  <translation id="LatestHourEventStartWeekday" value="จัดอีเว้นท์ในวันธรรมดาช้าสุด"/>
+  <translation id="LatestHourEventStartWeekdayTooltip" value="ช่วงเวลาจัดอีเว้นท์ในวันธรรมดาช้าสุด"/>
+  <translation id="EarliestHourEventStartWeekend" value="จัดอีเว้นท์ในวันหยุดเร็วสุด"/>
+  <translation id="EarliestHourEventStartWeekendTooltip" value="ช่วงเวลาจัดอีเว้นท์ในวันหยุดเร็วสุด"/>
+  <translation id="LatestHourEventStartWeekend" value="จัดอีเว้นท์ในวันหยุดช้าสุด"/>
+  <translation id="LatestHourEventStartWeekendTooltip" value="ช่วงเวลาจัดอีเว้นท์ในวันหยุดช้าสุด"/>
+
+  <translation id="4Time" value="ชั่วโมงเวลา"/>
+  <translation id="MaxOvertime" value="ล่วงเวลามากสุด"/>
+  <translation id="MaxOvertimeTooltip" value="ระยะล่วงเวลาสูงสุดสำหรับชาวเมือง - มาทำงานก่อนเวลาหรืออยู่ค้างนานขึ้น"/>
+  <translation id="SchoolBegin" value="เวลาเริ่มเรียน"/>
+  <translation id="SchoolBeginTooltip" value="ช่วงโรงเรียนจะเริ่มเปิดสอนในช่วงกลางวัน - เด็กๆ ต้องไปที่โรงเรียน"/>
+  <translation id="SchoolEnd" value="เวลาสิ้นสุดการเรียน"/>
+  <translation id="SchoolEndTooltip" value="ช่วงเวลาที่โรงเรียนจะเลิกการสอน - เด็กๆ เดินทางกลับบ้าน"/>
+  <translation id="WorkBegin" value="เวลาเริ่มทำงาน"/>
+  <translation id="WorkBeginTooltip" value="ช่วงเวลาที่ต้องออกไปทำงาน - ชาวเมืองผู้ใหญ่จะต้องทำงานหรือไปมหาวิทยาลัย"/>
+  <translation id="WorkEnd" value="เวลาสิ้นสุดการทำงาน"/>
+  <translation id="WorkEndTooltip" value="ช่วงเวลาที่ต้องเลิกงาน - ชาวเมืองผู้ใหญ่ออกจากที่ทำงานหรือมหาวิทยาลัย"/>
+  <translation id="LunchBegin" value="เวลาทานมื้อกลางวัน"/>
+  <translation id="LunchBeginTooltip" value="ช่วงเวลาที่ชาวเมืองจะออกไปทานอาหารกลางวัน"/>
+  <translation id="LunchEnd" value="เวลาสิ้นสุดมื้อกลางวัน"/>
+  <translation id="LunchEndTooltip" value="ช่วงเวลาที่ชาวเมืองจะกลับไปทำงาน"/>
+  <translation id="MaxVacationLength" value="วันหยุดสูงสุด"/>
+  <translation id="MaxVacationLengthTooltip" value="สำหรับระยะเวลาพักผ่อนของชาวเมือง ตั้งค่าเป็น 0 เพื่อปิดใช้งานวันหยุด"/>
+  
+  <translation id="5BuildingService" value="อาคารให้บริการ"/>
+  <translation id="0Garbage" value="ชั่วโมงทำการเก็บขยะ"/>
+  <translation id="1Mail" value="ชั่วโมงทำการส่งจดหมาย"/>
+  <translation id="2Other" value="ชั่วโมงการบำรุงสวนสาธารณะ"/>
+  <translation id="GarbageResidentialStartHour" value="เวลาเริ่มในเขตที่อยู่อาศัย"/>
+  <translation id="GarbageResidentialStartHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะปฏิบัติงานในเขตพื้นที่อยู่อาศัย"/>
+  <translation id="GarbageResidentialEndHour" value="เวลาสิ้นสุดในเขตที่อยู่อาศัย"/>
+  <translation id="GarbageResidentialEndHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะหยุดปฏิบัติงานในเขตพื้นที่อยู่อาศัย"/>
+  <translation id="GarbageCommercialStartHour" value="เวลาเริ่มในเขตพาณิชย์"/>
+  <translation id="GarbageCommercialStartHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะปฏิบัติงานในเขตพื้นที่เชิงพาณิชย์"/>
+  <translation id="GarbageCommercialEndHour" value="เวลาสิ้นสุดในเขตพาณิชย์"/>
+  <translation id="GarbageCommercialEndHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะหยุดปฏิบัติงานในเขตพื้นที่เชิงพาณิชย์"/>
+  <translation id="GarbageIndustrialStartHour" value="เวลาเริ่มในเขตอุตสาหกรรม"/>
+  <translation id="GarbageIndustrialStartHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะปฏิบัติงานในเขตพื้นที่อุตสาหกรรม"/>
+  <translation id="GarbageIndustrialEndHour" value="เวลาสิ้นสุดในเขตอุตสาหกรรม"/>
+  <translation id="GarbageIndustrialEndHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะหยุดปฏิบัติงานในเขตพื้นที่อุตสาหกรรม"/>
+  <translation id="GarbageOfficeStartHour" value="เวลาเริ่มในเขตสำนักงาน"/>
+  <translation id="GarbageOfficeStartHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะปฏิบัติงานในเขตพื้นที่สำนักงาน"/>
+  <translation id="GarbageOfficeEndHour" value="เวลาสิ้นสุดในเขตสำนักงาน"/>
+  <translation id="GarbageOfficeEndHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะหยุดปฏิบัติงานในเขตพื้นที่สำนักงาน"/>
+  <translation id="GarbageOtherStartHour" value="เวลาเริ่มในเขตอื่น"/>
+  <translation id="GarbageOtherStartHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะปฏิบัติงานในเขตพื้นที่อื่นๆ"/>
+  <translation id="GarbageOtherEndHour" value="เวลาสิ้นสุดในเขตอื่น"/>
+  <translation id="GarbageOtherEndHourTooltip" value="ช่วงเวลาที่รถเก็บขยะจะหยุดปฏิบัติงานในเขตพื้นที่อื่นๆ"/>
+
+  <translation id="MailResidentialStartHour" value="เวลาเริ่มในเขตที่อยู่อาศัย"/>
+  <translation id="MailResidentialStartHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะปฏิบัติงานในเขตพื้นที่อยู่อาศัย"/>
+  <translation id="MailResidentialEndHour" value="เวลาสิ้นสุดในเขตที่อยู่อาศัย"/>
+  <translation id="MailResidentialEndHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะหยุดปฏิบัติงานในเขตพื้นที่อยู่อาศัย"/>
+  <translation id="MailCommercialStartHour" value="เวลาเริ่มในเขตพาณิชย์"/>
+  <translation id="MailCommercialStartHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะปฏิบัติงานในเขตพื้นที่เชิงพาณิชย์"/>
+  <translation id="MailCommercialEndHour" value="เวลาสิ้นสุดในเขตพาณิชย์"/>
+  <translation id="MailCommercialEndHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะหยุดปฏิบัติงานในเขตพื้นที่เชิงพาณิชย์"/>
+  <translation id="MailIndustrialStartHour" value="เวลาเริ่มในเขตอุตสาหกรรม"/>
+  <translation id="MailIndustrialStartHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะปฏิบัติงานในเขตพื้นที่อุตสาหกรรม"/>
+  <translation id="MailIndustrialEndHour" value="เวลาสิ้นสุดในเขตอุตสาหกรรม"/>
+  <translation id="MailIndustrialEndHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะหยุดปฏิบัติงานในเขตพื้นที่อุตสาหกรรม"/>
+  <translation id="MailOfficeStartHour" value="เวลาเริ่มในเขตสำนักงาน"/>
+  <translation id="MailOfficeStartHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะปฏิบัติงานในเขตพื้นที่สำนักงาน"/>
+  <translation id="MailOfficeEndHour" value="เวลาสิ้นสุดในเขตสำนักงาน"/>
+  <translation id="MailOfficeEndHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะหยุดปฏิบัติงานในเขตพื้นที่สำนักงาน"/>
+  <translation id="MailOtherStartHour" value="เวลาเริ่มในเขตอื่น"/>
+  <translation id="MailOtherStartHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะปฏิบัติงานในเขตพื้นที่อื่นๆ"/>
+  <translation id="MailOtherEndHour" value="เวลาสิ้นสุดในเขตอื่น"/>
+  <translation id="MailOtherEndHourTooltip" value="ช่วงเวลาที่บริการส่งจดหมายจะหยุดปฏิบัติงานในเขตพื้นที่อื่นๆ"/>
+
+  <translation id="ParkMaintenanceStartHour" value="เวลาเริ่มบำรุง"/>
+  <translation id="ParkMaintenanceStartHourTooltip" value="ช่วงเวลาที่บริการบำรุงสวนสาธารณะออกปฏิบัติงาน"/>
+  <translation id="ParkMaintenanceEndHour" value="เวลาสิ้นสุดการบำรุง"/>
+  <translation id="ParkMaintenanceEndHourTooltip" value="ช่วงเวลาที่บริการบำรุงสวนสาธารณะสิ้นสุดการปฏิบัติงาน"/>
+
+  <translation id="6RoadService" value="บริการเส้นทางสัญจร"/>
+  <translation id="0MaintenanceSnow" value="ชั่วโมงการบำรุงรักษาและการกวาดหิมะ"/>
+  <translation id="MaintenanceSnowRoadsSmallStartHour" value="เริ่มบำรุงถนนขนาดเล็ก"/>
+  <translation id="MaintenanceSnowRoadsSmallStartHourTooltip" value="ช่วงเวลาที่การซ่อมถนนและบริการกวาดหิมะเริ่มปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsSmallEndHour" value="สิ้นสุดการบำรุงถนนขนาดเล็ก"/>
+  <translation id="MaintenanceSnowRoadsSmallEndHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะสิ้นสุดการปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsMediumStartHour" value="เริ่มบำรุงถนนขนาดกลาง"/>
+  <translation id="MaintenanceSnowRoadsMediumStartHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะเริ่มปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsMediumEndHour" value="สิ้นสุดการบำรุงถนนขนาดกลาง"/>
+  <translation id="MaintenanceSnowRoadsMediumEndHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะสิ้นสุดการปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsLargeStartHour" value="เริ่มบำรุงถนนขนาดใหญ่"/>
+  <translation id="MaintenanceSnowRoadsLargeStartHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะเริ่มปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsLargeEndHour" value="สิ้นสุดการบำรุงถนนขนาดใหญ่"/>
+  <translation id="MaintenanceSnowRoadsLargeEndHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะสิ้นสุดการปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsHighwayStartHour" value="เริ่มบำรุงทางหลวง"/>
+  <translation id="MaintenanceSnowRoadsHighwayStartHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะเริ่มปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsHighwayEndHour" value="สิ้นสุดการบำรุงทางหลวง"/>
+  <translation id="MaintenanceSnowRoadsHighwayEndHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะสิ้นสุดการปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsOtherStartHour" value="เริ่มบำรุงถนนอื่น"/>
+  <translation id="MaintenanceSnowRoadsOtherStartHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะเริ่มปฏิบัติงาน"/>
+  <translation id="MaintenanceSnowRoadsOtherEndHour" value="สิ้นสุดการบำรุงถนนอื่น"/>
+  <translation id="MaintenanceSnowRoadsOtherEndHourTooltip" value="ช่วงเวลาที่การบำรุงรักษาและบริการกวาดหิมะสิ้นสุดการปฏิบัติงาน"/>
+
+  <translation id="ScheduledAction" value="ตอนนี้"/>
+  <translation id="NextScheduledAction" value="จนถึง"/>
+  <translation id="ScheduledAction.AtHome" value="กำลังกลับบ้าน"/>
+  <translation id="ScheduledAction.AtSchoolOrWork" value="ไปทำงาน/เรียน"/>
+  <translation id="ScheduledAction.Shopping" value="กำลังไปซื้อของ"/>
+  <translation id="ScheduledAction.Relaxing" value="กำลังพักผ่อน"/>
+  <translation id="ScheduledAction.Visiting" value="ไปเยี่ยม"/>
+  <translation id="ScheduledAction.InShelter" value="ไปยังหลุมหลบภัย"/>
+  <translation id="WorkShift.First" value="ทำงานกะที่หนึ่ง"/>
+  <translation id="WorkShift.Second" value="ทำงานกะที่สอง"/>
+  <translation id="WorkShift.Night" value="ทำงานกะกลางคืน"/>
+  
+  <translation id="WorkStatus.OnVacation" value="(วันหยุด: {0} วัน)"/>
+  <translation id="AcademicYear.DaysLeft" value="สิ้นสุดใน {0} วัน"/>
+  <translation id="AcademicYear.HoursLeft" value="สิ้นสุดใน {0} ชั่วโมง"/>
+  <translation id="AcademicYear.EndsSoon" value="สิ้นสุดในเวลาไม่ถึง 1 ชั่วโมง"/>
+
+  <overrides type="Units">
+  <translation id="AIINFO_COAL_STORED" value="มีถ่านหินเพียงพอสำหรับ {0} x {unit}"/>
+  <translation id="AIINFO_CUMULATIVEUPKEEP" value="ค่าบำรุงรักษา: {0} + {1} / {unit} / เซลล์"/>
+  <translation id="AIINFO_DECEASED_PROCESSED" value="จำนวนศพที่จัดการไปเมื่อ {unit}ก่อน: {0}"/>
+  <translation id="AIINFO_ELECTRICITY_PRODUCED" value=" {unit}ที่แล้วผลิตไฟฟ้าได้: {0} เมกะวัตต์"/>
+  <translation id="AIINFO_FIRES_EXTINGUISHED" value="เพลิงที่ระงับได้ใน {unit}ที่แล้ว: {0}"/>
+  <translation id="AIINFO_OIL_STORED" value="มีน้ำมันเพียงพอสำหรับ {0} x  {unit}"/>
+  <translation id="AIINFO_PASSENGERS_SERVICED" value="ผู้โดยสารที่ใช้บริการใน {unit}ที่แล้ว: {0}"/>
+  <translation id="AIINFO_PATIENTS_TREATED" value="ผู้ป่วย {unit}ที่แล้ว: {0}"/>
+  <translation id="AIINFO_POLE_UPKEEP" value="ค่าบำรุงรักษา: {0} / ต้น / {unit}"/>
+  <translation id="AIINFO_PROCESSING_RATE" value="ปริมาณที่กำจัดได้: {0} / {unit}"/>
+  <translation id="AIINFO_TOURISTS" value="นักท่องเที่ยวใน{unit}ที่แล้ว: {0}"/>
+  <translation id="AIINFO_UPKEEP" value="ค่าบำรุงรักษา: {0} / {unit}"/>
+  <translation id="AIINFO_UPKEEPPERCELL" value="ค่าบำรุงรักษา: {0} / {unit} / เซลล์"/>
+  <translation id="AIINFO_VISITORS" value="ผู้เข้าชม {unit}ที่แล้ว: {0}"/>
+  <translation id="AIINFO_WATER_CONSUMPTION" value="ใช้น้ำ: {0} ลบ.ม.ต่อ {unit}"/>
+  <translation id="AIINFO_WATER_INTAKE" value="สูบน้ำ: {0} ลบ.ม.ต่อ {unit}"/>
+  <translation id="AIINFO_WATER_OUTLET" value="ปล่อยน้ำทิ้ง: {0} ลบ.ม.ต่อ {unit}"/>
+  <translation id="AIINFO_WATER_STORED" value="มีน้ำเพียงพอสำหรับ {0}  {unit}"/>
+  <translation id="AINFO_WATER_IO_CAPACITY" value="อัตราการดำเนินงาน: {0:N0} ลบ.ม.ต่อ {unit}"/>
+  <translation id="DATETIME_WEEK" value="{unit}"/>
+  <translation id="DATETIME_WEEKLOWERCASE" value="{unit}"/>
+  <translation id="DATETIME_WEEKS" value="× {unit}"/>
+  <translation id="DISTRICT_TOURISTS" value="นักท่องเที่ยว\nราย {unit}:\n"/>
+  <translation id="EXPENSES_TT_EDUCATION" value="ค่าดูแลการศึกษาราย {unit}"/>
+  <translation id="EXPENSES_TT_ELECTRICITY" value="ค่าดูแลบริการไฟฟ้าราย {unit}"/>
+  <translation id="EXPENSES_TT_FIRE" value="ค่าดูแลหน่วยดับเพลิงราย {unit}"/>
+  <translation id="EXPENSES_TT_FIRE_ND" value="ค่าดูแลบริการฉุกเฉินราย {unit}"/>
+  <translation id="EXPENSES_TT_GARBAGE" value="ค่าดูแลระบบขยะราย {unit}"/>
+  <translation id="EXPENSES_TT_HEALTHCARE" value="ค่าดูแลสาธารณสุขราย {unit}"/>
+  <translation id="EXPENSES_TT_LOANS" value="ค่าดูแลการกู้ยืมเงินราย {unit}"/>
+  <translation id="EXPENSES_TT_MONUMENTS" value="ค่าดูแลสิ่งปลูกสร้างพิเศษราย {unit}"/>
+  <translation id="EXPENSES_TT_PARK" value="ค่าดูแลสถานที่พักผ่อน สวน และพลาซ่าราย {unit}"/>
+  <translation id="EXPENSES_TT_POLICE" value="ค่าดูแลกรมตำรวจราย {unit}"/>
+  <translation id="EXPENSES_TT_POLICIES" value="ค่าดูแลนโยบายราย {unit}"/>
+  <translation id="EXPENSES_TT_PUBLICTRANSPORT" value="ค่าดูแลขนส่งสาธารณะราย {unit}"/>
+  <translation id="EXPENSES_TT_ROADS" value="ค่าดูแลระบบถนนราย {unit}"/>
+  <translation id="EXPENSES_TT_TOTAL" value="ค่าดูแลทั้งหมดราย {unit}"/>
+  <translation id="EXPENSES_TT_WATER" value="ค่าดูแลระบบประปาและน้ำเสียราย {unit}"/>
+  <translation id="EXPENSES_TT_WATER_WW" value="ค่าดูแลระบบประปา การบำบัดน้ำ และการผลิตน้ำร้อน ราย {unit}"/>
+  <translation id="INCOME_TT_COMMERCIALCITIZEN" value=""/>
+  <translation id="INCOME_TT_COMMERCIALHIGH" value="รายได้จากการค้าขายของพลเมืองราย {unit}"/>
+  <translation id="INCOME_TT_COMMERCIALLOW" value="รายได้พาณิชย์ความหนาแน่นสูงราย {unit}"/>
+  <translation id="INCOME_TT_COMMERCIALSPEC" value="รายได้พาณิชย์ความหนาแน่นต่ำราย {unit}"/>
+  <translation id="INCOME_TT_COMMERCIALTOTAL" value="รายได้เขตพาณิชยกรรมพิเศษราย {unit}"/>
+  <translation id="INCOME_TT_COMMERCIALTOURIST" value="รายได้พาณิชยกรรมราย {unit}"/>
+  <translation id="INCOME_TT_INDUSTRIAL" value="รายได้อุตสาหกรรมราย {unit}"/>
+  <translation id="INCOME_TT_OFFICE" value="รายได้สำนักงานราย {unit}"/>
+  <translation id="INCOME_TT_PARKAREAS" value="รายได้สวนสาธารณะราย {unit}"/>
+  <translation id="INCOME_TT_RESIDENTIALHIGH" value="รายได้ที่พักอาศัยความหนาแน่นสูงราย {unit}"/>
+  <translation id="INCOME_TT_RESIDENTIALLOW" value="รายได้ที่พักอาศัยความหนาแน่นต่ำราย {unit}"/>
+  <translation id="INCOME_TT_RESIDENTIALTOTAL" value="รายได้ที่พักอาศัยราย {unit}"/>
+  <translation id="INCOME_TT_TOTAL" value="รายได้ทั้งหมดราย {unit}"/>
+  <translation id="INCOME_TT_TOTAL_COMMERCIAL" value="รายได้ทั้งหมดจากการท่องเที่ยวราย {unit}"/>
+  <translation id="INCOME_TT_TOTAL_RESIDENTIAL" value="รายได้ทั้งหมดจากที่พักอาศัยราย {unit}"/>
+  <translation id="INCOME_TT_TOTAL_WORK" value="รายได้ทั้งหมดจากอุตสาหกรรมราย {unit}"/>
+  <translation id="INCOME_TT_PUBLICTRANSPORT" value="รายได้ระบบขนส่งมวลชนราย {unit}"/>
+  <translation id="INFO_CONNECTIONS_TOURISTSTOTAL" value="ปริมาณนักท่องเที่ยวราย {unit}: {0:N0} "/>
+  <translation id="INFO_CRIMERATE_CRIMES" value="อาชญากรที่จับได้เมื่อ {unit}ที่แล้ว"/>
+  <translation id="INFO_ENTERTAINMENT_PARKVISIT" value="ผู้ใช้งานสวนสาธารณะและพลาซ่าต่อ {unit}: {0:N0}"/>
+  <translation id="INFO_ENTERTAINMENT_UBVISIT" value="ผู้เยี่ยมชมสิ่งปลูกสร้างพิเศษต่อ {unit}: {0:N0}"/>
+  <translation id="INFO_GARBAGE_INCINERATORCAPACITY" value="ความสามารถในการกำจัดขยะ: {0:N0} หน่วย / {unit}"/>
+  <translation id="INFO_GARBAGE_GARBAGEPRODUCTION" value="ปริมาณขยะที่เมืองสร้าง: {0:N0} หน่วย / {unit}"/>
+  <translation id="INFO_POPULATION_BIRTHS" value="อัตราการเกิด {0:N0} คน / {unit}"/>
+  <translation id="INFO_POPULATION_DEATHS" value="อัตราการตาย {0:N0} คน / {unit}"/>
+  <translation id="INFO_PUBLICTRANSPORT_COUNT" value="{0:N0} ต่อ {unit}"/>
+  <translation id="INFO_RES_FORESTAMOUNT" value="{0} หน่วย/ {unit}"/>
+  <translation id="INFO_RES_FORESTUSED" value="{0} หน่วย/ {unit}"/>
+  <translation id="INFO_RES_OILUSED" value="{0} หน่วย/ {unit}"/>
+  <translation id="INFO_RES_OREUSED" value="{0} หน่วย/ {unit}"/>
+  <translation id="INFO_WATER_CONSUMPTION" value="ใช้น้ำประปา: {0:N0} ลบ.ม./ {unit}"/>
+  <translation id="INFO_WATER_PRODUCTION" value="น้ำดิบที่สูบได้: {0:N0} ลบ.ม./ {unit}"/>
+  <translation id="INFO_WATER_SEWAGEACCUMULATION" value="น้ำเสียที่บำบัดได้: {0:N0} ลบ.ม./ {unit}"/>
+  <translation id="INFO_WATER_SEWAGECAPACITY" value="น้ำเสียที่ระบายได้: {0:N0} ลบ.ม./ {unit}"/>
+  <translation id="LOAN_WEEKLYCOST" value="ชำระคืนราย {unit}"/>
+  <translation id="MAIN_MONEYDELTA" value="รายได้ราย {unit}"/>
+  <translation id="MAIN_POPULATIONDELTA" value="การเปลี่ยนแปลงราย {unit}"/>
+  <translation id="MILESTONE_COMBINED_PASSED_TIME_DESC" value="ต้องการผู้โดยสาร {0} ใน {1} {unit}"/>
+  <translation id="MILESTONE_COMBINED_TIME_DESC" value="รักษาระดับ {0} x {unit}"/>
+  <translation id="PARKINFOPANEL_CURRENTVISITORS" value="ผู้เข้าชม {unit}นี้: {0}"/>
+  <translation id="PARKINFOPANEL_INCOME" value="รายได้: {0} / {unit}"/>
+  <translation id="PROFIT_TT_TOTAL_PUBTRANS" value="รายได้จากการขนส่งสาธารณะประจำ {unit}"/>
+  <translation id="STADIUMINFO7" value="ชนะ/แมตช์ 12 x {unit}ล่าสุด:"/>
+  <translation id="STADIUMINFO9" value="รายได้ใน {unit}นี้:"/>
+  <translation id="TOOL_WATER_ESTIMATE" value="การผลิตโดยประมาณ {0:N0} ลบ.ม.ต่อ {unit}"/>
+  <translation id="TRANSPORT_LINE_PASSENGERS_WALKINGTOUR" value="ผู้เยี่ยมชมต่อ {unit}: ผู้อยู่อาศัย {0} คน นักท่องเที่ยว {1}  คน"/>
+  <translation id="TRANSPORT_LINE_PASSENGERS" value="ผู้โดยสารต่อ {unit}: ผู้อยู่อาศัย {0} คน นักท่องเที่ยว {1}  คน"/>
+  <translation id="AIINFO_INDUSTRY_PRODUCTION_RATE" value="การผลิต: {0:N0} ต่อ {unit}"/>
+  <translation id="AIINFO_POST_SORTING_RATE" value="อัตราการคัดจดหมายแยก: {0:N0} ฉบับต่อ {unit}"/>
+  <translation id="AIINFO_TOLL_BOOTH_VEHICLE_COUNT" value="ค่าผ่านด่านของ {unit}ที่แล้ว: {0:N0}"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_INDUSTRIAL_PLAYERINDUSTRY" value="รายได้จากโซนอุตสาหรรม และพื้นที่อุตสาหกรรมราย {unit}"/>
+  <translation id="EXPENSES_TT_PLAYERINDUSTRY" value="ค่าดูแลพื้นที่อุตสาหกรรมราย {unit}"/>
+  <translation id="INCOME_TT_ROADTOLLS" value="รายได้ค่าผ่านทางราย {unit}"/>
+  <translation id="INCOME_TT_TOTAL_ROADTOLLS" value="รายได้ทั้งหมดจากค่าผ่านทางราย {unit}"/>
+  <translation id="INDUSTRYPANEL_ACQUISITION_TOOLTIP" value="ปริมาณสะสมต่อ {unit}"/>
+  <translation id="INDUSTRYPANEL_ACQUISITIONCOST_TOOLTIP" value="ค่าใช้จ่ายจากการนำเข้าวัตถุดิบต่อ {unit}"/>
+  <translation id="INDUSTRYPANEL_OUTPUT_TOOLTIP" value="ปริมาณส่งออกต่อ {unit}"/>
+  <translation id="INDUSTRYPANEL_OUTPUTINCOME_TOOLTIP" value="รายได้จากการขายวัตถุดิบต่อ {unit}"/>
+  <translation id="INDUSTRYPANEL_PROFIT_TOOLTIP" value="กำไรต่อ {unit}"/>
+  <translation id="INDUSTRYPANEL_WEEKLYPRODUCTION" value="{0} / {unit}"/>
+  <translation id="PROFIT_TT_TOTAL_INDUSTRYAREAS" value="ผลกำไรรวมทั้งหมดจากพื้นที่อุตสาหกรรมราย {unit}"/>
+  <translation id="TOOL_EXTRACTION_ESTIMATE" value="อัตราการผลิตโดยประมาณ: {0:N0} หน่วยต่อ {unit}"/>
+  <translation id="UFPANEL_MATERIALCOST_TOOLTIP" value="ต้นทุนของวัตถุดิบที่ใช้ในกระบวนการผลิตต่อ {unit}"/>
+  <translation id="UFPANEL_PRODUCTIONVALUE_TOOLTIP" value="มูลค่าของผลิตภัณฑ์ที่ได้ต่อ {unit}"/>
+  <translation id="UNIQUEFACTORYPANEL_INCOME_TOOLTIP" value="รายได้ราย {unit}"/>
+  <translation id="UNIQUEFACTORYPANEL_RESOURCEEXPENSES" value="ค่าใช้จ่ายในการจัดหาทรัพยากรราย {unit}"/>
+  <translation id="UPDATEAIINFO_INDUSTRY_PRODUCTION_RATE" value="การผลิต: {0:N0} ต่อ {unit}"/>
+  <translation id="CAMPUSPANEL_VARSITYSPORTS_CHEERLEADINGTOOLTIP" value="ค่าใช้จ่าย: {0} /สนาม/ {unit}"/>
+  <translation id="CAMPUSPANEL_VARSITYSPORTS_COACHCOSTTOOLTIP" value="ค่าใช้จ่าย: {0} /โค้ช/ {unit}"/>
+  <translation id="CAMPUSPANEL_GRADUATESTHISYEAR" value="บัณฑิตปีนี้: {0}"/>
+  <translation id="CAMPUSPANEL_ACADEMICSTAFF_COST" value="ค่าใช้จ่าย: {0} /นักวิชาการ/ {unit}"/>
+  <translation id="CAMPUSPANEL_VARSITYSPORTS_EXPENSES" value="รายจ่ายราย {unit}"/>
+  <translation id="CAMPUSPANEL_VARSITYSPORTS_COACHINGSTAFF_TOOLTIP" value="การฝึกโดยโค้ช\nการจ้างโค้ชจะเพิ่มโอกาสชนะในการแข่งขัน แต่จะไม่เพิ่มทันที แต่จะเพิ่ม +0% ถึง +1% ต่อโค้ช 1 คน ในช่วง 40  {unit}ที่ผ่านมา\n"/>
+  <translation id="PROFIT_TT_TOTAL_CAMPUSAREAS" value="กำไรรวมจากพื้นที่การศึกษาราย {unit}"/>
+  <translation id="EXPENSES_TT_MONUMENTS_ARENAS" value="ค่าดูแลสิ่งปลูกสร้างพิเศษ และสปอร์ตอารีน่า ราย {unit}"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_CAMPUSINCOME" value="รายได้จากพื้นที่การศึกษาราย {unit}"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_INDUSTRIAL_ONLYPLAYERINDUSTRY_AND_FISHING" value="รายได้ราย {unit} จากพื้นที่อุตสาหกรรม และการประมง"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_INDUSTRIAL_FISHING" value="รายได้ราย {unit}จากการประมง"/>
+  <translation id="EXPENSES_TT_PLAYERINDUSTRY_AND_FISHING" value="ค่าดูแลพื้นที่อุตสาหกรรม และการประมง ราย {unit}"/>
+  <translation id="EXPENSES_TT_FISHING" value="ค่าดูแลการประมงราย {unit}"/>
+  <translation id="AIINFO_FISH_SOLD" value="ปริมาณปลาที่ขายได้ใน {unit}ที่แล้ว: {0}"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_INDUSTRYAREASANDFISHING_INCOME" value="รายได้ราย {unit} จากพื้นที่อุตสาหกรรม และการประมง"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_INDUSTRYAREASANDFISHING_EXPENSES" value="รายจ่ายราย {unit} จากพื้นที่อุตสาหกรรม และการประมง"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_FISHING_EXPENSES" value="รายจ่ายราย {unit} จากการประมง"/>
+  <translation id="ECONOMYPANEL_TOOLTIP_FISHING_INCOME" value="รายได้ราย {unit} จากการประมง"/>
+  <translation id="PROFIT_TT_TOTAL_INDUSTRIES" value="กำไรรวมราย {unit}จากพื้นที่อุตสาหกรรม และการประมง"/>
+  <translation id="PROFIT_TT_TOTAL_FISHINGINDUSTRY" value="กำไรรวมจากการประมงราย {unit}"/>
+  <translation id="INFO_HEALTH_CHILDCARE_BIRTHRATE" value="อัตราการเกิด: {0} / {unit}"/>
+  </overrides>
+
+</language>
