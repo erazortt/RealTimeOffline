@@ -73,8 +73,12 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(ResidentAI __instance, uint citizenID, ref Citizen data)
             {
-                RealTimeAI.UpdateLocation(__instance, citizenID, ref data);
-                return false;
+                if (RealTimeAI != null)
+                {
+                    RealTimeAI.UpdateLocation(__instance, citizenID, ref data);
+                    return false;
+                }
+                return true;
             }
         }
 

@@ -23,9 +23,12 @@ namespace RealTime.Patches
             [HarmonyPostfix]
             private static void Postfix(ref int __result)
             {
-                // Using the relaxing chance of an adult as base value - seems to be reasonable.
-                int chance = (int)SpareTimeBehavior.GetRelaxingChance(Citizen.AgeGroup.Adult);
-                __result = __result * chance * chance / 10_000;
+                if(SpareTimeBehavior != null)
+                {
+                    // Using the relaxing chance of an adult as base value - seems to be reasonable.
+                    int chance = (int)SpareTimeBehavior.GetRelaxingChance(Citizen.AgeGroup.Adult);
+                    __result = __result * chance * chance / 10_000;
+                }
             }
         }
     }

@@ -14,7 +14,6 @@ namespace RealTime.Patches
     using static RealTime.GameConnection.HumanAIConnectionBase<TouristAI, Citizen>;
     using static RealTime.GameConnection.TouristAIConnection<TouristAI, Citizen>;
     using ColossalFramework;
-    using ColossalFramework.Globalization;
 
 
     /// <summary>
@@ -78,8 +77,12 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(TouristAI __instance, uint citizenID, ref Citizen data)
             {
-                RealTimeAI.UpdateLocation(__instance, citizenID, ref data);
-                return false;
+                if(RealTimeAI != null)
+                {
+                    RealTimeAI.UpdateLocation(__instance, citizenID, ref data);
+                    return false;
+                }
+                return true;
             }
         }
 
