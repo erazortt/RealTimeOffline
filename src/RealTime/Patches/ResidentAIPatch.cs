@@ -11,6 +11,7 @@ namespace RealTime.Patches
     using static RealTime.GameConnection.ResidentAIConnection<ResidentAI, Citizen>;
     using RealTime.Core;
     using ColossalFramework;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A static class that provides the patch objects and the game connection objects for the resident AI .
@@ -170,12 +171,67 @@ namespace RealTime.Patches
                     RealTimeAI.ProcessWaitingForTransport(__instance, citizenData.m_citizen, instanceID);
                 }
             }
+
+            [HarmonyPatch(typeof(ResidentAI), "SimulationStep",
+                new Type[] { typeof(ushort), typeof(CitizenInstance), typeof(CitizenInstance.Frame), typeof(bool) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Ref, ArgumentType.Normal })]
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> TranspileSimulationStep1(IEnumerable<CodeInstruction> instructions)
+            {
+                var inst = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < inst.Count; i++)
+                {
+                    if (inst[i].LoadsConstant(-100))
+                    {
+                        inst[i].operand = -1;
+                    }
+                }
+                return inst;
+            }
+
+            [HarmonyPatch(typeof(ResidentAI), "SimulationStep",
+                new Type[] { typeof(uint), typeof(CitizenUnit) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref })]
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> TranspileSimulationStep2(IEnumerable<CodeInstruction> instructions)
+            {
+                var inst = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < inst.Count; i++)
+                {
+                    if (inst[i].LoadsConstant(20))
+                    {
+                        inst[i].operand = 1;
+                    }
+                }
+                return inst;
+            }
+
         }
 
 
         [HarmonyPatch]
         private sealed class ResidentAI_StartTransfer
         {
+            [HarmonyPatch(typeof(ResidentAI), "StartTransfer",
+                new Type[] { typeof(uint), typeof(Citizen), typeof(TransferManager.TransferReason), typeof(TransferManager.TransferOffer) },
+                new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal, ArgumentType.Normal })]
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> TranspileStartTransfer(IEnumerable<CodeInstruction> instructions)
+            {
+                var inst = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < inst.Count; i++)
+                {
+                    if (inst[i].LoadsConstant(100))
+                    {
+                        inst[i].operand = 1;
+                    }
+                }
+                return inst;
+            }
+
             [HarmonyPatch(typeof(ResidentAI), "StartTransfer")]
             [HarmonyPrefix]
             private static bool Prefix(ResidentAI __instance, uint citizenID, ref Citizen data, TransferManager.TransferReason reason, TransferManager.TransferOffer offer)
