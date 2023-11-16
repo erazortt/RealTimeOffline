@@ -14,10 +14,12 @@ namespace RealTime.Patches
         [HarmonyPatch]
         private sealed class FireTruckAI_ExtinguishFire
         {
+
             [HarmonyPatch(typeof(FireTruckAI), "ExtinguishFire")]
             [HarmonyPrefix]
             private static bool Prefix(FireTruckAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
             {
+                RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
                 if (RealTimeAI.ShouldExtinguishFire(buildingID))
                 {
                     return true;
@@ -46,6 +48,7 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(FireCopterAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
             {
+                RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
                 if (RealTimeAI.ShouldExtinguishFire(buildingID))
                 {
                     return true;

@@ -432,25 +432,31 @@ namespace RealTime.CustomAI
 
         private bool StartMovingToHotelBuilding(TAI instance, uint citizenId, ref TCitizen citizen, ushort currentBuilding, ushort hotelBuilding)
         {
-            uint empty_room = Singleton<BuildingManager>.instance.m_buildings.m_buffer[hotelBuilding].GetNotFullCitizenUnit(CitizenUnit.Flags.Hotel);
-            if(empty_room != 0)
+            var data = Singleton<BuildingManager>.instance.m_buildings.m_buffer[hotelBuilding];
+            if (data.m_roomUsed < data.m_roomMax)
             {
-                CitizenProxy.SetHotel(ref citizen, citizenId, hotelBuilding, empty_room);
-            }
-            if (CitizenProxy.GetHotelBuilding(ref citizen) == 0)
-            {
-                // Building is full and doesn't accept visitors anymore
-                CitizenProxy.ResetHotel(ref citizen, citizenId);
-                return false;
+                uint empty_room = Singleton<BuildingManager>.instance.m_buildings.m_buffer[hotelBuilding].GetNotFullCitizenUnit(CitizenUnit.Flags.Hotel);
+                if (empty_room != 0)
+                {
+                    CitizenProxy.SetHotel(ref citizen, citizenId, hotelBuilding, empty_room);
+                }
+
+                if (CitizenProxy.GetHotelBuilding(ref citizen) == 0)
+                {
+                    CitizenProxy.ResetHotel(ref citizen, citizenId);
+                    return false;
+                }
+
+                if (!touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, hotelBuilding))
+                {
+                    CitizenProxy.ResetHotel(ref citizen, citizenId);
+                    return false;
+                }
+
+                return true;
             }
 
-            if (!touristAI.StartMoving(instance, citizenId, ref citizen, currentBuilding, hotelBuilding))
-            {
-                CitizenProxy.ResetHotel(ref citizen, citizenId);
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
         private uint GetHotelLeaveChance() => TimeInfo.IsNightTime ? 0u : (uint)((TimeInfo.CurrentHour - Config.WakeUpHour) / 0.03f);

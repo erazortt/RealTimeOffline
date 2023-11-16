@@ -1070,6 +1070,7 @@ namespace RealTime.CustomAI
 
         public void RemoveBuildingFire(ushort buildingID) => FireBurnTimeManager.RemoveBuildingBurnTime(buildingID);
 
+
         public bool ShouldExtinguishFire(ushort buildingID)
         {
             if (!config.RealisticFires)
@@ -1077,6 +1078,10 @@ namespace RealTime.CustomAI
                 return true;
             }
             var burnTime = FireBurnTimeManager.GetBuildingBurnTime(buildingID);
+            if(burnTime.Equals(default(FireBurnTimeManager.BurnTime)))
+            {
+                return false;
+            }
             if(burnTime.StartDate == timeInfo.Now.Date)
             {
                 if (timeInfo.CurrentHour < burnTime.StartTime + burnTime.Duration)

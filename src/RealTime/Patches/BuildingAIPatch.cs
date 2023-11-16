@@ -5,8 +5,10 @@
 namespace RealTime.Patches
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Reflection.Emit;
     using ColossalFramework;
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
@@ -65,6 +67,30 @@ namespace RealTime.Patches
                     GetHotelBehaviour(buildingID, ref buildingData, ref behaviour, ref aliveCount, ref hotelTotalCount);
                     buildingData.m_roomUsed = (ushort)hotelTotalCount;
                     buildingData.m_roomMax = (ushort)__instance.CalculateVisitplaceCount(buildingData.Info.m_class.m_level, new Randomizer(buildingID), buildingData.Width, buildingData.Length);
+
+                    if (buildingData.m_roomUsed > buildingData.m_roomMax)
+                    {
+                        var instance = Singleton<CitizenManager>.instance;
+                        uint num = buildingData.m_citizenUnits;
+                        int num2 = 0;
+                        while (num != 0 && buildingData.m_roomUsed > buildingData.m_roomMax)
+                        {
+                            if ((instance.m_units.m_buffer[num].m_flags & CitizenUnit.Flags.Hotel) != 0)
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    uint citizen = instance.m_units.m_buffer[num].GetCitizen(i);
+                                    instance.m_citizens.m_buffer[citizen].ResetHotel(citizen, num);
+                                }
+                            }
+                            num = instance.m_units.m_buffer[num].m_nextUnit;
+                            if (++num2 > 524288)
+                            {
+                                CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -328,43 +354,19 @@ namespace RealTime.Patches
         private sealed class CommonBuildingAI_RenderGarbageBins
         {
             [HarmonyPatch(typeof(CommonBuildingAI), "RenderGarbageBins")]
-            [HarmonyPrefix]
-            public static bool RenderGarbageBins(RenderManager.CameraInfo cameraInfo, ushort buildingID, ref Building data, int layerMask, ref RenderManager.Instance instance)
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> TranspileRenderGarbageBins(IEnumerable<CodeInstruction> instructions)
             {
-                if (data.m_garbageBuffer < 1000)
+                var inst = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < inst.Count; i++)
                 {
-                    return false;
-                }
-                var r = new Randomizer(buildingID);
-                var randomPropInfo = Singleton<PropManager>.instance.GetRandomPropInfo(ref r, ItemClass.Service.Garbage);
-                if (randomPropInfo == null || (layerMask & (1 << randomPropInfo.m_prefabDataLayer)) == 0 || randomPropInfo.m_requireHeightMap)
-                {
-                    return false;
-                }
-                int num = Mathf.Min(8, data.m_garbageBuffer / 10000);
-                int width = data.Width;
-                int length = data.Length;
-                Vector3 vector = default;
-                for (int i = 0; i < num; i++)
-                {
-                    var variation = randomPropInfo.GetVariation(ref r);
-                    float scale = variation.m_minScale + (float)r.Int32(10000u) * (variation.m_maxScale - variation.m_minScale) * 0.0001f;
-                    float angle = (float)r.Int32(10000u) * 0.0006283185f;
-                    var color = variation.GetColor(ref r);
-                    vector.x = ((float)r.Int32(10000u) * 0.0001f - 0.5f) * (float)width * 4f;
-                    vector.y = 0f;
-                    vector.z = (float)r.Int32(10000u) * 0.0001f - 0.5f + (float)length * 4f;
-                    vector = instance.m_dataMatrix0.MultiplyPoint(vector);
-                    vector.y = (float)(int)instance.m_extraData.GetUShort(64 + i) * (1f / 64f);
-                    if (cameraInfo.CheckRenderDistance(vector, variation.m_maxRenderDistance))
+                    if (inst[i].LoadsConstant(1000))
                     {
-                        var objectIndex = new Vector4(0.001953125f, 0.0026041667f, 0f, 0f);
-                        InstanceID id = default;
-                        id.Building = buildingID;
-                        PropInstance.RenderInstance(cameraInfo, variation, id, vector, scale, angle, color, objectIndex, (data.m_flags & Building.Flags.Active) != 0);
+                        inst[i].operand = 10000;
                     }
                 }
-                return false;
+                return inst;
             }
         }
 
@@ -563,20 +565,6 @@ namespace RealTime.Patches
                     return false;
                 }
                 return true;
-            }
-        }
-
-        [HarmonyPatch]
-        private sealed class CommonBuildingAI_BurnBuilding
-        {
-            [HarmonyPatch(typeof(CommonBuildingAI), "BurnBuilding")]
-            [HarmonyPostfix]
-            private static void Postfix(CommonBuildingAI __instance, ushort buildingID, ref Building data, InstanceManager.Group group, bool testOnly, ref bool __result)
-            {
-                if(__result)
-                {
-                    RealTimeAI.CreateBuildingFire(buildingID);
-                }
             }
         }
 
@@ -1399,7 +1387,7 @@ namespace RealTime.Patches
 
             [HarmonyPatch(typeof(PrivateBuildingAI), "CreateBuilding")]
             [HarmonyPrefix]
-            public static bool CreateBuilding(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
+            public static bool Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
             {
                 if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (data.Info.name.Contains("hotel") || data.Info.name.Contains("Hotel")))
                 {
@@ -1411,6 +1399,7 @@ namespace RealTime.Patches
                     int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     Singleton<CitizenManager>.instance.CreateUnits(out data.m_citizenUnits, ref Singleton<SimulationManager>.instance.m_randomizer, buildingID, 0, 0, workCount, visitCount, 0, 0, hotelCount);
+                    data.m_customBuffer1 = (ushort)(data.m_customBuffer1 * 10);
                     return false;
                 }
                 else
@@ -1419,6 +1408,10 @@ namespace RealTime.Patches
                 }
             }
 
+            [HarmonyPatch(typeof(PrivateBuildingAI), "CreateBuilding")]
+            [HarmonyPostfix]
+            public static void Postfix(PrivateBuildingAI __instance, ushort buildingID, ref Building data) => data.m_customBuffer1 = (ushort)(data.m_customBuffer1 * 10);
+
         }
 
         [HarmonyPatch]
@@ -1426,7 +1419,7 @@ namespace RealTime.Patches
         {
             [HarmonyPatch(typeof(PrivateBuildingAI), "BuildingLoaded")]
             [HarmonyPrefix]
-            public static bool BuildingLoaded(PrivateBuildingAI __instance, ushort buildingID, ref Building data, uint version)
+            public static bool Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data, uint version)
             {
                 if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (data.Info.name.Contains("hotel") || data.Info.name.Contains("Hotel")))
                 {
@@ -1437,6 +1430,7 @@ namespace RealTime.Patches
                     int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     EnsureCitizenUnits(buildingID, ref data, 0, workCount, visitCount, 0, hotelCount);
+                    data.m_customBuffer1 = (ushort)(data.m_customBuffer1 * 10);
                     return false;
                 }
                 else
@@ -1444,6 +1438,10 @@ namespace RealTime.Patches
                     return true;
                 }
             }
+
+            [HarmonyPatch(typeof(PrivateBuildingAI), "BuildingLoaded")]
+            [HarmonyPostfix]
+            public static void Postfix(PrivateBuildingAI __instance, ushort buildingID, ref Building data) => data.m_customBuffer1 = (ushort)(data.m_customBuffer1 * 10);
 
             private static void EnsureCitizenUnits(ushort buildingID, ref Building data, int homeCount = 0, int workCount = 0, int visitCount = 0, int studentCount = 0, int hotelCount = 0)
             {
@@ -1945,61 +1943,100 @@ namespace RealTime.Patches
                 data.m_problems = Notification.RemoveProblems(data.m_problems, Notification.Problem1.Fire);
                 return false;
             }
-        }
 
-        private static int GetFireTruckCount(ref Building data)
-        {
-            int buildingVolume = GetBuildingVolume(data.Info.m_generatedInfo);
-            int fireTruckCount = buildingVolume < 10000 ? 1 : buildingVolume / 10000 + 1;
-            return fireTruckCount;
-        }
-
-        private static int GetFireHelicopterCount(ref Building data)
-        {
-            int buildingVolume = GetBuildingVolume(data.Info.m_generatedInfo);
-            int fireHelicopterCount = buildingVolume < 10000 ? 1 : buildingVolume / 20000;
-            return fireHelicopterCount;
-        }
-
-        private static int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
-        {
-            float gridSizeX = (buildingInfoGen.m_max.x - buildingInfoGen.m_min.x) / 16f;
-            float gridSizeY = (buildingInfoGen.m_max.z - buildingInfoGen.m_min.z) / 16f;
-            float gridArea = gridSizeX * gridSizeY;
-
-            float volume = 0f;
-            float[] heights = buildingInfoGen.m_heights;
-            for (int i = 0; i < heights.Length; i++)
+            private static int GetFireTruckCount(ref Building data)
             {
-                volume += gridArea * heights[i];
+                int buildingVolume = GetBuildingVolume(data.Info.m_generatedInfo);
+                int fireTruckCount = buildingVolume < 10000 ? 1 : buildingVolume / 10000 + 1;
+                return fireTruckCount;
             }
-            return (int)volume;
+
+            private static int GetFireHelicopterCount(ref Building data)
+            {
+                int buildingVolume = GetBuildingVolume(data.Info.m_generatedInfo);
+                int fireHelicopterCount = buildingVolume < 10000 ? 1 : buildingVolume / 20000;
+                return fireHelicopterCount;
+            }
+
+            private static int GetBuildingVolume(BuildingInfoGen buildingInfoGen)
+            {
+                float gridSizeX = (buildingInfoGen.m_max.x - buildingInfoGen.m_min.x) / 16f;
+                float gridSizeY = (buildingInfoGen.m_max.z - buildingInfoGen.m_min.z) / 16f;
+                float gridArea = gridSizeX * gridSizeY;
+
+                float volume = 0f;
+                float[] heights = buildingInfoGen.m_heights;
+                for (int i = 0; i < heights.Length; i++)
+                {
+                    volume += gridArea * heights[i];
+                }
+                return (int)volume;
+            }
+
+            private static void BlockSegmentsOnBothSides(PathUnit.Position pathPos)
+            {
+                ushort segment = pathPos.m_segment;
+
+                ushort end_node = Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].m_endNode;
+
+                ushort start_node = Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].m_startNode;
+
+
+                Singleton<NetManager>.instance.m_segments.m_buffer[segment].GetLeftAndRightSegments(end_node, out ushort endLeftSegment, out ushort endRightSegment);
+
+                Singleton<NetManager>.instance.m_segments.m_buffer[endLeftSegment].AddTraffic(65535, 0);
+
+                Singleton<NetManager>.instance.m_segments.m_buffer[endRightSegment].AddTraffic(65535, 0);
+
+
+                Singleton<NetManager>.instance.m_segments.m_buffer[segment].GetLeftAndRightSegments(start_node, out ushort startLeftSegment, out ushort startRightSegment);
+
+                Singleton<NetManager>.instance.m_segments.m_buffer[startLeftSegment].AddTraffic(65535, 0);
+
+                Singleton<NetManager>.instance.m_segments.m_buffer[startRightSegment].AddTraffic(65535, 0);
+
+            }
         }
 
-        private static void BlockSegmentsOnBothSides(PathUnit.Position pathPos)
+        
+
+        [HarmonyPatch]
+        private sealed class HotelAI_ProduceGoods
         {
-            ushort segment = pathPos.m_segment;
-
-            ushort end_node = Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].m_endNode;
-
-            ushort start_node = Singleton<NetManager>.instance.m_segments.m_buffer[pathPos.m_segment].m_startNode;
-
-
-            Singleton<NetManager>.instance.m_segments.m_buffer[segment].GetLeftAndRightSegments(end_node, out ushort endLeftSegment, out ushort endRightSegment);
-
-            Singleton<NetManager>.instance.m_segments.m_buffer[endLeftSegment].AddTraffic(65535, 0);
-
-            Singleton<NetManager>.instance.m_segments.m_buffer[endRightSegment].AddTraffic(65535, 0);
-
-
-            Singleton<NetManager>.instance.m_segments.m_buffer[segment].GetLeftAndRightSegments(start_node, out ushort startLeftSegment, out ushort startRightSegment);
-
-            Singleton<NetManager>.instance.m_segments.m_buffer[startLeftSegment].AddTraffic(65535, 0);
-
-            Singleton<NetManager>.instance.m_segments.m_buffer[startRightSegment].AddTraffic(65535, 0);
+            [HarmonyPatch(typeof(HotelAI), "ProduceGoods")]
+            [HarmonyPrefix]
+            public static void ProduceGoods(ushort buildingID, ref Building buildingData, ref Building.Frame frameData, int productionRate, int finalProductionRate, ref Citizen.BehaviourData guestBehaviour, int aliveWorkerCount, int totalWorkerCount, int workPlaceCount, int aliveGuestCount, int totalGuestCount, int guestPlaceCount)
+            {
+                if(buildingData.m_roomUsed > buildingData.m_roomMax)
+                {
+                    var instance = Singleton<CitizenManager>.instance;
+                    uint num = buildingData.m_citizenUnits;
+                    int num2 = 0;
+                    while (num != 0 && buildingData.m_roomUsed > buildingData.m_roomMax)
+                    {
+                        if ((instance.m_units.m_buffer[num].m_flags & CitizenUnit.Flags.Hotel) != 0)
+                        {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                uint citizen = instance.m_units.m_buffer[num].GetCitizen(i);
+                                instance.m_citizens.m_buffer[citizen].ResetHotel(citizen, num);
+                            }
+                        }
+                        num = instance.m_units.m_buffer[num].m_nextUnit;
+                        if (++num2 > 524288)
+                        {
+                            CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
+                            break;
+                        }
+                    }
+                }
+            }
 
         }
 
     }
+
+
+    
 }
 
