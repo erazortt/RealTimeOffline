@@ -12,12 +12,10 @@ namespace RealTime.Patches
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Reflection.Emit;
     using ColossalFramework;
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
-    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
@@ -1401,8 +1399,8 @@ namespace RealTime.Patches
                     __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);
                     __instance.AdjustWorkplaceCount(buildingID, ref data, ref level, ref level2, ref level3, ref level4);
                     int workCount = level + level2 + level3 + level4;
-                    int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
+                    int visitCount = Singleton<SimulationManager>.instance.m_randomizer.Int32(5, hotelCount);
                     Singleton<CitizenManager>.instance.CreateUnits(out data.m_citizenUnits, ref Singleton<SimulationManager>.instance.m_randomizer, buildingID, 0, 0, workCount, visitCount, 0, 0, hotelCount);
                     return false;
                 }
@@ -1426,8 +1424,8 @@ namespace RealTime.Patches
                     __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);
                     __instance.AdjustWorkplaceCount(buildingID, ref data, ref level, ref level2, ref level3, ref level4);
                     int workCount = level + level2 + level3 + level4;
-                    int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
+                    int visitCount = Singleton<SimulationManager>.instance.m_randomizer.Int32(5, hotelCount);
                     EnsureCitizenUnits(buildingID, ref data, 0, workCount, visitCount, 0, hotelCount);
                     return false;
                 }
