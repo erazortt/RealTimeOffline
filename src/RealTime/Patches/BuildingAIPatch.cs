@@ -2,6 +2,10 @@
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
+using HarmonyLib;
+using System.Reflection;
+using System.Xml.Linq;
+
 namespace RealTime.Patches
 {
     using System;
@@ -1400,7 +1404,6 @@ namespace RealTime.Patches
                     int visitCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     int hotelCount = __instance.CalculateVisitplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length);
                     Singleton<CitizenManager>.instance.CreateUnits(out data.m_citizenUnits, ref Singleton<SimulationManager>.instance.m_randomizer, buildingID, 0, 0, workCount, visitCount, 0, 0, hotelCount);
-                    data.m_customBuffer1 = (ushort)(data.m_customBuffer1 * 10);
                     return false;
                 }
                 else
@@ -1408,11 +1411,6 @@ namespace RealTime.Patches
                     return true;
                 }
             }
-
-            [HarmonyPatch(typeof(PrivateBuildingAI), "CreateBuilding")]
-            [HarmonyPostfix]
-            public static void Postfix(PrivateBuildingAI __instance, ushort buildingID, ref Building data) => data.m_customBuffer1 = (ushort)(data.m_customBuffer1 * 10);
-
         }
 
         [HarmonyPatch]
@@ -2033,93 +2031,31 @@ namespace RealTime.Patches
         [HarmonyPatch]
         private sealed class ShelterAI_CreateBuilding
         {
-            private delegate void PlayerBuildingAISimulationStepDelegate(PlayerBuildingAI __instance, ushort buildingID, ref Building buildingData, ref Building.Frame frameData);
-            private static readonly PlayerBuildingAISimulationStepDelegate BaseSimulationStep = AccessTools.MethodDelegate<PlayerBuildingAISimulationStepDelegate>(typeof(PlayerBuildingAI).GetMethod("SimulationStep", BindingFlags.Instance | BindingFlags.Public), null, false);
-
-
             [HarmonyPatch(typeof(ShelterAI), "CreateBuilding")]
             [HarmonyPrefix]
             public static void CreateBuilding(ShelterAI __instance, ushort buildingID, ref Building data) => __instance.m_goodsStockpileAmount *= 100;
+        }
 
+        [HarmonyPatch]
+        private sealed class ShelterAI_SimulationStep
+        {
             [HarmonyPatch(typeof(ShelterAI), "SimulationStep")]
             [HarmonyPrefix]
-            public static bool SimulationStep(ShelterAI __instance, ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
+            public static void SimulationStep(ShelterAI __instance, ushort buildingID, ref Building buildingData, ref Building.Frame frameData)
             {
-                buildingData.m_finalExport = buildingData.m_tempExport;
-                buildingData.m_tempExport = 0;
-                BaseSimulationStep(__instance, buildingID, ref buildingData, ref frameData);
-                var instance = Singleton<SimulationManager>.instance;
-                uint num = (instance.m_currentFrameIndex & 0xF00) >> 8;
-                if (num == 15)
+                if(buildingData.m_productionRate == 0)
                 {
-                    buildingData.m_finalImport = buildingData.m_tempImport;
-                    buildingData.m_tempImport = 0;
+                    __instance.m_goodsConsumptionRate = 1;
                 }
-                if (buildingData.m_productionRate == 0)
-                {
-                    int productionRate = 100;
-                    int budget = __instance.GetBudget(buildingID, ref buildingData);
-                    productionRate = PlayerBuildingAI.GetProductionRate(productionRate, budget);
-                    int num2 = productionRate * __instance.m_electricityConsumption / 100;
-                    int num3 = productionRate * __instance.m_waterConsumption / 100;
-                    int goodsConsumptionRate = __instance.m_goodsConsumptionRate;
-                    if (buildingData.m_electricityBuffer >= num2)
-                    {
-                        buildingData.m_electricityBuffer -= (ushort)num2;
-                    }
-                    else
-                    {
-                        buildingData.m_electricityBuffer = 0;
-                    }
-                    if (buildingData.m_waterBuffer >= num3)
-                    {
-                        buildingData.m_waterBuffer -= (ushort)num3;
-                    }
-                    else
-                    {
-                        buildingData.m_waterBuffer = 0;
-                    }
-                    if (buildingData.m_customBuffer1 >= goodsConsumptionRate)
-                    {
-                        buildingData.m_customBuffer1 -= 5;
-                    }
-                    else
-                    {
-                        buildingData.m_customBuffer1 = 0;
-                    }
-                    buildingData.m_problems = Notification.RemoveProblems(buildingData.m_problems, Notification.Problem1.NoFood);
-                }
-                if ((buildingData.m_flags & Building.Flags.Downgrading) != 0)
-                {
-                    return false;
-                }
-                int budget2 = Singleton<EconomyManager>.instance.GetBudget(__instance.m_info.m_class);
-                int productionRate2 = PlayerBuildingAI.GetProductionRate(100, budget2);
-                float num4 = (float)productionRate2 * __instance.m_evacuationRange * 0.01f;
-                var instance2 = Singleton<NetManager>.instance;
-                var instance3 = Singleton<DisasterManager>.instance;
-                int num5 = 0;
-                ushort num6 = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID].m_netNode;
-                int num7 = 0;
-                while (num6 != 0)
-                {
-                    var info = instance2.m_nodes.m_buffer[num6].Info;
-                    if (info.m_class.m_layer == ItemClass.Layer.PublicTransport)
-                    {
-                        instance3.AddEvacuationArea(buildingData.m_position, num4 * 0.35f);
-                        num5++;
-                    }
-                    num6 = instance2.m_nodes.m_buffer[num6].m_nextBuildingNode;
-                    if (++num7 > 32768)
-                    {
-                        CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
-                        break;
-                    }
-                }
-                num4 *= 10f / (10f + (float)num5);
-                instance3.AddEvacuationArea(buildingData.m_position, num4);
-                return false;
             }
+        }
+
+        [HarmonyPatch]
+        private sealed class ShelterAI_ProduceGoods
+        {
+            [HarmonyPatch(typeof(ShelterAI), "ProduceGoods")]
+            [HarmonyPrefix]
+            public static void ProduceGoods(ShelterAI __instance, ushort buildingID, ref Building buildingData, ref Building.Frame frameData, int productionRate, int finalProductionRate, ref Citizen.BehaviourData behaviour, int aliveWorkerCount, int totalWorkerCount, int workPlaceCount, int aliveVisitorCount, int totalVisitorCount, int visitPlaceCount) => __instance.m_goodsConsumptionRate = 1;
         }
 
     }
