@@ -258,7 +258,7 @@ namespace RealTime.Patches
                         num = UniqueFacultyAI.DecreaseByBonus(UniqueFacultyAI.FacultyBonus.Science, num);
                         Singleton<NaturalResourceManager>.instance.TryDumpResource(NaturalResourceManager.Resource.Pollution, num, num, buildingData.m_position, 0f);
                     }
-                    int num2 = ((!(__instance is MainCampusBuildingAI) && !(__instance is ParkGateAI) && !(__instance is MainIndustryBuildingAI)) ? 3 : 4);
+                    int num2 = (!(__instance is MainCampusBuildingAI) && !(__instance is ParkGateAI) && !(__instance is MainIndustryBuildingAI)) ? 3 : 4;
                     if (num >= num2)
                     {
                         if (Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
@@ -2027,7 +2027,11 @@ namespace RealTime.Patches
         {
             [HarmonyPatch(typeof(ShelterAI), "CreateBuilding")]
             [HarmonyPrefix]
-            public static void CreateBuilding(ShelterAI __instance, ushort buildingID, ref Building data) => __instance.m_goodsStockpileAmount *= 100;
+            public static void CreateBuilding(ShelterAI __instance, ushort buildingID, ref Building data)
+            {
+                __instance.m_goodsStockpileAmount = ushort.MaxValue;
+                data.m_customBuffer1 = ushort.MaxValue;
+            }
         }
 
         [HarmonyPatch]
