@@ -2,10 +2,6 @@
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
-using HarmonyLib;
-using System.Reflection;
-using System.Xml.Linq;
-
 namespace RealTime.Patches
 {
     using System;
