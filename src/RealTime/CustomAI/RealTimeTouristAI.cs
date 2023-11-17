@@ -155,10 +155,11 @@ namespace RealTime.CustomAI
                     targetBuildingId = CitizenMgr.GetTargetBuilding(instanceId);
                 }
 
+                var buildingData = BuildingManager.instance.m_buildings.m_buffer[targetBuildingId];
                 BuildingMgr.GetBuildingService(targetBuildingId, out var targetService, out var targetSubService);
                 switch (targetService)
                 {
-                    case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialTourist:
+                    case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialTourist && (buildingData.Info.name.Contains("Hotel") || buildingData.Info.name.Contains("hotel")):
                     case ItemClass.Service.Hotel:
                         return;
 
@@ -269,11 +270,12 @@ namespace RealTime.CustomAI
                 return;
             }
 
+            var buildingData = BuildingManager.instance.m_buildings.m_buffer[hotelBuilding];
             switch (BuildingMgr.GetBuildingService(hotelBuilding))
             {
                 // Tourist is sleeping in a hotel
                 case ItemClass.Service.Commercial
-                    when BuildingMgr.GetBuildingSubService(hotelBuilding) == ItemClass.SubService.CommercialTourist
+                    when BuildingMgr.GetBuildingSubService(hotelBuilding) == ItemClass.SubService.CommercialTourist && (buildingData.Info.name.Contains("Hotel") || buildingData.Info.name.Contains("hotel")) 
                         && !Random.ShouldOccur(GetHotelLeaveChance()):
                 case ItemClass.Service.Hotel when !Random.ShouldOccur(GetHotelLeaveChance()):
                     return;
