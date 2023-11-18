@@ -18,6 +18,21 @@ namespace RealTime.GameConnection
         private const int MaxBuildingGridIndex = BuildingManager.BUILDINGGRID_RESOLUTION - 1;
         private const int BuildingGridMiddle = BuildingManager.BUILDINGGRID_RESOLUTION / 2;
 
+
+        public static string[] Hotel_Names = new string[]
+        {
+            "Hotel",
+            "hotel",
+            "Crescent",
+            "Obsidian",
+            "Yggdrasil",
+            "K207",
+            "Rental",
+            "Inn",
+            "Babylon"
+        };
+
+
         /// <summary>Gets the service type of the building with specified ID.</summary>
         /// <param name="buildingId">The ID of the building to get the service type of.</param>
         /// <returns>
@@ -285,10 +300,11 @@ namespace RealTime.GameConnection
                     while (buildingId != 0)
                     {
                         ref var building = ref BuildingManager.instance.m_buildings.m_buffer[buildingId];
+                        var buildingInfo = building.Info;
                         if (building.Info?.m_class != null
                             && building.Info.m_class.m_service == ItemClass.Service.Commercial
                             && building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist
-                            && (building.Info.name.Contains("Hotel") || building.Info.name.Contains("hotel"))
+                            && Hotel_Names.Any(name => buildingInfo.name.Contains(name))
                             && building.m_roomUsed < building.m_roomMax
                             && (building.m_flags & combinedFlags) == requiredFlags)
                         {

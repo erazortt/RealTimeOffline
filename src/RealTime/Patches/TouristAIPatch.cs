@@ -14,6 +14,7 @@ namespace RealTime.Patches
     using static RealTime.GameConnection.HumanAIConnectionBase<TouristAI, Citizen>;
     using static RealTime.GameConnection.TouristAIConnection<TouristAI, Citizen>;
     using ColossalFramework;
+    using System.Linq;
 
 
     /// <summary>
@@ -131,7 +132,7 @@ namespace RealTime.Patches
                             {
                                 return false;
                             }
-                            if (building.Info.m_class.m_service == ItemClass.Service.Commercial && building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (building.Info.name.Contains("Hotel") || building.Info.name.Contains("hotel")))
+                            if (building.Info.m_class.m_service == ItemClass.Service.Commercial && building.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => building.Info.name.Contains(name)))
                             {
                                 return false;
                             }

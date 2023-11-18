@@ -16,6 +16,7 @@ namespace RealTime.Patches
     using ICities;
     using RealTime.Core;
     using RealTime.CustomAI;
+    using RealTime.GameConnection;
     using RealTime.Simulation;
     using UnityEngine;
 
@@ -58,7 +59,8 @@ namespace RealTime.Patches
                 {
                     RealTimeAI.ProcessBuildingProblems(buildingID, __state);
                 }
-                if(buildingData.Info.m_class.m_service == ItemClass.Service.Commercial && buildingData.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (buildingData.Info.name.Contains("Hotel") || buildingData.Info.name.Contains("hotel")))
+                var buildingInfo = buildingData.Info;
+                if (buildingData.Info.m_class.m_service == ItemClass.Service.Commercial && buildingData.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))
                 {
                     int aliveCount = 0;
                     int hotelTotalCount = 0;
@@ -154,7 +156,7 @@ namespace RealTime.Patches
                 var buildingInfo = buildingData.Info;
 
                 // Is this a hotel building?
-                if (buildingInfo.GetAI() is CommercialBuildingAI && buildingInfo.m_class.m_service == ItemClass.Service.Commercial && buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist && (buildingInfo.name.Contains("Hotel") || buildingInfo.name.Contains("hotel")))
+                if (buildingInfo.GetAI() is CommercialBuildingAI && buildingInfo.m_class.m_service == ItemClass.Service.Commercial && buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingData.Info.name.Contains(name)))
                 {
                     // Hotel show the label
                     s_hotelLabel.Show();
@@ -1388,7 +1390,8 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             public static bool Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
             {
-                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (data.Info.name.Contains("hotel") || data.Info.name.Contains("Hotel")))
+                var buildingInfo = data.Info;
+                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))
                 {
                     BaseCreateBuilding(__instance, buildingID, ref data);
                     data.m_level = (byte)__instance.m_info.m_class.m_level;
@@ -1414,7 +1417,8 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             public static bool Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data, uint version)
             {
-                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && (data.Info.name.Contains("hotel") || data.Info.name.Contains("Hotel")))
+                var buildingInfo = data.Info;
+                if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))
                 {
                     data.m_level = (byte)Mathf.Max(data.m_level, (int)__instance.m_info.m_class.m_level);
                     __instance.CalculateWorkplaceCount((ItemClass.Level)data.m_level, new Randomizer(buildingID), data.Width, data.Length, out int level, out int level2, out int level3, out int level4);

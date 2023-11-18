@@ -5,6 +5,7 @@
 namespace RealTime.CustomAI
 {
     using System;
+    using System.Linq;
     using ColossalFramework;
     using RealTime.Config;
     using RealTime.Events;
@@ -159,7 +160,7 @@ namespace RealTime.CustomAI
                 BuildingMgr.GetBuildingService(targetBuildingId, out var targetService, out var targetSubService);
                 switch (targetService)
                 {
-                    case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialTourist && (buildingData.Info.name.Contains("Hotel") || buildingData.Info.name.Contains("hotel")):
+                    case ItemClass.Service.Commercial when targetSubService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingData.Info.name.Contains(name)):
                     case ItemClass.Service.Hotel:
                         return;
 
@@ -275,7 +276,7 @@ namespace RealTime.CustomAI
             {
                 // Tourist is sleeping in a hotel
                 case ItemClass.Service.Commercial
-                    when BuildingMgr.GetBuildingSubService(hotelBuilding) == ItemClass.SubService.CommercialTourist && (buildingData.Info.name.Contains("Hotel") || buildingData.Info.name.Contains("hotel")) 
+                    when BuildingMgr.GetBuildingSubService(hotelBuilding) == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingData.Info.name.Contains(name))
                         && !Random.ShouldOccur(GetHotelLeaveChance()):
                 case ItemClass.Service.Hotel when !Random.ShouldOccur(GetHotelLeaveChance()):
                     return;
