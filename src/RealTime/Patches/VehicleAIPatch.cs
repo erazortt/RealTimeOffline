@@ -19,12 +19,12 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(FireTruckAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
             {
-                RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
-                if (RealTimeAI.ShouldExtinguishFire(buildingID))
+                if(buildingData.GetLastFrameData().m_fireDamage > 0)
                 {
-                    return true;
+                    RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
+                    return RealTimeAI.ShouldExtinguishFire(buildingID);
                 }
-                return false;
+                return true;               
             }
 
             [HarmonyPatch(typeof(FireTruckAI), "SetTarget")]

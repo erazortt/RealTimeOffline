@@ -25,16 +25,9 @@ namespace RealTime.CustomAI
 
         public static void Deinit() => FireBurnTime = new Dictionary<ushort, BurnTime>();
 
-        internal static BurnTime GetBuildingBurnTime(ushort buildingID)
-        {
-            if (!FireBurnTime.TryGetValue(buildingID, out var burnTime))
-            {
-                return default;
-            }
-            return burnTime;
-        }
+        internal static BurnTime GetBuildingBurnTime(ushort buildingID) => !FireBurnTime.TryGetValue(buildingID, out var burnTime) ? default : burnTime;
 
-        internal static BurnTime CreateBuildingBurnTime(ushort buildingID, ITimeInfo timeInfo)
+        internal static void CreateBuildingBurnTime(ushort buildingID, ITimeInfo timeInfo)
         {
             if (!FireBurnTime.TryGetValue(buildingID, out var burnTime))
             {
@@ -47,7 +40,6 @@ namespace RealTime.CustomAI
                 };
                 FireBurnTime.Add(buildingID, burnTime);
             }
-            return burnTime;
         }
 
         public static void SetBuildingBurnTime(ushort buildingID, BurnTime burnTime) => FireBurnTime[buildingID] = burnTime;

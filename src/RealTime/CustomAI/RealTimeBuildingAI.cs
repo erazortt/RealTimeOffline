@@ -1084,28 +1084,14 @@ namespace RealTime.CustomAI
             }
             if(burnTime.StartDate == timeInfo.Now.Date)
             {
-                if (timeInfo.CurrentHour < burnTime.StartTime + burnTime.Duration)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                return timeInfo.CurrentHour >= burnTime.StartTime + burnTime.Duration;
             }
             else if (burnTime.StartDate < timeInfo.Now.Date)
             {
                 if (burnTime.StartTime + burnTime.Duration >= 24f)
                 {
                     float nextDayTime = burnTime.StartTime + burnTime.Duration - 24f;
-                    if (timeInfo.CurrentHour < nextDayTime)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    return timeInfo.CurrentHour >= nextDayTime;
                 }
             }
             return true;
