@@ -12,6 +12,7 @@ namespace RealTime.Patches
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
+    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
@@ -254,7 +255,7 @@ namespace RealTime.Patches
                 var problemStruct = Notification.RemoveProblems(buildingData.m_problems, Notification.Problem1.Garbage);
                 if (buildingData.m_garbageBuffer >= 40000)
                 {
-                    int num = buildingData.m_garbageBuffer / 2000;
+                    int num = buildingData.m_garbageBuffer / 20000;
                     if (Singleton<SimulationManager>.instance.m_randomizer.Int32(5u) == 0)
                     {
                         num = UniqueFacultyAI.DecreaseByBonus(UniqueFacultyAI.FacultyBonus.Science, num);
@@ -265,8 +266,8 @@ namespace RealTime.Patches
                     {
                         if (Singleton<UnlockManager>.instance.Unlocked(ItemClass.Service.Garbage))
                         {
-                            int num3 = ((!(__instance is MainCampusBuildingAI) && !(__instance is ParkGateAI) && !(__instance is MainIndustryBuildingAI)) ? 6 : 8);
-                            problemStruct = ((num < num3) ? Notification.AddProblems(problemStruct, Notification.Problem1.Garbage) : Notification.AddProblems(problemStruct, Notification.Problem1.Garbage | Notification.Problem1.MajorProblem));
+                            int num3 = (!(__instance is MainCampusBuildingAI) && !(__instance is ParkGateAI) && !(__instance is MainIndustryBuildingAI)) ? 6 : 8;
+                            problemStruct = (num < num3) ? Notification.AddProblems(problemStruct, Notification.Problem1.Garbage) : Notification.AddProblems(problemStruct, Notification.Problem1.Garbage | Notification.Problem1.MajorProblem);
                             var properties = Singleton<GuideManager>.instance.m_properties;
                             if (properties is object)
                             {
