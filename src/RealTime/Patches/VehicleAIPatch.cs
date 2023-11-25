@@ -1,6 +1,7 @@
 namespace RealTime.Patches
 {
     using System;
+    using ColossalFramework;
     using HarmonyLib;
     using RealTime.CustomAI;
     using UnityEngine;
@@ -24,6 +25,10 @@ namespace RealTime.Patches
                     RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
                     return RealTimeAI.ShouldExtinguishFire(buildingID);
                 }
+                if (buildingData.GetLastFrameData().m_fireDamage == 0)
+                {
+                    RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
+                }
                 return true;               
             }
 
@@ -35,6 +40,15 @@ namespace RealTime.Patches
                 {
                     RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
                 }
+                else
+                {
+                    ref var building = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding];
+                    if (building.GetLastFrameData().m_fireDamage == 0)
+                    {
+                        RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
+                    }
+                }
+
             }
 
         }
