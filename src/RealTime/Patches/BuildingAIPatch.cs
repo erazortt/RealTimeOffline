@@ -325,8 +325,6 @@ namespace RealTime.Patches
                 }
                 return false;
             }
-
-
         }
 
         [HarmonyPatch]
@@ -2058,6 +2056,22 @@ namespace RealTime.Patches
             [HarmonyPatch(typeof(ShelterAI), "ProduceGoods")]
             [HarmonyPrefix]
             public static void ProduceGoods(ShelterAI __instance, ushort buildingID, ref Building buildingData, ref Building.Frame frameData, int productionRate, int finalProductionRate, ref Citizen.BehaviourData behaviour, int aliveWorkerCount, int totalWorkerCount, int workPlaceCount, int aliveVisitorCount, int totalVisitorCount, int visitPlaceCount) => __instance.m_goodsConsumptionRate = 1;
+        }
+
+        [HarmonyPatch]
+        private sealed class CommercialBuildingAI_SetGoodsAmount
+        {
+            [HarmonyPatch(typeof(CommercialBuildingAI), "SetGoodsAmount")]
+            [HarmonyPrefix]
+            public static bool SetGoodsAmount(CommercialBuildingAI __instance, ref Building data, ushort amount)
+            {
+                if(data.m_customBuffer1 - amount > 0)
+                {
+                    data.m_customBuffer1 -= 1;
+                    return false;
+                }
+                return true;
+            }
         }
 
     }
