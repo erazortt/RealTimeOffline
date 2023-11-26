@@ -20,12 +20,13 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(FireTruckAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
             {
-                if(buildingData.GetLastFrameData().m_fireDamage > 0)
+                byte fireIntensity = buildingData.m_fireIntensity;
+                if(fireIntensity > 0)
                 {
                     RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
                     return RealTimeAI.ShouldExtinguishFire(buildingID);
                 }
-                if (buildingData.GetLastFrameData().m_fireDamage == 0)
+                if (fireIntensity == 0)
                 {
                     RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
                 }
@@ -43,7 +44,7 @@ namespace RealTime.Patches
                 else
                 {
                     ref var building = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding];
-                    if (building.GetLastFrameData().m_fireDamage == 0)
+                    if (building.m_fireIntensity == 0)
                     {
                         RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
                     }
@@ -62,14 +63,26 @@ namespace RealTime.Patches
             [HarmonyPrefix]
             private static bool Prefix(FireCopterAI __instance, ushort vehicleID, ref Vehicle data, ushort buildingID, ref Building buildingData, ref bool __result)
             {
-                RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
-                if (RealTimeAI.ShouldExtinguishFire(buildingID))
+                byte fireIntensity = buildingData.m_fireIntensity;
+                if (fireIntensity > 0)
                 {
-                    return true;
+                    RealTimeAI.CreateBuildingFire(data.m_targetBuilding);
+                    if (RealTimeAI.ShouldExtinguishFire(buildingID))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        int num2 = Mathf.Min(__instance.m_fireFightingRate, data.m_transferSize);
+                        data.m_transferSize = (ushort)(data.m_transferSize - num2);
+                    }
+                    return false;
                 }
-                int num2 = Mathf.Min(__instance.m_fireFightingRate, data.m_transferSize);
-                data.m_transferSize = (ushort)(data.m_transferSize - num2);
-                return false;
+                if (fireIntensity == 0)
+                {
+                    RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
+                }
+                return true;
             }
 
             [HarmonyPatch(typeof(FireCopterAI), "SetTarget")]
@@ -79,6 +92,14 @@ namespace RealTime.Patches
                 if (targetBuilding == 0)
                 {
                     RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
+                }
+                else
+                {
+                    ref var building = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[targetBuilding];
+                    if (building.m_fireIntensity == 0)
+                    {
+                        RealTimeAI.RemoveBuildingFire(data.m_targetBuilding);
+                    }
                 }
             }
 
