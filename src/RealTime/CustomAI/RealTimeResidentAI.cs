@@ -1,4 +1,4 @@
-﻿// <copyright file="RealTimeResidentAI.cs" company="dymanoid">Copyright (c) dymanoid. All rights reserved.</copyright>
+// <copyright file="RealTimeResidentAI.cs" company="dymanoid">Copyright (c) dymanoid. All rights reserved.</copyright>
 
 namespace RealTime.CustomAI
 {
@@ -77,7 +77,7 @@ namespace RealTime.CustomAI
                 return;
             }
 
-            ref CitizenSchedule schedule = ref residentSchedules[citizenId];
+            ref var schedule = ref residentSchedules[citizenId];
             if (CitizenProxy.IsDead(ref citizen))
             {
                 ProcessCitizenDead(instance, citizenId, ref citizen);
@@ -127,7 +127,7 @@ namespace RealTime.CustomAI
         /// <param name="citizenId">The citizen ID to process.</param>
         public void RegisterCitizenArrival(uint citizenId)
         {
-            ref CitizenSchedule schedule = ref residentSchedules[citizenId];
+            ref var schedule = ref residentSchedules[citizenId];
             switch (CitizenMgr.GetCitizenLocation(citizenId))
             {
                 case Citizen.Location.Work:
@@ -157,7 +157,7 @@ namespace RealTime.CustomAI
                 return;
             }
 
-            ref TCitizen citizen = ref CitizenMgr.GetCitizen(instanceId);
+            ref var citizen = ref CitizenMgr.GetCitizen(instanceId);
             ushort targetBuilding = CitizenMgr.GetTargetBuilding(instanceId);
 
             buildingAI.RegisterReachingTrouble(targetBuilding);
@@ -177,7 +177,7 @@ namespace RealTime.CustomAI
         {
             if (CitizenMgr.GetCitizenLocation(citizenId) == Citizen.Location.Moving)
             {
-                ref CitizenSchedule schedule = ref residentSchedules[citizenId];
+                ref var schedule = ref residentSchedules[citizenId];
                 schedule.DepartureTime = TimeInfo.Now;
             }
         }

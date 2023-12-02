@@ -12,7 +12,6 @@ namespace RealTime.Patches
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
-    using Epic.OnlineServices.Presence;
     using HarmonyLib;
     using ICities;
     using RealTime.Core;
@@ -1390,6 +1389,11 @@ namespace RealTime.Patches
             public static bool Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
             {
                 var buildingInfo = data.Info;
+                if (data.Info.GetAI() is CommercialBuildingAI)
+                {
+                    BuildingWorkTimeManager.CreateBuildingWorkTime(buildingID);
+                }
+
                 if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))
                 {
                     BaseCreateBuilding(__instance, buildingID, ref data);
@@ -1417,6 +1421,12 @@ namespace RealTime.Patches
             public static bool Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data, uint version)
             {
                 var buildingInfo = data.Info;
+                var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(buildingID);
+                if (data.Info.GetAI() is CommercialBuildingAI && workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
+                {
+                    BuildingWorkTimeManager.CreateBuildingWorkTime(buildingID);
+                }
+
                 if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))
                 {
                     data.m_level = (byte)Mathf.Max(data.m_level, (int)__instance.m_info.m_class.m_level);
@@ -1500,7 +1510,20 @@ namespace RealTime.Patches
             }
         }
 
-        
+        [HarmonyPatch]
+        private sealed class PrivateBuildingAI_ReleaseBuilding
+        {
+            [HarmonyPatch(typeof(PrivateBuildingAI), "ReleaseBuilding")]
+            [HarmonyPrefix]
+            public static void Prefix(PrivateBuildingAI __instance, ushort buildingID, ref Building data)
+            {
+                var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(buildingID);
+                if (!workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
+                {
+                    BuildingWorkTimeManager.RemoveBuildingWorkTime(buildingID);
+                }
+            }
+        }
 
         [HarmonyPatch]
         private sealed class CommercialBuildingAI_GenerateName

@@ -227,6 +227,7 @@ namespace RealTime.Core
             ParkPatch.SpareTimeBehavior = null;
             OutsideConnectionAIPatch.SpareTimeBehavior = null;
             CitizenManagerPatch.NewCitizenBehavior = null;
+            BuildingWorkTimeManager.Random = null;
 
             vanillaEvents.Revert();
 
@@ -326,7 +327,7 @@ namespace RealTime.Core
             ParkPatch.SpareTimeBehavior = spareTimeBehavior;
             OutsideConnectionAIPatch.SpareTimeBehavior = spareTimeBehavior;
 
-            var realTimePrivateBuildingAI = new RealTimeBuildingAI(
+            var realTimeBuildingAI = new RealTimeBuildingAI(
                 config,
                 timeInfo,
                 gameConnections.BuildingManager,
@@ -334,18 +335,18 @@ namespace RealTime.Core
                 workBehavior,
                 travelBehavior);
 
-            BuildingAIPatch.RealTimeAI = realTimePrivateBuildingAI;
+            BuildingAIPatch.RealTimeAI = realTimeBuildingAI;
             BuildingAIPatch.WeatherInfo = gameConnections.WeatherInfo;
-            VehicleAIPatch.RealTimeAI = realTimePrivateBuildingAI;
-            TransferManagerPatch.RealTimeAI = realTimePrivateBuildingAI;
-            WorldInfoPanelPatch.RealTimeAI = realTimePrivateBuildingAI;
+            VehicleAIPatch.RealTimeAI = realTimeBuildingAI;
+            TransferManagerPatch.RealTimeAI = realTimeBuildingAI;
+            WorldInfoPanelPatch.RealTimeAI = realTimeBuildingAI;
 
             var realTimeResidentAI = new RealTimeResidentAI<ResidentAI, Citizen>(
                 config,
                 gameConnections,
                 residentAIConnection,
                 eventManager,
-                realTimePrivateBuildingAI,
+                realTimeBuildingAI,
                 workBehavior,
                 spareTimeBehavior,
                 travelBehavior);
@@ -368,6 +369,11 @@ namespace RealTime.Core
                 spareTimeBehavior);
 
             TouristAIPatch.RealTimeAI = realTimeTouristAI;
+
+            BuildingWorkTimeManager.Random = gameConnections.Random;
+            BuildingWorkTimeManager.Config = config;
+            BuildingWorkTimeManager.BuildingManager = gameConnections.BuildingManager;
+
             return true;
         }
 

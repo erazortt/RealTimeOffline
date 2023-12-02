@@ -63,5 +63,19 @@ namespace RealTime.Patches
                 }
             }
         }
+
+        [HarmonyPatch]
+        private sealed class PrivateBuildingAI_GetLocalizedStatus
+        {
+            [HarmonyPatch(typeof(PrivateBuildingAI), "GetLocalizedStatus")]
+            [HarmonyPostfix]
+            private static void postfix(ushort buildingID, ref Building data, ref string __result)
+            {
+                if (RealTimeAI != null && RealTimeAI.ShouldSwitchBuildingLightsOff(buildingID))
+                {
+                    __result = "Closed";
+                }
+            }
+        }
     }
 }

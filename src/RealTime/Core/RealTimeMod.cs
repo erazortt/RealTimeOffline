@@ -100,11 +100,27 @@ namespace RealTime.Core
             try
             {
                 FireBurnTimeManager.Init();
+                BuildingWorkTimeManager.Init();
             }
             catch (Exception e)
             {
                 Debug.LogError(e.ToString());
                 FireBurnTimeManager.Deinit();
+                BuildingWorkTimeManager.Deinit();
+            }
+        }
+
+        public override void OnReleased()
+        {
+            base.OnReleased();
+            try
+            {
+                FireBurnTimeManager.Deinit();
+                BuildingWorkTimeManager.Deinit();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
             }
         }
 

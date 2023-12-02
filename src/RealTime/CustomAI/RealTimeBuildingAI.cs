@@ -1054,7 +1054,7 @@ namespace RealTime.CustomAI
                     return false;
 
                 default:
-                    return !workBehavior.IsBuildingWorking(service, subService);
+                    return !workBehavior.IsBuildingWorking(buildingId, service, subService);
             }
         }
 

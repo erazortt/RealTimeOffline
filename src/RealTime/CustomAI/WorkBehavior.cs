@@ -5,6 +5,7 @@
 namespace RealTime.CustomAI
 {
     using System;
+    using ColossalFramework.Math;
     using RealTime.Config;
     using RealTime.GameConnection;
     using RealTime.Simulation;
@@ -56,11 +57,10 @@ namespace RealTime.CustomAI
         ///   <c>true</c> if a building of specified <paramref name="service"/> and <paramref name="subService"/>
         /// currently has working hours; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsBuildingWorking(ItemClass.Service service, ItemClass.SubService subService)
+        public bool IsBuildingWorking(ushort buildingId, ItemClass.Service service, ItemClass.SubService subService)
         {
             switch (subService)
             {
-                case ItemClass.SubService.CommercialLow:
                 case ItemClass.SubService.IndustrialOil:
                 case ItemClass.SubService.IndustrialOre:
                 case ItemClass.SubService.PlayerIndustryOre:
@@ -85,14 +85,14 @@ namespace RealTime.CustomAI
                     return true;
             }
 
-            if (config.IsWeekendEnabled && timeInfo.Now.IsWeekend() && !IsBuildingActiveOnWeekend(service, subService))
+            if (config.IsWeekendEnabled && timeInfo.Now.IsWeekend() && !IsBuildingActiveOnWeekend(buildingId, service, subService))
             {
                 return false;
             }
 
             return IsBuildingWorking(
-                GetBuildingWorkShiftCount(service, subService),
-                HasExtendedFirstWorkShift(service, subService));
+                GetBuildingWorkShiftCount(buildingId, service, subService),
+                HasExtendedFirstWorkShift(buildingId, service, subService));
         }
 
         /// <summary>Notifies this object that a new game day starts.</summary>
@@ -133,7 +133,7 @@ namespace RealTime.CustomAI
                 case Citizen.AgeGroup.Adult:
                     if (workShift == WorkShift.Unemployed)
                     {
-                        workShift = GetWorkShift(GetBuildingWorkShiftCount(service, subService));
+                        workShift = GetWorkShift(GetBuildingWorkShiftCount(schedule.WorkBuilding, service, subService));
                     }
 
                     workBegin = config.WorkBegin;
@@ -146,7 +146,7 @@ namespace RealTime.CustomAI
 
             switch (workShift)
             {
-                case WorkShift.First when HasExtendedFirstWorkShift(service, subService):
+                case WorkShift.First when HasExtendedFirstWorkShift(schedule.WorkBuilding, service, subService):
                     float extendedShiftBegin = service == ItemClass.Service.Education
                         ? Math.Min(config.SchoolBegin, config.WakeUpHour)
                         : config.WakeUpHour;
@@ -165,7 +165,7 @@ namespace RealTime.CustomAI
                     break;
             }
 
-            schedule.UpdateWorkShift(workShift, workBegin, workEnd, IsBuildingActiveOnWeekend(service, subService));
+            schedule.UpdateWorkShift(workShift, workBegin, workEnd, IsBuildingActiveOnWeekend(schedule.WorkBuilding, service, subService));
         }
 
         /// <summary>Updates the citizen's work schedule by determining the time for going to work.</summary>
@@ -241,12 +241,17 @@ namespace RealTime.CustomAI
             schedule.Schedule(ResidentState.Unknown, timeInfo.Now.FutureHour(departureHour));
         }
 
-        private static bool IsBuildingActiveOnWeekend(ItemClass.Service service, ItemClass.SubService subService)
+        private bool IsBuildingActiveOnWeekend(ushort buildingId, ItemClass.Service service, ItemClass.SubService subService)
         {
+            var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(buildingId);
+            if (!workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
+            {
+                return workTime.WorkAtWeekands;
+            }
+
             switch (service)
             {
-                case ItemClass.Service.Commercial
-                    when subService != ItemClass.SubService.CommercialHigh && subService != ItemClass.SubService.CommercialEco:
+                case ItemClass.Service.Commercial:
                 case ItemClass.Service.Industrial when subService != ItemClass.SubService.IndustrialGeneric:
                 case ItemClass.Service.PlayerIndustry:
                 case ItemClass.Service.Tourism:
@@ -271,8 +276,14 @@ namespace RealTime.CustomAI
             }
         }
 
-        private static int GetBuildingWorkShiftCount(ItemClass.Service service, ItemClass.SubService subService)
+        private int GetBuildingWorkShiftCount(ushort buildingId, ItemClass.Service service, ItemClass.SubService subService)
         {
+            var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(buildingId);
+            if (!workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
+            {
+                return workTime.WorkShifts;
+            }
+
             switch (service)
             {
                 case ItemClass.Service.Office:
@@ -290,7 +301,7 @@ namespace RealTime.CustomAI
                 case ItemClass.Service.Citizen:
                     return 2;
 
-                case ItemClass.Service.Commercial:
+                case ItemClass.Service.Commercial: 
                 case ItemClass.Service.Industrial:
                 case ItemClass.Service.Tourism:
                 case ItemClass.Service.Electricity:
@@ -311,11 +322,16 @@ namespace RealTime.CustomAI
             }
         }
 
-        private static bool HasExtendedFirstWorkShift(ItemClass.Service service, ItemClass.SubService subService)
+        private static bool HasExtendedFirstWorkShift(ushort buildingId, ItemClass.Service service, ItemClass.SubService subService)
         {
+            var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(buildingId);
+            if(!workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
+            {
+                return workTime.HasExtendedWorkShift;
+            }
+
             switch (service)
             {
-                case ItemClass.Service.Commercial when subService == ItemClass.SubService.CommercialLow:
                 case ItemClass.Service.Beautification:
                 case ItemClass.Service.Education:
                 case ItemClass.Service.PlayerIndustry:

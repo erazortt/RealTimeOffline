@@ -29,10 +29,10 @@ namespace RealTime.CustomAI
 
         internal static void CreateBuildingBurnTime(ushort buildingID, ITimeInfo timeInfo)
         {
-            if (!FireBurnTime.TryGetValue(buildingID, out var burnTime))
+            if (!FireBurnTime.TryGetValue(buildingID, out _))
             {
                 float burnDuration = 0.5f; // UnityEngine.Random.Range(0.5f, 4f);
-                burnTime = new BurnTime()
+                var burnTime = new BurnTime()
                 {
                     StartDate = timeInfo.Now.Date,
                     StartTime = timeInfo.CurrentHour,
