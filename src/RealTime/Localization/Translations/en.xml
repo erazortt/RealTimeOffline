@@ -52,9 +52,11 @@
 
   <translation id="2Quotas" value="Probabilities" />
   <translation id="SecondShiftQuota" value="Second shift workers" />
-  <translation id="SecondShiftQuotaTooltip" value="The percentage of the citizens that work second shift" />
+  <translation id="SecondShiftQuotaTooltip" value="The percentage of the citizens that work a second shift" />
   <translation id="NightShiftQuota" value="Night shift workers" />
-  <translation id="NightShiftQuotaTooltip" value="The percentage of the citizens that work night shift" />
+  <translation id="NightShiftQuotaTooltip" value="The percentage of the citizens that work a night shift" />
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="Lunch probability" />
   <translation id="LunchQuotaTooltip" value="The percentage of the Cims that will go out for lunch" />
   <translation id="LocalBuildingSearchQuota" value="Local shopping ratio" />
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="The percentage of the population that will go shopping just for fun even when they don't need any goods" />
   <translation id="OnTimeQuota" value="On-time ratio" />
   <translation id="OnTimeQuotaTooltip" value="The percentage of the Cims that will go to and leave their work on time" />
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="Events" />
   <translation id="AreEventsEnabled" value="Enable custom events" />

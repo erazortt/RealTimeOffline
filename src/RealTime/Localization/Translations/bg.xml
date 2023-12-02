@@ -55,6 +55,8 @@
   <translation id="SecondShiftQuotaTooltip" value="Процентът на гражданите, които работят втора смяна" />
   <translation id="NightShiftQuota" value="Работници през нощта" />
   <translation id="NightShiftQuotaTooltip" value="Процентът на гражданите, които работят през нощта" />
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="Вероятност за обяд" />
   <translation id="LunchQuotaTooltip" value="Процентът на гражданите, които ще излязат на обяд" />
   <translation id="LocalBuildingSearchQuota" value="Местно съотношение на пазаруване" />
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="Процент от населението, което ще пазарува само за забавление, дори когато не се нуждаят от стоки" />
   <translation id="OnTimeQuota" value="Коефициент на време" />
   <translation id="OnTimeQuotaTooltip" value="Процентът на гражданите, които ще отидат и ще напуснат работата си навреме" />
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="Събития" />
   <translation id="AreEventsEnabled" value="Активирайте персонализирани събития" />

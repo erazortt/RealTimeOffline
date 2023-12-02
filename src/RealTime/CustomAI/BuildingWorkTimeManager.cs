@@ -40,12 +40,12 @@ namespace RealTime.CustomAI
         {
             if (!BuildingsWorkTime.TryGetValue(buildingID, out _))
             {
-                bool OpenAtNight = Random.ShouldOccur(Config.OpenCommercialAtNight);
+                bool OpenAtNight = Random.ShouldOccur(Config.OpenCommercialAtNightQuota);
                 if (BuildingManager.GetBuildingHeight(buildingID) > Config.SwitchOffLightsMaxHeight)
                 {
                     OpenAtNight = true;
                 }
-                bool OpenAtWeekends = Random.ShouldOccur(Config.OpenCommercialAtWeekends);
+                bool OpenAtWeekends = Random.ShouldOccur(Config.OpenCommercialAtWeekendsQuota);
                 bool HasExtendedWorkShift = Random.ShouldOccur(50);
                 bool HasContinuousWorkShift = Random.ShouldOccur(50);
 

@@ -55,6 +55,8 @@
   <translation id="SecondShiftQuotaTooltip" value="掛け持ちで働く市民の割合"/>
   <translation id="NightShiftQuota" value="夜勤の労働者"/>
   <translation id="NightShiftQuotaTooltip" value="夜勤で働く市民の割合"/>
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="昼食の確率"/>
   <translation id="LunchQuotaTooltip" value="昼食のために外出する市民の割合"/>
   <translation id="LocalBuildingSearchQuota" value="地元で買い物をする人の割合"/>
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="商品が必要でなくとも買い物を楽しむためだけに外出する住民の割合"/>
   <translation id="OnTimeQuota" value="定時出退勤者の割合"/>
   <translation id="OnTimeQuotaTooltip" value="定時に出社、退勤する市民の割合"/>
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="イベント"/>
   <translation id="AreEventsEnabled" value="カスタムイベントを有効にする"/>

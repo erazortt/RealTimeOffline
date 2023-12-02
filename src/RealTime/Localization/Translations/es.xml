@@ -55,6 +55,8 @@
   <translation id="SecondShiftQuotaTooltip" value="Porcentaje de ciudadanos que trabajaran en el turno de tarde" />
   <translation id="NightShiftQuota" value="Turno de Noche" />
   <translation id="NightShiftQuotaTooltip" value="Porcentaje de ciudadanos que trabajaran en el turno de noche" />
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="Almuerzo" />
   <translation id="LunchQuotaTooltip" value="Porcentaje de ciudadanos que salen a almorzar" />
   <translation id="LocalBuildingSearchQuota" value="Compras locales" />
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="Porcentaje de la población que irá de compras sólo por diversion incluso cuando no necesiten nada" />
   <translation id="OnTimeQuota" value="Puntualidad" />
   <translation id="OnTimeQuotaTooltip" value="Porcentaje de ciudadanos que irán a trabajar y saldrán del trabajo con puntualidad" />
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="Eventos" />
   <translation id="AreEventsEnabled" value="Activar eventos personalizados" />

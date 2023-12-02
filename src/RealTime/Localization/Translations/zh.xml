@@ -55,6 +55,8 @@
   <translation id="SecondShiftQuotaTooltip" value="调节上第二轮班的市民的百分比" />
   <translation id="NightShiftQuota" value="夜班工人" />
   <translation id="NightShiftQuotaTooltip" value="调节上夜班的市民的百分比" />
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="午饭几率" />
   <translation id="LunchQuotaTooltip" value="调节外出吃午饭而不叫外卖的市民的百分比" />
   <translation id="LocalBuildingSearchQuota" value="就近购物几率" />
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="即使不需要，也会因为娱乐而购物的市民比例" />
   <translation id="OnTimeQuota" value="准点下班几率" />
   <translation id="OnTimeQuotaTooltip" value="调节摸完鱼准点下班的市民百分比" />
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="大型活动选项" />
   <translation id="AreEventsEnabled" value="启用自定义大型活动" />

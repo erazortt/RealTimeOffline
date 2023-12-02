@@ -185,7 +185,7 @@ namespace RealTime.Config
         /// </summary>
         [ConfigItem("2Quotas", 7)]
         [ConfigItemSlider(0, 100)]
-        public uint OpenCommercialAtNight { get; set; }
+        public uint OpenCommercialAtNightQuota { get; set; }
 
         /// <summary>
         /// Gets or sets the percentage of commercial buildings that stay open at weekends
@@ -193,7 +193,7 @@ namespace RealTime.Config
         /// </summary>
         [ConfigItem("2Quotas", 8)]
         [ConfigItemSlider(0, 100)]
-        public uint OpenCommercialAtWeekends { get; set; }
+        public uint OpenCommercialAtWeekendsQuota { get; set; }
 
 
         /// <summary>
@@ -584,8 +584,8 @@ namespace RealTime.Config
             ShoppingForFunQuota = FastMath.Clamp(ShoppingForFunQuota, 0u, 50u);
             OnTimeQuota = FastMath.Clamp(OnTimeQuota, 0u, 100u);
 
-            OpenCommercialAtNight = FastMath.Clamp(OpenCommercialAtNight, 0u, 100u);
-            OpenCommercialAtWeekends = FastMath.Clamp(OpenCommercialAtWeekends, 0u, 100u);
+            OpenCommercialAtNightQuota = FastMath.Clamp(OpenCommercialAtNightQuota, 0u, 100u);
+            OpenCommercialAtWeekendsQuota = FastMath.Clamp(OpenCommercialAtWeekendsQuota, 0u, 100u);
 
             EarliestHourEventStartWeekday = FastMath.Clamp(EarliestHourEventStartWeekday, 0f, 23.5f);
             LatestHourEventStartWeekday = FastMath.Clamp(LatestHourEventStartWeekday, 0f, 23.5f);
@@ -689,9 +689,8 @@ namespace RealTime.Config
             LocalBuildingSearchQuota = 60;
             ShoppingForFunQuota = 30;
             OnTimeQuota = 80;
-
-            OpenCommercialAtNight = 10;
-            OpenCommercialAtWeekends = 40;
+            OpenCommercialAtNightQuota = 10;
+            OpenCommercialAtWeekendsQuota = 40;
 
             AreEventsEnabled = true;
             EarliestHourEventStartWeekday = 16f;

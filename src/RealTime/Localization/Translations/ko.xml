@@ -55,6 +55,8 @@
   <translation id="SecondShiftQuotaTooltip" value="도시내 2교대 근무자들의 비율을 정합니다" />
   <translation id="NightShiftQuota" value="야간 교대 근무자들" />
   <translation id="NightShiftQuotaTooltip" value="도시내 야간 교대 근무자들의 비율을 정합니다" />
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="점심 먹으러 갈 비율" />
   <translation id="LunchQuotaTooltip" value="점심을 먹으러 갈 시민들의 비율을 정합니다" />
   <translation id="LocalBuildingSearchQuota" value="지역 쇼핑 비율" />
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="물건이 다 갖추어져 있음에도 재미로 쇼핑을 가는 비율을 정합니다" />
   <translation id="OnTimeQuota" value="정시 근무자 비율" />
   <translation id="OnTimeQuotaTooltip" value="일반적인 근무시간에 일하는 시민들의 비율을 정합니다." />
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="이벤트" />
   <translation id="AreEventsEnabled" value="사용자 이벤트 허용" />

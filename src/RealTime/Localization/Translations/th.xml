@@ -55,6 +55,8 @@
   <translation id="SecondShiftQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่ทำงานกะที่สอง"/>
   <translation id="NightShiftQuota" value="ทำงานกะกลางคืน"/>
   <translation id="NightShiftQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่ทำงานกะกลางคืน"/>
+  <translation id="ContinuousNightShiftQuota" value="Continuous Night shift workers" />
+  <translation id="ContinuousNightShiftQuotaTooltip" value="The percentage of the citizens that work a continuous night shift" />
   <translation id="LunchQuota" value="ออกไปทานมื้อกลางวัน"/>
   <translation id="LunchQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่จะออกไปทานอาหารกลางวัน"/>
   <translation id="LocalBuildingSearchQuota" value="ชื่นชอบการซื้อของท้องถิ่น"/>
@@ -63,6 +65,10 @@
   <translation id="ShoppingForFunQuotaTooltip" value="เปอร์เซ็นต์ของประชากรที่จะไปช็อปปิ้งเพื่อความสนุกสนาน แม้ว่าพวกเขาไม่ได้ต้องการสินค้าก็ตาม"/>
   <translation id="OnTimeQuota" value="ความตรงต่อเวลา"/>
   <translation id="OnTimeQuotaTooltip" value="เปอร์เซ็นต์ของชาวเมืองที่จะเข้าออกงานตรงเวลา"/>
+  <translation id="OpenCommercialAtNightQuota" value="Open commercial buildings at night percentage" />
+  <translation id="OpenCommercialAtNightQuotaTooltip" value="The percentage of the commercial buildings that will stay open at night" />
+  <translation id="OpenCommercialAtWeekendsQuota" value="Open commercial buildings at weekends percentage" />
+  <translation id="OpenCommercialAtWeekendsQuotaTooltip" value="The percentage of the commercial buildings that will stay open at weekends" />
 
   <translation id="3Events" value="อีเว้นท์"/>
   <translation id="AreEventsEnabled" value="เปิดใช้งานอีเว้นท์แบบกำหนดเอง"/>
