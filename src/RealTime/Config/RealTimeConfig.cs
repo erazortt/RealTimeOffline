@@ -122,7 +122,7 @@ namespace RealTime.Config
         public bool RealisticFires { get; set; }
 
         /// <summary>
-        /// Gets or sets a value that determines the percentage of the Cims that will work second shift.
+        /// Gets or sets a value that determines the percentage of the Cims that will work a second shift.
         /// Valid values are 1..8.
         /// </summary>
         [ConfigItem("2Quotas", 0)]
@@ -130,7 +130,7 @@ namespace RealTime.Config
         public uint SecondShiftQuota { get; set; }
 
         /// <summary>
-        /// Gets or sets a value that determines the percentage of the Cims that will work night shift.
+        /// Gets or sets a value that determines the percentage of the Cims that will work a night shift.
         /// Valid values are 1..8.
         /// </summary>
         [ConfigItem("2Quotas", 1)]
@@ -138,10 +138,18 @@ namespace RealTime.Config
         public uint NightShiftQuota { get; set; }
 
         /// <summary>
+        /// Gets or sets a value that determines the percentage of the Cims that will work a continuous night shift.
+        /// Valid values are 1..8.
+        /// </summary>
+        [ConfigItem("2Quotas", 2)]
+        [ConfigItemSlider(1, 25)]
+        public uint ContinuousNightShiftQuota { get; set; }
+
+        /// <summary>
         /// Gets or sets the percentage of the Cims that will go out for lunch.
         /// Valid values are 0..100.
         /// </summary>
-        [ConfigItem("2Quotas", 2)]
+        [ConfigItem("2Quotas", 3)]
         [ConfigItemSlider(0, 100)]
         public uint LunchQuota { get; set; }
 
@@ -149,7 +157,7 @@ namespace RealTime.Config
         /// Gets or sets the percentage of the population that will search locally for buildings.
         /// Valid values are 0..100.
         /// </summary>
-        [ConfigItem("2Quotas", 3)]
+        [ConfigItem("2Quotas", 4)]
         [ConfigItemSlider(0, 100)]
         public uint LocalBuildingSearchQuota { get; set; }
 
@@ -157,7 +165,7 @@ namespace RealTime.Config
         /// Gets or sets the percentage of the Cims that will go shopping just for fun without needing to buy something.
         /// Valid values are 0..100.
         /// </summary>
-        [ConfigItem("2Quotas", 4)]
+        [ConfigItem("2Quotas", 5)]
         [ConfigItemSlider(0, 50)]
         public uint ShoppingForFunQuota { get; set; }
 
@@ -166,7 +174,7 @@ namespace RealTime.Config
         /// on time (no overtime!).
         /// Valid values are 0..100.
         /// </summary>
-        [ConfigItem("2Quotas", 5)]
+        [ConfigItem("2Quotas", 6)]
         [ConfigItemSlider(0, 100)]
         public uint OnTimeQuota { get; set; }
 
@@ -175,7 +183,7 @@ namespace RealTime.Config
         /// on time (no overtime!).
         /// Valid values are 0..100.
         /// </summary>
-        [ConfigItem("2Quotas", 6)]
+        [ConfigItem("2Quotas", 7)]
         [ConfigItemSlider(0, 100)]
         public uint OpenCommercialAtNight { get; set; }
 
@@ -183,7 +191,7 @@ namespace RealTime.Config
         /// Gets or sets the percentage of commercial buildings that stay open at weekends
         /// Valid values are 0..100.
         /// </summary>
-        [ConfigItem("2Quotas", 7)]
+        [ConfigItem("2Quotas", 8)]
         [ConfigItemSlider(0, 100)]
         public uint OpenCommercialAtWeekends { get; set; }
 
@@ -568,6 +576,9 @@ namespace RealTime.Config
 
             SecondShiftQuota = FastMath.Clamp(SecondShiftQuota, 1u, 25u);
             NightShiftQuota = FastMath.Clamp(NightShiftQuota, 1u, 25u);
+            ContinuousNightShiftQuota = FastMath.Clamp(ContinuousNightShiftQuota, 1u, 25u);
+
+
             LunchQuota = FastMath.Clamp(LunchQuota, 0u, 100u);
             LocalBuildingSearchQuota = FastMath.Clamp(LocalBuildingSearchQuota, 0u, 100u);
             ShoppingForFunQuota = FastMath.Clamp(ShoppingForFunQuota, 0u, 50u);
@@ -672,6 +683,7 @@ namespace RealTime.Config
 
             SecondShiftQuota = 13;
             NightShiftQuota = 6;
+            ContinuousNightShiftQuota = 6;
 
             LunchQuota = 80;
             LocalBuildingSearchQuota = 60;

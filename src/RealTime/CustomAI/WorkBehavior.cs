@@ -133,9 +133,16 @@ namespace RealTime.CustomAI
                 case Citizen.AgeGroup.Adult:
                     if (workShift == WorkShift.Unemployed)
                     {
-                        workShift = GetWorkShift(GetBuildingWorkShiftCount(schedule.WorkBuilding, service, subService));
+                        var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(schedule.WorkBuilding);
+                        if (!workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
+                        {
+                            workShift = GetWorkShift(workTime);
+                        }
+                        else
+                        {
+                            workShift = GetWorkShift(GetBuildingWorkShiftCount(schedule.WorkBuilding, service, subService));
+                        }
                     }
-
                     workBegin = config.WorkBegin;
                     workEnd = config.WorkEnd;
                     break;
@@ -162,6 +169,16 @@ namespace RealTime.CustomAI
                 case WorkShift.Night:
                     workEnd = workBegin;
                     workBegin = 0;
+                    break;
+
+                case WorkShift.ContinuousDay:
+                    workBegin = 8;
+                    workEnd = 20;
+                    break;
+
+                case WorkShift.ContinuousNight:
+                    workBegin = 20;
+                    workEnd = 8;
                     break;
             }
 
@@ -366,6 +383,26 @@ namespace RealTime.CustomAI
             float startHour = extendedFirstShift ? Math.Min(config.WakeUpHour, EarliestWakeUp) : config.WorkBegin;
             float currentHour = timeInfo.CurrentHour;
             return currentHour >= startHour && currentHour < endHour;
+        }
+
+
+        private WorkShift GetWorkShift(BuildingWorkTimeManager.WorkTime workTime)
+        {
+            if (workTime.HasContinuousWorkShift)
+            {
+                if (workTime.WorkShifts == 2)
+                {
+                    return randomizer.ShouldOccur(config.ContinuousNightShiftQuota) ? WorkShift.ContinuousNight : WorkShift.ContinuousDay;
+                }
+                else
+                {
+                    return WorkShift.ContinuousDay;
+                }
+            }
+            else
+            {
+                return GetWorkShift(workTime.WorkShifts);
+            }
         }
 
         private WorkShift GetWorkShift(int workShiftCount)

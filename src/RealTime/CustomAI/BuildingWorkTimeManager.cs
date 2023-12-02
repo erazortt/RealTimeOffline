@@ -20,6 +20,7 @@ namespace RealTime.CustomAI
             public bool WorkAtNight;
             public bool WorkAtWeekands;
             public bool HasExtendedWorkShift;
+            public bool HasContinuousWorkShift;
             public int WorkShifts;
         }
 
@@ -40,17 +41,29 @@ namespace RealTime.CustomAI
             if (!BuildingsWorkTime.TryGetValue(buildingID, out _))
             {
                 bool OpenAtNight = Random.ShouldOccur(Config.OpenCommercialAtNight);
-                if(BuildingManager.GetBuildingHeight(buildingID) > Config.SwitchOffLightsMaxHeight)
+                if (BuildingManager.GetBuildingHeight(buildingID) > Config.SwitchOffLightsMaxHeight)
                 {
                     OpenAtNight = true;
                 }
                 bool OpenAtWeekends = Random.ShouldOccur(Config.OpenCommercialAtWeekends);
                 bool HasExtendedWorkShift = Random.ShouldOccur(50);
+                bool HasContinuousWorkShift = Random.ShouldOccur(50);
+
+                if (HasExtendedWorkShift)
+                {
+                    HasContinuousWorkShift = false;
+                }
 
                 int WorkShifts = 2;
-                if(OpenAtNight)
+
+                if (HasContinuousWorkShift && !OpenAtNight)
                 {
-                    WorkShifts = 3;
+                    WorkShifts = 1;
+                }
+
+                if (OpenAtNight)
+                {
+                    WorkShifts = HasContinuousWorkShift ? 2 : 3;
                 }
 
                 var workTime = new WorkTime()
@@ -58,6 +71,7 @@ namespace RealTime.CustomAI
                     WorkAtNight = OpenAtNight,
                     WorkAtWeekands = OpenAtWeekends,
                     HasExtendedWorkShift = HasExtendedWorkShift,
+                    HasContinuousWorkShift = HasContinuousWorkShift,
                     WorkShifts = WorkShifts
                 };
                 BuildingsWorkTime.Add(buildingID, workTime);
