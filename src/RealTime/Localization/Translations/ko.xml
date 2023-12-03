@@ -185,6 +185,8 @@
   <translation id="WorkShift.First" value="1교대 근무 교대" />
   <translation id="WorkShift.Second" value="2교대 근무 교대" />
   <translation id="WorkShift.Night" value="야간 근무 교대" />
+  <translation id="WorkShift.ContinuousDay" value="Continuous day work shift" />
+  <translation id="WorkShift.ContinuousNight" value="Continuous night work shift" />
   <translation id="WorkStatus.OnVacation" value="(휴가: {0} 일)" />
 
   <translation id="AcademicYear.DaysLeft" value="{0} 일 이내 종료" />

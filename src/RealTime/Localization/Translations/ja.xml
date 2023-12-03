@@ -185,6 +185,8 @@
   <translation id="WorkShift.First" value="日勤シフト"/>
   <translation id="WorkShift.Second" value="準夜勤シフト"/>
   <translation id="WorkShift.Night" value="深夜勤シフト"/>
+  <translation id="WorkShift.ContinuousDay" value="Continuous day work shift" />
+  <translation id="WorkShift.ContinuousNight" value="Continuous night work shift" />
   <translation id="WorkStatus.OnVacation" value="（休暇: {0} 日）"/>
 
   <translation id="AcademicYear.DaysLeft" value="残り {0} 日"/>

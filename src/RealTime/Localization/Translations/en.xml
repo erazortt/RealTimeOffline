@@ -185,6 +185,8 @@
   <translation id="WorkShift.First" value="1st work shift" />
   <translation id="WorkShift.Second" value="2nd work shift" />
   <translation id="WorkShift.Night" value="Night work shift" />
+  <translation id="WorkShift.ContinuousDay" value="Continuous day work shift" />
+  <translation id="WorkShift.ContinuousNight" value="Continuous night work shift" />
   <translation id="WorkStatus.OnVacation" value="(vacation: {0} days)" />
 
   <translation id="AcademicYear.DaysLeft" value="Ends in {0} days" />

@@ -185,6 +185,8 @@
   <translation id="WorkShift.First" value="第一班次" />
   <translation id="WorkShift.Second" value="第二班次" />
   <translation id="WorkShift.Night" value="晚班" />
+  <translation id="WorkShift.ContinuousDay" value="Continuous day work shift" />
+  <translation id="WorkShift.ContinuousNight" value="Continuous night work shift" />
   <translation id="WorkStatus.OnVacation" value="(假期: {0} 天)" />
 
   <translation id="AcademicYear.DaysLeft" value="结束与 {0} 天" />

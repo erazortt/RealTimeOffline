@@ -185,8 +185,10 @@
   <translation id="WorkShift.First" value="ทำงานกะที่หนึ่ง"/>
   <translation id="WorkShift.Second" value="ทำงานกะที่สอง"/>
   <translation id="WorkShift.Night" value="ทำงานกะกลางคืน"/>
-  
+  <translation id="WorkShift.ContinuousDay" value="Continuous day work shift" />
+  <translation id="WorkShift.ContinuousNight" value="Continuous night work shift" />
   <translation id="WorkStatus.OnVacation" value="(วันหยุด: {0} วัน)"/>
+  
   <translation id="AcademicYear.DaysLeft" value="สิ้นสุดใน {0} วัน"/>
   <translation id="AcademicYear.HoursLeft" value="สิ้นสุดใน {0} ชั่วโมง"/>
   <translation id="AcademicYear.EndsSoon" value="สิ้นสุดในเวลาไม่ถึง 1 ชั่วโมง"/>

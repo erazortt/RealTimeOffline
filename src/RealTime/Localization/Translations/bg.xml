@@ -185,6 +185,8 @@
   <translation id="WorkShift.First" value="1-ва работна смяна" />
   <translation id="WorkShift.Second" value="2-ра работна смяна" />
   <translation id="WorkShift.Night" value="Нощна работа" />
+  <translation id="WorkShift.ContinuousDay" value="Continuous day work shift" />
+  <translation id="WorkShift.ContinuousNight" value="Continuous night work shift" />
   <translation id="WorkStatus.OnVacation" value="(Ваканция: {0} дни)" />
 
   <translation id="AcademicYear.DaysLeft" value="Завършва в {0} дни" />
