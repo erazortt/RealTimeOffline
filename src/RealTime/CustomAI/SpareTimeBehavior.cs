@@ -1,4 +1,4 @@
-﻿// <copyright file="SpareTimeBehavior.cs" company="dymanoid">
+// <copyright file="SpareTimeBehavior.cs" company="dymanoid">
 // Copyright (c) dymanoid. All rights reserved.
 // </copyright>
 
@@ -20,6 +20,7 @@ namespace RealTime.CustomAI
         private readonly uint[] defaultChances;
         private readonly uint[] secondShiftChances;
         private readonly uint[] nightShiftChances;
+        private readonly uint[] continuousNightShiftChances;
         private readonly uint[] shoppingChances;
         private readonly uint[] vacationChances;
 
@@ -41,6 +42,7 @@ namespace RealTime.CustomAI
             defaultChances = new uint[agesCount];
             secondShiftChances = new uint[agesCount];
             nightShiftChances = new uint[agesCount];
+            continuousNightShiftChances = new uint[agesCount];
             shoppingChances = new uint[agesCount];
 
             vacationChances = new uint[Enum.GetValues(typeof(Citizen.Wealth)).Length];
@@ -79,6 +81,7 @@ namespace RealTime.CustomAI
                 CalculateDefaultChances(currentHour, weekdayModifier);
                 CalculateSecondShiftChances(currentHour, isWeekend);
                 CalculateNightShiftChances(currentHour, isWeekend);
+                CalculateContinuousNightShiftChances(currentHour, isWeekend);
                 CalculateShoppingChance(currentHour);
 
                 lastUpdatedMinute = timeInfo.Now.Minute;
@@ -130,6 +133,9 @@ namespace RealTime.CustomAI
 
                         case WorkShift.Night:
                             return nightShiftChances[age];
+
+                        case WorkShift.ContinuousNight:
+                            return continuousNightShiftChances[age];
 
                         default:
                             return defaultChances[age];
@@ -211,6 +217,32 @@ namespace RealTime.CustomAI
             if (oldChance != secondShiftChances[(int)Citizen.AgeGroup.Adult])
             {
                 Log.Debug(LogCategory.Simulation, $"SECOND SHIFT GOING OUT CHANCE for {timeInfo.Now}: young = {secondShiftChances[2]}, adult = {secondShiftChances[3]}");
+            }
+#endif
+        }
+
+        private void CalculateContinuousNightShiftChances(float currentHour, bool isWeekend)
+        {
+#if DEBUG
+            uint oldChance = continuousNightShiftChances[(int)Citizen.AgeGroup.Adult];
+#endif
+
+            float wakeUpHour = config.WorkBegin + (config.WakeUpHour - config.GoToSleepHour + 24f);
+            if (isWeekend || currentHour < config.WakeUpHour || currentHour >= wakeUpHour)
+            {
+                continuousNightShiftChances[(int)Citizen.AgeGroup.Young] = defaultChances[(int)Citizen.AgeGroup.Young];
+                continuousNightShiftChances[(int)Citizen.AgeGroup.Adult] = defaultChances[(int)Citizen.AgeGroup.Adult];
+            }
+            else
+            {
+                continuousNightShiftChances[(int)Citizen.AgeGroup.Young] = 0;
+                continuousNightShiftChances[(int)Citizen.AgeGroup.Adult] = 0;
+            }
+
+#if DEBUG
+            if (oldChance != continuousNightShiftChances[(int)Citizen.AgeGroup.Adult])
+            {
+                Log.Debug(LogCategory.Simulation, $"Continuous NIGHT SHIFT GOING OUT CHANCE for {timeInfo.Now}: young = {continuousNightShiftChances[2]}, adult = {continuousNightShiftChances[3]}");
             }
 #endif
         }
