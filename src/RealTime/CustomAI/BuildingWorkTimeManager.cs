@@ -1,19 +1,11 @@
 namespace RealTime.CustomAI
 {
     using System.Collections.Generic;
-    using RealTime.Config;
-    using RealTime.GameConnection;
-    using RealTime.Simulation;
+    using RealTime.Core;
 
     internal static class BuildingWorkTimeManager
     {
         public static Dictionary<ushort, WorkTime> BuildingsWorkTime;
-
-        public static IRandomizer Random { get; set; }
-
-        public static RealTimeConfig Config { get; set; }
-
-        public static IBuildingManagerConnection BuildingManager;
 
         public struct WorkTime
         {
@@ -36,18 +28,19 @@ namespace RealTime.CustomAI
 
         internal static WorkTime GetBuildingWorkTime(ushort buildingID) => !BuildingsWorkTime.TryGetValue(buildingID, out var workTime) ? default : workTime;
 
-        internal static void CreateBuildingWorkTime(ushort buildingID)
+        internal static void CreateBuildingWorkTime(ushort buildingID, BuildingInfo buildingInfo)
         {
+            float height = BuildingManager.instance.m_buildings.m_buffer[buildingID].Info.m_size.y;
             if (!BuildingsWorkTime.TryGetValue(buildingID, out _))
             {
-                bool OpenAtNight = Random.ShouldOccur(Config.OpenCommercialAtNightQuota);
-                if (BuildingManager.GetBuildingHeight(buildingID) > Config.SwitchOffLightsMaxHeight)
+                bool OpenAtNight = ShouldOccur(RealTimeMod.configProvider.Configuration.OpenCommercialAtNightQuota);
+                if (height > RealTimeMod.configProvider.Configuration.SwitchOffLightsMaxHeight || buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialLeisure || buildingInfo.m_class.m_subService == ItemClass.SubService.CommercialTourist)
                 {
                     OpenAtNight = true;
                 }
-                bool OpenAtWeekends = Random.ShouldOccur(Config.OpenCommercialAtWeekendsQuota);
-                bool HasExtendedWorkShift = Random.ShouldOccur(50);
-                bool HasContinuousWorkShift = Random.ShouldOccur(50);
+                bool OpenAtWeekends = ShouldOccur(RealTimeMod.configProvider.Configuration.OpenCommercialAtWeekendsQuota);
+                bool HasExtendedWorkShift = ShouldOccur(50);
+                bool HasContinuousWorkShift = ShouldOccur(50);
 
                 if (HasExtendedWorkShift)
                 {
@@ -82,6 +75,9 @@ namespace RealTime.CustomAI
 
 
         public static void RemoveBuildingWorkTime(ushort buildingID) => BuildingsWorkTime.Remove(buildingID);
+
+
+        private static bool ShouldOccur(uint probability) => SimulationManager.instance.m_randomizer.Int32(100u) < probability;
     }
 
 }

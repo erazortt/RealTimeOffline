@@ -1391,7 +1391,7 @@ namespace RealTime.Patches
                 var buildingInfo = data.Info;
                 if (data.Info.GetAI() is CommercialBuildingAI)
                 {
-                    BuildingWorkTimeManager.CreateBuildingWorkTime(buildingID);
+                    BuildingWorkTimeManager.CreateBuildingWorkTime(buildingID, data.Info);
                 }
 
                 if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))
@@ -1424,7 +1424,7 @@ namespace RealTime.Patches
                 var workTime = BuildingWorkTimeManager.GetBuildingWorkTime(buildingID);
                 if (data.Info.GetAI() is CommercialBuildingAI && workTime.Equals(default(BuildingWorkTimeManager.WorkTime)))
                 {
-                    BuildingWorkTimeManager.CreateBuildingWorkTime(buildingID);
+                    BuildingWorkTimeManager.CreateBuildingWorkTime(buildingID, data.Info);
                 }
 
                 if (data.Info.GetAI() is CommercialBuildingAI && data.Info.m_class.m_service == ItemClass.Service.Commercial && data.Info.m_class.m_subService == ItemClass.SubService.CommercialTourist && BuildingManagerConnection.Hotel_Names.Any(name => buildingInfo.name.Contains(name)))

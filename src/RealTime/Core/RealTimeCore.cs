@@ -227,7 +227,6 @@ namespace RealTime.Core
             ParkPatch.SpareTimeBehavior = null;
             OutsideConnectionAIPatch.SpareTimeBehavior = null;
             CitizenManagerPatch.NewCitizenBehavior = null;
-            BuildingWorkTimeManager.Random = null;
 
             vanillaEvents.Revert();
 
@@ -369,10 +368,6 @@ namespace RealTime.Core
                 spareTimeBehavior);
 
             TouristAIPatch.RealTimeAI = realTimeTouristAI;
-
-            BuildingWorkTimeManager.Random = gameConnections.Random;
-            BuildingWorkTimeManager.Config = config;
-            BuildingWorkTimeManager.BuildingManager = gameConnections.BuildingManager;
 
             return true;
         }
