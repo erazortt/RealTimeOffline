@@ -21,6 +21,7 @@ namespace RealTime.Core
     using SkyTools.Patching;
     using SkyTools.Storage;
     using SkyTools.Tools;
+    using ColossalFramework.Plugins;
 
     /// <summary>
     /// The core component of the Real Time mod. Activates and deactivates
@@ -326,7 +327,8 @@ namespace RealTime.Core
                 OutsideConnectionAIPatch.DummyTrafficProbability,
             };
 
-            if (compatibility.IsAnyModActive(WorkshopMods.CitizenLifecycleRebalance, WorkshopMods.LifecycleRebalanceRevisited))
+            var piLR = PluginManager.instance.GetPluginsInfo().FirstOrDefault(pi => pi.name.Contains("LifecycleRebalance"));
+            if (piLR != null || compatibility.IsAnyModActive(WorkshopMods.CitizenLifecycleRebalance, WorkshopMods.LifecycleRebalanceRevisited))
             {
                 Log.Info("The 'Real Time' mod will not change the citizens aging because a 'Lifecycle Rebalance' mod is active.");
             }
@@ -388,7 +390,8 @@ namespace RealTime.Core
                 return false;
             }
 
-            float travelDistancePerCycle = compatibility.IsAnyModActive(WorkshopMods.RealisticWalkingSpeed)
+            var piRWS = PluginManager.instance.GetPluginsInfo().FirstOrDefault(pi => pi.name.Contains("RealisticWalkingSpeed"));
+            float travelDistancePerCycle = (piRWS != null || compatibility.IsAnyModActive(WorkshopMods.RealisticWalkingSpeed))
                 ? Constants.AverageTravelDistancePerCycle * 0.583f
                 : Constants.AverageTravelDistancePerCycle;
 

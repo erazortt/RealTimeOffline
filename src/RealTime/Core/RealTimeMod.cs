@@ -178,7 +178,7 @@ namespace RealTime.Core
         private static string GetModPath()
         {
             var pluginInfo = PluginManager.instance.GetPluginsInfo()
-                .FirstOrDefault(pi => pi.publishedFileID.AsUInt64 == WorkshopId);
+                .FirstOrDefault(pi => pi.name.Contains("RealTime"));
 
             return pluginInfo?.modPath;
         }
